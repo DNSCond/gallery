@@ -30,7 +30,8 @@ if (preg_match('/\\.store-img\\{width:(\\d+)em;?}/', $width, $matches)) {
 } else {
     $width = "$width.store-img{width:20em;}";
 }
-$overflox = ".overflox>div,.charname{width:calc({$overflox}em - 2ch);overflow-x:hidden;white-space:nowrap;text-overflow:ellipsis;}";
+$overflox = ".overflox>div,.charname{width:calc({$overflox}em - 2ch);overflow-x:hidden;" .
+        "white-space:nowrap;text-overflow:ellipsis;}";
 create_head2($title = 'ANT\'s Gallery', ['base' => '/gallery/',
 ], [new ANTNavLinkTag('stylesheet', ["cssx.css", 'ddDL-table.css']),
         new ANTNavIStyle("$width$overflox"),
@@ -83,10 +84,13 @@ $universe = $_GET['universe'] ?? 'Favicond-All';
 /** @noinspection PhpIncludeInspection */
 require_once "{$baseURL}imageTag.php";
 
-$HideAiArt = (bool)$_GET['HideAiArt'];
+$AiArt = match ($_GET['AiArt']) {
+    '1' => '1',
+    '2' => '2',
+    default => '0',
+};
 foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
     if ($char = readCharacterJSON($item)) {
-        /*function (string $key, mixed $val) { return match ($key) {default => htmlspecialchars12($val),};}*/
         $char = $char['data'];
         $characters_total++;
         if ($selectedFilter === 'with' || $selectedFilter === 'no') {
@@ -106,7 +110,8 @@ foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
         if ($universe !== 'Favicond-All') if ($universe !== $array['UniverseId']) continue;
         $char['UniverseName'] = $array['UniverseId'] = matchUniverses($array['UniverseId']);
         unset($array['charId']);
-        $img = imageTag($charId, 'main', $altText, null, !$HideAiArt, ['store-img']);
+        $img = imageTag($charId, 'main', $altText, null, $AiArt, ['store-img']);
+        if ($img === false) continue;
         if (str_starts_with($width, '/*smallest*/')) {
             $echo = "<div class=store-div id=sec-$charId style=border-top:none><a href=char/$charId>$img</a></div>";
         } else {
@@ -180,21 +185,10 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
         <label><?= 'With Borders: ' . createSelectElement("with-bord", [
                     'n' => 'Named', 's' => 'Sorted', '1' => 'Yes', '0' => 'No',
             ], $selectedBorder) ?></label>.
-        <label><?= 'Hide AiArt: ' . createSelectElement("HideAiArt", [
-                    '1' => 'Yes', '0' => 'No',
-            ], (string)(int)$HideAiArt) ?></label>.<br>
+        <label><?= 'AiArt: ' . createSelectElement("AiArt", [
+                    '2' => 'Only', '1' => 'Show', '0' => 'Hide',
+            ], $AiArt) ?></label>.<br>
         <label><?= 'Sorted: ' . createSelectElement("sorted", [
-                /* '0' => 'Internal Name (A-z)', // , Ascending
-                'inverted' => 'Internal Name (z-A)', // , Descending
-                'displayASC' => 'Display Name (A-z)', // , Ascending
-                'displayDESC' => 'Display Name (z-A)', // , Descending
-                'creationDate' => 'Chronologically (Oldest First)', // (Ascending)
-                'newestFirst' => 'Newest First (Newest First)', // (Descending)
-                'latestFirst' => 'Last Updated (Newest First)', // (Descending)
-                'updatedDate' => 'Last Updated (Oldest First)', // (Ascending)
-                'registerDateR' => 'Registration Date (Newest First)', // (Descending)
-                'registerDateN' => 'Registration Date (Oldest First)', // (Ascending)
-                'random' => 'Random (Random)'*/
                     '0' => 'Internal Name',
                     'displayName' => 'Display Name',
                     'UniverseName' => 'Universe Name',

@@ -1,19 +1,34 @@
 <?php use function Helpers\htmlspecialchars12;
 
-// imageTag
-
 function imageTag(string  $charId, string $variant, string $alt,
-                  ?string $prefixed, bool $ai, array $classes,
+                  ?string $prefixed, bool|int $ai, array $classes,
                   ?string $token = null): string|false
 {
-    $ai = $ai ? 'ai/' : '';
     $prefixed = is_string($prefixed) ? "$prefixed." : "";
-    $baseURL = "images/$ai$prefixed$charId.$variant";
-    $basePath = __DIR__ . "/htignore/images/$charId/" . ($ai ? 'ai.' : '') . "$prefixed$variant";
+    $baseURLAi = "images/ai/$prefixed$charId.$variant";
+    $baseURL = "images/$prefixed$charId.$variant";
+    $basePathAi = __DIR__ . "/htignore/images/$charId/ai.$prefixed$variant";
+    $basePath = __DIR__ . "/htignore/images/$charId/$prefixed$variant";
     $result = "<picture>";
     $suffix = '';
     if ($token) {
         $suffix = "?token=$token";
+    }
+    if ($ai) {
+        $basePath = $basePathAi;
+        $baseURL = $baseURLAi;
+        if ($ai === 2) {
+            // If none of the files exist, return false
+            $files = ["$basePath.webp", "$basePath.png", "$basePath.jpeg", "$basePath.avif", "$basePath.jpg"];
+            $exists = false;
+            foreach ($files as $file) {
+                if (file_exists($file)) {
+                    $exists = true;
+                    break; // stop as soon as we find one
+                }
+            }
+            if (!$exists) return false;
+        }
     }
     $alt = htmlspecialchars12($alt);
     //$url = "images/$charId.$variant.png$suffix";
