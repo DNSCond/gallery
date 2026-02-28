@@ -1,0 +1,23 @@
+/* */
+:host {
+    font-family: sans-serif;
+}
+
+/**:last-child{margin-bottom:0}*/
+
+a:visited, a:link {
+    color: blue;
+}
+
+a:hover {
+    color: orangered;
+}
+
+a:active {
+    color: black;
+}
+
+/*dl { border: 3px solid #7c7c7c; margin: 0; div { border-top: 3px solid #7c7c7c; padding: 1ch 1ch 1ch 0; }
+div:first-child { border-top: none; } dd, dt { display: inline; padding: 1ch; } dt { /!*border-right:
+3px solid #7c7c7c;*!/ font-family: monospace; } dd { margin-left: 0; border-left: 3px solid #7c7c7c; }
+/!*dt:after{content:": ";} }*!/*/

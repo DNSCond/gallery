@@ -1,0 +1,13 @@
+<svg viewBox="0 0 512 512" width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+    <rect width="256" height="176" fill="#00a8f3" x="128" y="256"/>
+    <!--<path d="M 128 256 V 180 L 256 80 L 384 180 V 256" fill="#00a8f3"/>-->
+    <path d="M 70 256 L 256 80 L 442 256" fill="#00a8f3"/>
+    <path d="M 128 256 v -160 h 40 v160" fill="#00a8f3"/>
+    <g transform="scale(0.5 0.5) translate(0 192)" transform-origin="256 256">
+        <rect fill="#8cfffa" width="416" height="192" x="48" y="80"/>
+        <rect fill="#fff200" width="64" height="64" x="384" y="288"/>
+        <rect fill="#fff200" width="64" height="64" x="64" y="288"/>
+        <rect fill="#000000" width="128" height="96" x="48" y="384"/>
+        <rect fill="#000000" width="128" height="96" x="336" y="384"/>
+    </g>
+</svg>

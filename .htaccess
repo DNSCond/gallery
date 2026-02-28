@@ -1,0 +1,15 @@
+RewriteEngine on
+RewriteRule ^char/([a-zA-Z0-9\-]+)$ characterPage.php?char=$1 [L,QSA]
+RewriteRule ^images/ai/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ img.php?img=ai.$1.$2.$3 [L,QSA]
+
+RewriteRule ^images/ai/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|jpe?g|webp|avif)$ img.php?img=ai.gallery.$1.$2.$3 [L,QSA]
+RewriteRule ^images/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|jpe?g|webp|avif)$ img.php?img=gallery.$1.$2.$3 [L,QSA]
+
+RewriteRule ^images/comics\.([a-zA-Z0-9\-]+)\.(\d+)\.(\d+)\.(png|jpe?g|webp|avif)$ img.php?img=comics.$1.$2.$3.$4 [L,QSA]
+RewriteRule ^images/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ img.php?img=$1.$2.$3 [L,QSA]
+RewriteRule ^images/([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ img.php?img=$1.$2 [L,QSA]
+RewriteRule ^images/.+$ img.php?img=404 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^comics/([a-zA-Z0-9\\-]+)/(\d+)$ comics/comicPage.php?titleURL=$1&episodeId=$2 [L,QSA]
+

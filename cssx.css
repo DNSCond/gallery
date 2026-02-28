@@ -1,0 +1,53 @@
+/* */
+
+.store-div {
+    border: 3px solid gray;
+    display: inline-block;
+    margin: 1em 0 0 1em;
+}
+
+.store-img {
+    height: auto;
+    border-top: 3px solid grey;
+    display: block;
+    aspect-ratio: 800 / 1280;
+    object-fit: contain;
+}
+
+.store-display {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 20em);
+    gap: 3ch;
+}
+
+.border {
+    border: 3px solid gray;
+}
+
+.charname {
+    padding: 0.5em;
+    overflow-x: scroll;
+}
+
+.FId {
+    padding: 1ch;
+    border-top: 3px solid #7c7c7c;
+}
+
+.table-center > table {
+    width: 100%;
+}
+
+.hr-border {
+    margin: 1em 0 calc(1em - 0.5em) 0;
+}
+
+.h2-border {
+    padding-left: 0.5em;
+    margin: 0.5em 0 0 0;
+}
+
+.h2-border:not(.h2-border:first-child) {
+    border-top: 3px solid #7c7c7c;
+    padding-top: 0.5em;
+}
