@@ -199,7 +199,7 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
                     'joinId' => 'join Id',
                     'random' => 'Random',
             ], $sorted = (string)($_GET['sorted'] ?? 'UniverseName')) ?></label>.<br>
-        <!-- Array.from(document.querySelectorAll('html body div.divs form.border label select[name=\'universe\'] option'), str=>str.value).join(); -->
+        <!-- Array.from(document.querySelectorAll('html body div.divs form.border label select[name=\'universe\'] option'), str => str.value).join(); -->
         <label><?= 'Universe: ' . createSelectElement("universe",
                     (function () use ($universes, $unisort): array {
                         $result = array();
@@ -304,6 +304,18 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
         }
         echo "-->" ?></div>
 </div>
+<script>
+    async function* interVal(iterator, milliseconds) {
+        let {promise, resolve, reject} = Promise.withResolvers();
+        if (Number.isSafeInteger(milliseconds) && milliseconds > 0) {
+            for (const iteratorElement of iterator) {
+                setTimeout(resolve, milliseconds);
+                yield promise.then(() => iteratorElement);
+                ({promise, resolve, reject} = Promise.withResolvers());
+            }
+        }
+    }
+</script>
 <div class=divs><h2>Definitions</h2>
     <dl class=descLi>
         <div>

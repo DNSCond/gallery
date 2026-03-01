@@ -3,7 +3,7 @@ import datetime
 import pathlib
 import re, jwt
 
-sem = asyncio.Semaphore(50)
+sem = asyncio.Semaphore(75)
 
 secret = "026c56c425825f58b24b96f3ea54dfa46b563a4139687039e837e2824868c75bc5fb6ca2e07e41be46b830faeedb0c99a6c42ed12d6e14a39748bdf55802e827ca5526"
 iat = datetime.datetime.now(datetime.UTC)

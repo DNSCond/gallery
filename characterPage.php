@@ -70,7 +70,7 @@ create_head2($title, [
                 "cssx.css", "characterPage.css", 'ddDL-table.css',
         ]), new ANTNavIStyle("body{background-size: 100vw auto;background-image:url(\"$bgURL\")}"),
         new ANTNavIStyle('h1{margin-bottom:0.5em}.store-img{border:none;border-bottom:3px solid gray}'),
-        new ANTNavIStyle("/*normal*/.store-img{width:20em;}.overflox>div,.charname{width:calc(20em - 2ch);" .
+        new ANTNavIStyle(".store-img,.store-div{width:20em;}.overflox>div,.charname{width:calc(20em - 2ch);" .
                 "overflow-x:hidden;white-space:nowrap;text-overflow:ellipsis;}"),
 ], [ANTNavFavicond('/', 'Home'), $navigator]);
 require_once "dataDescriptionList.php";
