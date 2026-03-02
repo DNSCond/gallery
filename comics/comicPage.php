@@ -6,7 +6,7 @@ use function ANTHeader\ANTNavBuzz;
 use function ANTHeader\ANTNavFavicond;
 use function ANTHeader\create_head2;
 use function Helpers\htmlspecialchars12;
-use function Helpers\json_fromArray;
+use function JWT\generateToken;
 
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
 require_once "{$_SERVER['DOCUMENT_ROOT']}/gallery/JWT.php";
@@ -35,12 +35,14 @@ class Counter
     }
 }
 
-$comicData = null;
 $images = array();
+$comicData = null;
+$title = "ANT's Comics"; $name = 'Unknown';
 $item = "/{$_GET['titleURL']}/{$_GET['episodeId']}/edata.json";
 if (preg_match('/\\/([a-zA-Z0-9\\-]+)\\/(\d+)\\/edata\\.json$/D', $item, $matches)) {
-    if (is_string($content = file_get_contents("{$_SERVER['DOCUMENT_ROOT']}/gallery/htignore/comic-images/$item"))) {
+    if (is_string($content = file_get_contents("{$_SERVER['DOCUMENT_ROOT']}/gallery/htignore/comic-images/$item"))) { $name = $matches[1];
         if (is_array($json_content = json_decode($content, true))) {
+            $title = "{$json_content['name']}";
             $comicData = $json_content;
             $index = new Counter;
             while (file_exists($file = "{$_SERVER['DOCUMENT_ROOT']}/gallery/htignore/"
@@ -64,9 +66,9 @@ if (preg_match('/\\/([a-zA-Z0-9\\-]+)\\/(\d+)\\/edata\\.json$/D', $item, $matche
         }
     }
 }
+
 $primaryColor = '8e46db';
 $secondaryColor = '6a35a6';
-$title = 'ANT\'s Comics';
 $navigator = new ANTNavOption($_SERVER['REQUEST_URI'],
         "/dollmaker2/icon/endpoint.php?bgcolor=%23$primaryColor&fgcolor=%238cfffa&L=%23fff200&W=%23000000&LC=%23ff0000&RC=%230000ff&v=1",
         htmlspecialchars12($title), new Color("#$secondaryColor"),
@@ -76,19 +78,25 @@ create_head2($title, ['base' => '/gallery/comics/',
         ANTNavFavicond('/', 'Home'),
         ANTNavBuzz('/gallery/comics/', $title),
         $navigator,
-]) ?>
+]);
+global $JWT;
+$watermarkBypass = '';
+require_once "../loginService.php";
+if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
+    $watermarkBypass = '?token=' . generateToken(array('nowatermark' => true), 60);
+}
+$title = htmlspecialchars12($title) ?>
 <div class=divs style=text-align:center><?= "<h1> $title</h1>\n";
-    $baseURL = '/gallery/images/';
+    $baseURL = '/gallery/images/'; $index = new Counter;
     foreach ($images as $image) {
         echo "<picture>";
         if (array_key_exists('avif', $image)) {
-            echo "<source srcset=\"$baseURL{$image['avif']}\" type=image/avif>";
+            echo "<source srcset=\"$baseURL{$image['avif']}$watermarkBypass\" type=image/avif>";
         }
         if (array_key_exists('webp', $image)) {
-            echo "<source srcset=\"$baseURL{$image['webp']}\" type=image/webp>";
+            echo "<source srcset=\"$baseURL{$image['webp']}$watermarkBypass\" type=image/webp>";
         }
-        //if(array_key_exists('jpeg',$image)){echo"<source src='{$image['jpeg']}' type=image/jpeg>";}
-        echo "<img src=\"$baseURL{$image['png']}\" width=800 height=1280 alt=\"Comic Image\"></picture\n>";
+        echo "<img src=\"$baseURL{$image['png']}$watermarkBypass\" id=\"img-$name-{$index->countUpFormatted()}\" width=800 height=1280 alt=\"Comic Image\"></picture\n>";
     } ?></div>
 <!--<div class=divs>
     <pre><code>&lt;?= htmlspecialchars12(json_fromArray([

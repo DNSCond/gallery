@@ -23,7 +23,7 @@ if (array_key_exists('username', $_POST) && array_key_exists('password', $_POST)
                     }
                 }
             }
-            $maxAge = 600;
+            $maxAge = 86400;
             if ($htpasswd) {
                 if (password_verify("{$_POST['password']}", $htpasswd)) {
                     $cookie = $JWT->generate(array('username' => $username), $maxAge);
