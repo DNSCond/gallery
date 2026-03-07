@@ -62,7 +62,6 @@ function readCharacterJSON(string $jsonFile, bool $longDate = false): ?array
             'creationDate-epoch' => $creationDate,
             'LastModified-epoch' => $LastModified,
             'registerDate-epoch' => $registerDate,
-
         ]), 'json' => $json];
     }
     return null;

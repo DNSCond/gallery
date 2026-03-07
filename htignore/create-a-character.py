@@ -1,5 +1,5 @@
 #from datetime import datetime, timezone
-import re, json, pathlib
+import json, pathlib
 
 #iso_string = datetime.now(timezone.utc)\
 #             .isoformat(timespec='milliseconds')\
@@ -11,9 +11,13 @@ with open(pathlib.Path('images') / path / 'main.json',
           'wt', encoding='utf8') as file:
     evilize = '1970-01-01T00:00:00Z'
     file.write(json.dumps(dict(
+        name='/*Unknown-Name*/',
         UniverseId='Favicond-Unknown',
         creationDate=evilize,
         LastModified=evilize,
         registerDate=evilize,
     ), indent=2))
-    pass
+with (open(pathlib.Path('images') / 'placeholder.kra', 'rb') as src,
+      open(pathlib.Path('images') / path / 'main.kra', 'wb') as out):
+    out.write(src.read())
+pass

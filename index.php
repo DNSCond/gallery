@@ -91,6 +91,7 @@ $AiArt = match ($_GET['AiArt']) {
 };
 foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
     if ($char = readCharacterJSON($item)) {
+        if ($char['json']['private']) continue;
         $char = $char['data'];
         $characters_total++;
         if ($selectedFilter === 'with' || $selectedFilter === 'no') {
@@ -141,8 +142,8 @@ foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
             }
             $echo = <<<HTML
             <div class=store-div id=sec-$charId><div class=charname><a href="char/$charId"
-            >$name</a></div><a href="char/$charId">$img</a><div>$dataDescriptionList</div></div>
-            HTML;
+            >$name</a></div><a href="char/$charId">$img</a><div>$dataDescriptionList</div>
+            HTML. '</div>';
         }
         $char['html'] = "-->" . preg_replace('/[\\r\\n]+/', ' ', $echo) . "<!--\n";
         if (!preg_match('/^\\d{2}$/D', $char['listing'])) $char['listing'] = '00';
@@ -305,7 +306,7 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
         echo "-->" ?></div>
 </div>
 <script>
-    async function* interVal(iterator, milliseconds) {
+    function* asynctimer(iterator, milliseconds) {
         let {promise, resolve, reject} = Promise.withResolvers();
         if (Number.isSafeInteger(milliseconds) && milliseconds > 0) {
             for (const iteratorElement of iterator) {
@@ -315,6 +316,24 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
             }
         }
     }
+
+    class TimedEventSource extends EventTarget {
+        constructor() {
+            super();
+        }
+
+        async runTimer(name, length, millisecondsPerInterval) {
+            name = `${name}`;
+            for await(const detail of asynctimer(Array.from({length}, (_, index) => index), millisecondsPerInterval)) {
+                const event = new CustomEvent(name, {detail});
+                this.dispatchEvent(event);
+            }
+        }
+    }
+
+    const timer = new TimedEventSource;
+    timer.addEventListener('timer', ({detail}) => console.log(detail));
+    timer.runTimer('timer', 15, 100);
 </script>
 <div class=divs><h2>Definitions</h2>
     <dl class=descLi>
@@ -328,8 +347,8 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
         </div>
         <div>
             <dt id=what-is-FavicondId><dfn>FavicondId</dfn></dt>
-            <dd>A number made of the Legacy Listing and their JoinId. It's not really an id, but the name is kept for
-                consistency.
+            <dd>A number made of the Legacy Listing and their JoinId.
+                It's not really an id, but the name is kept for consistency.
             </dd>
         </div>
         <div>
@@ -346,3 +365,11 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
         </div>
     </dl>
 </div>
+<div class=divs><?= '<h2 id=hrefs>Links</h2><ul class=margin-tb>';
+    // base = /gallery/
+    foreach (['/layerzip/' => 'LayerZip: a program independent way to store 2d image' .
+            ' layers using zip deflate, png, and a json file.', 'admin.php' => 'Admin',
+                     'comics' => 'Comics'] as $href => $name) {
+        echo "<li><a href=$href>$name</a>";
+    }
+    echo "</ul>" ?></div>

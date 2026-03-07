@@ -51,3 +51,7 @@
     border-top: 3px solid #7c7c7c;
     padding-top: 0.5em;
 }
+
+.margin-tb > li {
+    margin: 1ch 0;
+}
