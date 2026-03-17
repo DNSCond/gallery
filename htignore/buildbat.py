@@ -140,7 +140,7 @@ def copysite(path):
 
 def main():
     zero = int()
-    for i in ('gallery', 'require', 'dollmaker2', 'layerzip'):
+    for i in ('gallery', 'require', 'dollmaker2', 'layerzip','standard'):
         zero += (one := copysite(i))
         print('moved', one, 'items in', i)
     print('moved', zero, 'items')

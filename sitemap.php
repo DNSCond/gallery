@@ -21,32 +21,45 @@ if (array_key_exists('type', $_GET)) {
 $urlSet = new XUrlSet($base = new XUrl('https://antrequest.nl', '/'))->set_withOuter(true);
 $base->set_changefreq(changefreq::daily)->set_priority(10);
 
-{
+if (file_exists("{$_SERVER['DOCUMENT_ROOT']}/standard/lastModified.json")) {
     $array = array();
-    $json = json_decode(file_get_contents(
-        "{$_SERVER['DOCUMENT_ROOT']}/layerzip/lastModified.json"), true)['layerzipVersion'];
-    foreach (glob("{$_SERVER['DOCUMENT_ROOT']}/layerzip/*/index.php") as $entry) {
-        if (preg_match('/(\\d+)\\.(\\d+)\\.(\\d+)\\/index\\.php$/D', $entry, $matches)) {
-            $array[] = array('major' => +$matches[1], 'minor' => +$matches[2], 'patch' => +$matches[3]);
+    $json = json_decode(file_get_contents("{$_SERVER['DOCUMENT_ROOT']}/standard/lastModified.json"), true)['metadata'];
+    foreach (glob("{$_SERVER['DOCUMENT_ROOT']}/standard/*/*/index.php") as $entry) {
+        if (preg_match('/\\/([A-Za-z0-9_\\-]+)\\/(\\d+)\\.(\\d+)\\.(\\d+)\\/index\\.php$/D', $entry, $matches)) {
+            if (!array_key_exists($matches[1], $array)) $array[$matches[1]] = array();
+            $array[$matches[1]][] = array('major' => +$matches[2], 'minor' => +$matches[3],
+                'patch' => +$matches[4], 'path' => $matches[1]);
         }
     }
-    usort($array, function ($x, $y) {
-        /** @noinspection PhpLoopCanBeConvertedToArrayAnyInspection */
-        foreach (['major', 'minor', 'patch'] as $key) {
-            if ($x[$key] !== $y[$key]) return $x <=> $y;
-        }
-        return +0;
-    });
+    foreach ($array as $item) {
+        usort($item, function ($x, $y) {
+            /** @noinspection PhpLoopCanBeConvertedToArrayAnyInspection */
+            foreach (['major', 'minor', 'patch'] as $key) {
+                if ($x[$key] !== $y[$key]) return -($x <=> $y);
+            }
+            return +0;
+        });
+    }
     $first = true;
-    foreach (array_reverse($array) as $layerzipVersion) {
-        $lzpV = "{$layerzipVersion['major']}.{$layerzipVersion['minor']}.{$layerzipVersion['patch']}";
-        $xurl = $urlSet->addXUrl("/layerzip/$lzpV/")->set_changefreq(changefreq::never);
-        $xurl->set_lastMod(strtotime($json[$lzpV] ?? '2026-03-01T12:45:07Z'));
-        if ($first) {
-            $first = false;
-            $xurl->set_priority(7);
-        } else {
-            $xurl->set_priority(2);
+    foreach ($array as $path => $specification) {
+        foreach (array_reverse($specification) as $specificationVersion) {
+            $lzpV = "{$specificationVersion['major']}.{$specificationVersion['minor']}.{$specificationVersion['patch']}";
+            $xurl = $urlSet->addXUrl("/standard/$path/$lzpV/")->set_changefreq(changefreq::never);
+            if ($json[$path]) {
+                if ($json[$path][$lzpV]) {
+                    $xurl->set_lastMod(strtotime($json[$path][$lzpV]['lastModified'] ?? '2026-03-01T12:45:07Z'));
+                } else {
+                    $xurl->set_lastMod(strtotime('2026-03-01T12:45:07Z'));
+                }
+            } else {
+                $xurl->set_lastMod(strtotime('2026-03-01T12:45:07Z'));
+            }
+            if ($first) {
+                $first = false;
+                $xurl->set_priority(7);
+            } else {
+                $xurl->set_priority(2);
+            }
         }
     }
 }
