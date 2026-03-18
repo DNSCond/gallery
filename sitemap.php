@@ -40,8 +40,8 @@ if (file_exists("{$_SERVER['DOCUMENT_ROOT']}/standard/lastModified.json")) {
             return +0;
         });
     }
-    $first = true;
     foreach ($array as $path => $specification) {
+    $first = true;
         foreach (array_reverse($specification) as $specificationVersion) {
             $lzpV = "{$specificationVersion['major']}.{$specificationVersion['minor']}.{$specificationVersion['patch']}";
             $xurl = $urlSet->addXUrl("/standard/$path/$lzpV/")->set_changefreq(changefreq::never);

@@ -111,7 +111,7 @@ foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
         if ($universe !== 'Favicond-All') if ($universe !== $array['UniverseId']) continue;
         $char['UniverseName'] = $array['UniverseId'] = matchUniverses($array['UniverseId']);
         unset($array['charId']);
-        $img = imageTag($charId, 'main', $altText, null, $AiArt, ['store-img']);
+        $img = imageTag($charId, 'main', $altText, null, $AiArt, ['store-img'],);
         if ($img === false) continue;
         if (str_starts_with($width, '/*smallest*/')) {
             $echo = "<div class=store-div id=sec-$charId style=border-top:none><a href=char/$charId>$img</a></div>";
@@ -305,7 +305,7 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
         }
         echo "-->" ?></div>
 </div>
-<script>
+<script type=text/plain>
     function* asynctimer(iterator, milliseconds) {
         let {promise, resolve, reject} = Promise.withResolvers();
         if (Number.isSafeInteger(milliseconds) && milliseconds > 0) {

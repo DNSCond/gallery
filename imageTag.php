@@ -1,9 +1,16 @@
 <?php use function Helpers\htmlspecialchars12;
 
+use function JWT\generateToken;
+
+$dir = __DIR__;
+require_once "$dir/loginService.php";
+require_once "$dir/JWT.php";
+global $JWT;
 function imageTag(string  $charId, string $variant, string $alt,
                   ?string $prefixed, bool|int $ai, array $classes,
                   ?string $token = null): string|false
 {
+    global $JWT;
     $prefixed = is_string($prefixed) ? "$prefixed." : "";
     $baseURLAi = "images/ai/$prefixed$charId.$variant";
     $baseURL = "images/$prefixed$charId.$variant";
@@ -13,6 +20,13 @@ function imageTag(string  $charId, string $variant, string $alt,
     $suffix = '';
     if ($token) {
         $suffix = "?token=$token";
+    } elseif ($_COOKIE['hidewatermarks']) {
+        if (is_array($JWT->validate("{$_COOKIE['htpasswd']}"))) {
+            $suffix = "?token=" . generateToken([
+                    'nonce' => bin2hex(random_bytes(8)),
+                    'nowatermark' => true,
+                ], 86400);
+        }
     }
     if ($ai) {
         $basePath = $basePathAi;
