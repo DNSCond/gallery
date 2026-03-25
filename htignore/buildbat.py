@@ -135,6 +135,7 @@ def copysite(path):
     gitignored.add_ignore_rule('.git/')
     gitignored.add_ignore_rule('.idea/')
     gitignored.add_ignore_rule('*backup*')
+    gitignored.add_ignore_rule('comic-cropper.php')
     return gitignored.copy_to(directory, dst)
 
 

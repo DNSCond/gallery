@@ -17,6 +17,7 @@
       <extension name="amqp" enabled="false" />
       <extension name="apache" enabled="false" />
       <extension name="apcu" enabled="false" />
+      <extension name="brotli" enabled="false" />
       <extension name="bz2" enabled="false" />
       <extension name="cassandra" enabled="false" />
       <extension name="couchbase" enabled="false" />
@@ -31,7 +32,9 @@
       <extension name="fann" enabled="false" />
       <extension name="ffmpeg" enabled="false" />
       <extension name="fileinfo" enabled="false" />
+      <extension name="frankenphp" enabled="false" />
       <extension name="ftp" enabled="false" />
+      <extension name="gd" enabled="false" />
       <extension name="gearman" enabled="false" />
       <extension name="geoip" enabled="false" />
       <extension name="geos" enabled="false" />
@@ -47,11 +50,13 @@
       <extension name="inotify" enabled="false" />
       <extension name="interbase" enabled="false" />
       <extension name="intl" enabled="false" />
+      <extension name="jsonpath" enabled="false" />
       <extension name="judy" enabled="false" />
       <extension name="ldap" enabled="false" />
       <extension name="libevent" enabled="false" />
       <extension name="libsodium" enabled="false" />
       <extension name="mailparse" enabled="false" />
+      <extension name="mbstring" enabled="false" />
       <extension name="mcrypt" enabled="false" />
       <extension name="memcache" enabled="false" />
       <extension name="memcached" enabled="false" />
@@ -68,6 +73,7 @@
       <extension name="oauth" enabled="false" />
       <extension name="oci8" enabled="false" />
       <extension name="odbc" enabled="false" />
+      <extension name="openssl" enabled="false" />
       <extension name="opentelemetry" enabled="false" />
       <extension name="pcntl" enabled="false" />
       <extension name="pdflib" enabled="false" />
@@ -96,6 +102,7 @@
       <extension name="sysvsem" enabled="false" />
       <extension name="sysvshm" enabled="false" />
       <extension name="tidy" enabled="false" />
+      <extension name="uri" enabled="false" />
       <extension name="v8js" enabled="false" />
       <extension name="wddx" enabled="false" />
       <extension name="win32service" enabled="false" />
@@ -107,7 +114,6 @@
       <extension name="xsl" enabled="false" />
       <extension name="yaml" enabled="false" />
       <extension name="zend" enabled="false" />
-      <extension name="zip" enabled="false" />
       <extension name="zmq" enabled="false" />
     </extensions>
   </component>

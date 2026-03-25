@@ -206,11 +206,11 @@ header("vary: referer", false);
 $ext = getimagesizefromstring("$fileContent");
 header("Content-Disposition: inline; filename=\"$name\"");
 header("content-length:" . strlen($fileContent));
+header("hashtag: \"sha256hex-$sha256\"");
 header("content-type:{$ext['mime']}");
-header("hash-tag: \"$sha256\"");
+header("etag: \"sha256hex-$sha256\"");
 header("image-width: $ext[0]");
 header("image-height:$ext[1]");
-header("etag: \"$sha256\"");
 //if (array_key_exists('HTTP_IF_NONE_MATCH', $_SERVER)) {
 //if (hash_equals("\"$sha256\"", "{$_SERVER['HTTP_IF_NONE_MATCH']}"))
 //{http_response_code(304);exit;}}

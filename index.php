@@ -32,7 +32,7 @@ if (preg_match('/\\.store-img\\{width:(\\d+)em;?}/', $width, $matches)) {
 }
 $overflox = ".overflox>div,.charname{width:calc({$overflox}em - 2ch);overflow-x:hidden;" .
         "white-space:nowrap;text-overflow:ellipsis;}";
-create_head2($title = 'ANT\'s Gallery', ['base' => '/gallery/',
+create_head2($title = 'ANT\'s Gallery', ['base' => '/gallery/',//'//cdn.localhost/gallery/',//'/gallery/',
 ], [new ANTNavLinkTag('stylesheet', ["cssx.css", 'ddDL-table.css']),
         new ANTNavIStyle("$width$overflox"),
 ], [ANTNavFavicond('https://ANTRequest.nl', $title, true)]);
