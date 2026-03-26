@@ -10,6 +10,9 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/output_svgs" />
       <excludeFolder url="file://$MODULE_DIR$/piout" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea/httpRequests" />
+      <excludeFolder url="file://$MODULE_DIR$/htignore/comic-images" />
+      <excludeFolder url="file://$MODULE_DIR$/htignore/images" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Python 3.13 interpreter library" level="application" />

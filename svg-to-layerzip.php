@@ -166,5 +166,4 @@ create_head2($title = 'SVG to LayerZip (PNG Only Mode)', [
         <button type=submit>Create</button>
         <output><?= ($output ? "<a href=\"./$output/output.zip\">Download LayerZip</a>" : 'No Output Yet.') ?></output>
     </form>
-
 </div>
