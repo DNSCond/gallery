@@ -1,4 +1,5 @@
-<?php use function Helpers\sha256;
+<?php use function ANTHeader\sendHashApi;
+use function Helpers\sha256;
 use function JWT\validateToken;
 
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
@@ -6,7 +7,6 @@ $http = array_key_exists('img', $_GET) ? "{$_GET['img']}" : '';
 require_once "JWT.php";
 $name = '404';
 $file = null;
-
 function readJSONFile(string $file)
 {
     if ($content = file_get_contents($file)) {
@@ -14,6 +14,8 @@ function readJSONFile(string $file)
     } else return null;
 }
 
+handleCORS();
+header("vary: referer", false);
 $intendedFormat = null;
 if (preg_match('/^[a-zA-Z0-9\\-]+(?:\\.[a-zA-Z0-9\\-]+)?(?:\\.[a-zA-Z0-9\-]+)?(?:\\.[a-zA-Z0-9\\-]+)?(?:\\.[a-zA-Z0-9\\-]+)?(?:\\.(?:png|jpe?g|webp|avif))?$/D',
     "$http")) header("xhttp: $http");
@@ -200,18 +202,46 @@ if (array_key_exists('token', $_GET)) {
         }
     }
 }
-
-header("vary: referer", false);
-
+$sha384 = \HashApi\sendHashApi($fileContent, true)['sha384'];
 $ext = getimagesizefromstring("$fileContent");
 header("Content-Disposition: inline; filename=\"$name\"");
 header("content-length:" . strlen($fileContent));
-header("hashtag: \"sha256hex-$sha256\"");
 header("content-type:{$ext['mime']}");
-header("etag: \"sha256hex-$sha256\"");
+header("etag: \"$sha384\"");
 header("image-width: $ext[0]");
 header("image-height:$ext[1]");
 //if (array_key_exists('HTTP_IF_NONE_MATCH', $_SERVER)) {
 //if (hash_equals("\"$sha256\"", "{$_SERVER['HTTP_IF_NONE_MATCH']}"))
 //{http_response_code(304);exit;}}
 echo "$fileContent";
+
+function handleCORS(array $options = ['allowlistedDomains' => ['antrequest.nl'], 'allowCredentials' => true,
+    'allowedCustomHeaders' => ['FX-HashApi-Nonce', 'FX-HashApi-CHash', 'FX-HashApi-DateTime'], 'autoExitOPTIONS' => true,
+    'allowedMethods' => ['GET'], 'maxage' => 60, 'allowedRequestHeaders' => array()]): void
+{
+    $matched = false;
+    header("vary: Origin", false);
+    $HTTP_ORIGIN = "{$_SERVER['HTTP_ORIGIN']}";
+    $allowlistedDomains = array_key_exists('allowlistedDomains', $options) ? $options['allowlistedDomains'] : array();
+    if (preg_match('/^https:\\/\\/([a-z_\\-.]+)$/D', $HTTP_ORIGIN, $matches)) {
+        if (in_array($matches[1], $allowlistedDomains)) {
+            header("Access-Control-Allow-Origin: $HTTP_ORIGIN");
+            $matched = true;
+        }
+    } elseif (in_array('localhost', $allowlistedDomains) && preg_match('/^https?:\\/\\/localhost(?::\\d+)?$/D', $HTTP_ORIGIN)) {
+        header("Access-Control-Allow-Origin: $HTTP_ORIGIN");
+        $matched = true;
+    }
+    if ($matched) {
+        if (array_key_exists('allowCredentials', $options) && $options['allowCredentials'])
+            header('Access-Control-Allow-Credentials: true');
+        if (array_key_exists('allowedRequestHeaders', $options) && !empty($options['allowedRequestHeaders']))
+            header('Access-Control-Allow-Headers: ' . implode(', ', $options['allowedRequestHeaders']));
+        if (array_key_exists('allowedMethods', $options) && !empty($options['allowedMethods']))
+            header('Access-Control-Allow-Methods: ' . implode(', ', $options['allowedMethods']));
+        if (array_key_exists('allowedCustomHeaders', $options) && !empty($options['allowedCustomHeaders']))
+            header('Access-Control-Expose-Headers: ' . implode(', ', $options['allowedCustomHeaders']));
+        header('Access-Control-Max-Age: ' . (array_key_exists('maxage', $options) ? $options['maxage'] : 5));
+    }
+    if ($options['autoExitOPTIONS'] && ($_SERVER['REQUEST_METHOD'] === 'OPTIONS')) exit;
+}
