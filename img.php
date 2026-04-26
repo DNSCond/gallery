@@ -1,5 +1,4 @@
-<?php use function ANTHeader\sendHashApi;
-use function Helpers\sha256;
+<?php use function ANTHeader\sha256Base64;
 use function JWT\validateToken;
 
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
@@ -14,12 +13,20 @@ function readJSONFile(string $file)
     } else return null;
 }
 
+function sha256(string $string): string
+{
+    return sha256Base64($string);
+}
+
+header("vary: origin", false);
 handleCORS();
-header("vary: referer", false);
+header("vary: referer, if-none-match", false);
 $intendedFormat = null;
-if (preg_match('/^[a-zA-Z0-9\\-]+(?:\\.[a-zA-Z0-9\\-]+)?(?:\\.[a-zA-Z0-9\-]+)?(?:\\.[a-zA-Z0-9\\-]+)?(?:\\.[a-zA-Z0-9\\-]+)?(?:\\.(?:png|jpe?g|webp|avif))?$/D',
+if (preg_match('/^[a-zA-Z0-9\\-]+(?:\\.[a-zA-Z0-9\\-]+)?(?:\\.[a-zA-Z0-9\-]+)?(?:\\.[a-zA-Z0-9\\-]+)?' .
+    '(?:\\.[a-zA-Z0-9\\-]+)?(?:\\.(?:png|jpe?g|webp|avif))?$/D',
     "$http")) header("xhttp: $http");
-if (preg_match('/^(ai\\.)?gallery\\.([a-zA-Z0-9\\-]+)\\.([a-zA-Z0-9\\-]+)\\.(png|jpe?g|webp|avif)$/D', "$http", $matches)) {
+if (preg_match('/^(ai\\.)?gallery\\.([a-zA-Z0-9\\-]+)\\.([a-zA-Z0-9\\-]+)\\.(png|jpe?g|webp|avif)$/D',
+    "$http", $matches)) {
     $format = $matches[4] === 'jpeg' ? 'jpg' : $matches[4];
     if (file_exists($temp = "htignore/images/$matches[2]/$matches[1]gallery.$matches[3].$matches[4]")) {
         header("{$_SERVER['SERVER_PROTOCOL']} 200 Ok");
@@ -28,7 +35,8 @@ if (preg_match('/^(ai\\.)?gallery\\.([a-zA-Z0-9\\-]+)\\.([a-zA-Z0-9\\-]+)\\.(png
         $file = $temp;
         $intendedFormat = $format;
     }
-} elseif (preg_match('/^ai\\.([a-zA-Z0-9\\-]+)\\.([a-zA-Z0-9\\-]+)\\.(png|jpe?g|webp|avif)$/D', "$http", $matches)) {
+} elseif (preg_match('/^ai\\.([a-zA-Z0-9\\-]+)\\.([a-zA-Z0-9\\-]+)\\.(png|jpe?g|webp|avif)$/D',
+    "$http", $matches)) {
     $format = $matches[3] === 'jpeg' ? 'jpg' : $matches[3];
     if (file_exists($temp = "htignore/images/$matches[1]/ai.$matches[2].$matches[3]")) {
         header("{$_SERVER['SERVER_PROTOCOL']} 200 Ok");
@@ -39,7 +47,8 @@ if (preg_match('/^(ai\\.)?gallery\\.([a-zA-Z0-9\\-]+)\\.([a-zA-Z0-9\\-]+)\\.(png
     } else {
         $http = "$matches[1].$matches[2].$matches[3]";
     }
-} elseif (preg_match('/^comics\\.([a-zA-Z0-9\\-]+)\\.(\\d+)\\.(\\d+)\\.(png|jpe?g|webp|avif)$/D', "$http", $matches)) {
+} elseif (preg_match('/^comics\\.([a-zA-Z0-9\\-]+)\\.(\\d+)\\.(\\d+)\\.(png|jpe?g|webp|avif)$/D',
+    "$http", $matches)) {
     $format = $matches[4] === 'jpeg' ? 'jpg' : $matches[4];
     if (file_exists($temp = "htignore/comic-images/$matches[1]/$matches[2]/img$matches[3].$format")) {
         $name = "Comia ImageViewer";
@@ -52,7 +61,8 @@ if (preg_match('/^(ai\\.)?gallery\\.([a-zA-Z0-9\\-]+)\\.([a-zA-Z0-9\\-]+)\\.(png
 if ($intendedFormat === null) {
     if (preg_match('/^([a-zA-Z0-9\\-]+)\\.(png|jpe?g|webp|avif)$/iD', "$http", $matches))
         $http = "$matches[1].main.$matches[2]";
-    if (preg_match('/^([a-zA-Z0-9\\-]+)\\.([a-zA-Z0-9\\-]+)\\.(png|jpe?g|webp|avif)$/iD', "$http", $matches)) {
+    if (preg_match('/^([a-zA-Z0-9\\-]+)\\.([a-zA-Z0-9\\-]+)\\.(png|jpe?g|webp|avif)$/iD',
+        "$http", $matches)) {
         $format = $matches[3] === 'jpeg' ? 'jpg' : $matches[3];
         if (file_exists($temp = "htignore/images/$matches[1]/$matches[2].$format")) {
             header("{$_SERVER['SERVER_PROTOCOL']} 200 Ok");
@@ -202,17 +212,32 @@ if (array_key_exists('token', $_GET)) {
         }
     }
 }
-$sha384 = \HashApi\sendHashApi($fileContent, true)['sha384'];
+
 $ext = getimagesizefromstring("$fileContent");
 header("Content-Disposition: inline; filename=\"$name\"");
 header("content-length:" . strlen($fileContent));
 header("content-type:{$ext['mime']}");
-header("etag: \"$sha384\"");
+header("etag: \"sha256b64-$sha256\"");
 header("image-width: $ext[0]");
 header("image-height:$ext[1]");
-//if (array_key_exists('HTTP_IF_NONE_MATCH', $_SERVER)) {
-//if (hash_equals("\"$sha256\"", "{$_SERVER['HTTP_IF_NONE_MATCH']}"))
-//{http_response_code(304);exit;}}
+$checked = 0;
+if (array_key_exists('HTTP_IF_NONE_MATCH', $_SERVER)) {
+    if (trim("{$_SERVER['HTTP_IF_NONE_MATCH']}") === '*') {
+        http_response_code(304);
+        exit;
+    }
+    if (preg_match_all('/"([^"]+)"/', "{$_SERVER['HTTP_IF_NONE_MATCH']}",
+        $matches, PREG_SET_ORDER)) {
+        foreach ($matches as $match) {
+            if (preg_match('/^sha256b64-(.+)$/D', $match[1], $matched)) {
+                if (hash_equals("$sha256", $matched[1])) {
+                    http_response_code(304);
+                    exit;
+                }
+            }
+        }
+    }
+}
 echo "$fileContent";
 
 function handleCORS(array $options = ['allowlistedDomains' => ['antrequest.nl'], 'allowCredentials' => true,
@@ -220,7 +245,6 @@ function handleCORS(array $options = ['allowlistedDomains' => ['antrequest.nl'],
     'allowedMethods' => ['GET'], 'maxage' => 60, 'allowedRequestHeaders' => array()]): void
 {
     $matched = false;
-    header("vary: Origin", false);
     $HTTP_ORIGIN = "{$_SERVER['HTTP_ORIGIN']}";
     $allowlistedDomains = array_key_exists('allowlistedDomains', $options) ? $options['allowlistedDomains'] : array();
     if (preg_match('/^https:\\/\\/([a-z_\\-.]+)$/D', $HTTP_ORIGIN, $matches)) {
@@ -228,7 +252,8 @@ function handleCORS(array $options = ['allowlistedDomains' => ['antrequest.nl'],
             header("Access-Control-Allow-Origin: $HTTP_ORIGIN");
             $matched = true;
         }
-    } elseif (in_array('localhost', $allowlistedDomains) && preg_match('/^https?:\\/\\/localhost(?::\\d+)?$/D', $HTTP_ORIGIN)) {
+    } elseif (in_array('localhost', $allowlistedDomains) && preg_match(
+            '/^https?:\\/\\/localhost(?::\\d+)?$/D', $HTTP_ORIGIN)) {
         header("Access-Control-Allow-Origin: $HTTP_ORIGIN");
         $matched = true;
     }

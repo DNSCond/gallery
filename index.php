@@ -1,9 +1,10 @@
 <?php use ANTHeader\ANTNavIStyle;
 use ANTHeader\ANTNavLinkTag;
-use function ANTHeader\ANTNavFavicond;
 use function ANTHeader\create_head2;
+use function ANTHeader\ANTNavFavicond;
 use function Helpers\htmlspecialchars12;
 use function readCharacterJSON\readCharacterJSON;
+use function ANTHeader\ANTNavBinary;
 
 // Evanthia
 date_default_timezone_set('UTC');
@@ -35,7 +36,10 @@ $overflox = ".overflox>div,.charname{width:calc({$overflox}em - 2ch);overflow-x:
 create_head2($title = 'ANT\'s Gallery', ['base' => '/gallery/',//'//cdn.localhost/gallery/',//'/gallery/',
 ], [new ANTNavLinkTag('stylesheet', ["cssx.css", 'ddDL-table.css']),
         new ANTNavIStyle("$width$overflox"),
-], [ANTNavFavicond('https://ANTRequest.nl', $title, true)]);
+], [
+        ANTNavFavicond('https://ANTRequest.nl', $title, true),
+        ANTNavBinary('/gallery/ascii-table.php', 'Ascii Table', true)
+]);
 
 function createSelectElement(string $name, array $options, null|string|callable|array $select = null): string
 {
