@@ -15,7 +15,7 @@ create_head2('Hash Table!', [], [
 ], [
     ANTNavHome(),
     ANTNavBinary('/gallery/ascii-table.php', 'Ascii Table'),
-    new ANTNavOption('/gallery/hashtable.php', '/dollmaker1/endpoint.php?' .
+    new ANTNavOption('/gallery/hashtable.php', '/dollmaker2/icon/endpoint.php?' .
         'bgcolor=%2300a8f3&fgcolor=%238cfffa&L=%23fff200&W=%23000000&LC=%23ff0000&RC=%230000ff&v=1',
         'Hash Table', '#00a6a6', '#00ffff', true),
 ]);

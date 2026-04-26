@@ -38,7 +38,7 @@ create_head2($title = 'ANT\'s Gallery', ['base' => '/gallery/',//'//cdn.localhos
         new ANTNavIStyle("$width$overflox"),
 ], [
         ANTNavFavicond('https://ANTRequest.nl', $title, true),
-        ANTNavBinary('/gallery/ascii-table.php', 'Ascii Table', true)
+        ANTNavBinary('/gallery/ascii-table.php', 'Ascii Table'),
 ]);
 
 function createSelectElement(string $name, array $options, null|string|callable|array $select = null): string
