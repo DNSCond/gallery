@@ -18,9 +18,8 @@ function sha256(string $string): string
     return sha256Base64($string);
 }
 
-header("vary: origin", false);
+header("vary: origin, referer, if-none-match", false);
 handleCORS();
-header("vary: referer, if-none-match", false);
 $intendedFormat = null;
 if (preg_match('/^[a-zA-Z0-9\\-]+(?:\\.[a-zA-Z0-9\\-]+)?(?:\\.[a-zA-Z0-9\-]+)?(?:\\.[a-zA-Z0-9\\-]+)?' .
     '(?:\\.[a-zA-Z0-9\\-]+)?(?:\\.(?:png|jpe?g|webp|avif))?$/D',
@@ -29,7 +28,7 @@ if (preg_match('/^(ai\\.)?gallery\\.([a-zA-Z0-9\\-]+)\\.([a-zA-Z0-9\\-]+)\\.(png
     "$http", $matches)) {
     $format = $matches[4] === 'jpeg' ? 'jpg' : $matches[4];
     if (file_exists($temp = "htignore/images/$matches[2]/$matches[1]gallery.$matches[3].$matches[4]")) {
-        header("{$_SERVER['SERVER_PROTOCOL']} 200 Ok");
+        // header("{$_SERVER['SERVER_PROTOCOL']} 200 Ok");
         $json = readJSONFile("htignore/images/$matches[1]/main.json") ?? array();
         $name = $json['name'] ?? $matches[1];
         $file = $temp;
@@ -39,7 +38,6 @@ if (preg_match('/^(ai\\.)?gallery\\.([a-zA-Z0-9\\-]+)\\.([a-zA-Z0-9\\-]+)\\.(png
     "$http", $matches)) {
     $format = $matches[3] === 'jpeg' ? 'jpg' : $matches[3];
     if (file_exists($temp = "htignore/images/$matches[1]/ai.$matches[2].$matches[3]")) {
-        header("{$_SERVER['SERVER_PROTOCOL']} 200 Ok");
         $json = readJSONFile("htignore/images/$matches[1]/main.json") ?? array();
         $name = $json['name'] ?? $matches[1];
         $file = $temp;
@@ -53,8 +51,6 @@ if (preg_match('/^(ai\\.)?gallery\\.([a-zA-Z0-9\\-]+)\\.([a-zA-Z0-9\\-]+)\\.(png
     if (file_exists($temp = "htignore/comic-images/$matches[1]/$matches[2]/img$matches[3].$format")) {
         $name = "Comia ImageViewer";
         $file = $temp;
-    } else {
-        header("{$_SERVER['SERVER_PROTOCOL']} 404 Not Found");
     }
     $intendedFormat = $format;
 }
@@ -65,16 +61,12 @@ if ($intendedFormat === null) {
         "$http", $matches)) {
         $format = $matches[3] === 'jpeg' ? 'jpg' : $matches[3];
         if (file_exists($temp = "htignore/images/$matches[1]/$matches[2].$format")) {
-            header("{$_SERVER['SERVER_PROTOCOL']} 200 Ok");
             $json = readJSONFile("htignore/images/$matches[1]/main.json") ?? array();
             $name = $json['name'] ?? $matches[1];
             $file = $temp;
-        } else {
-            header("{$_SERVER['SERVER_PROTOCOL']} 404 Not Found");
         }
         $intendedFormat = $format;
     } else {
-        header("{$_SERVER['SERVER_PROTOCOL']} 404 Not Found");
         $intendedFormat = 'png';
     }
 }
@@ -82,7 +74,11 @@ if ($intendedFormat === null) {
 if (is_null($intendedFormat)) $intendedFormat = 'png';
 $http404File = "htignore/404placeholder.$intendedFormat";
 $http404FilePng = "htignore/404placeholder.png";
-if (is_null($file)) $file = $http404File;
+$status = 200;
+if (is_null($file)) {
+    $file = $http404File;
+    $status = 404;
+}
 
 /**
  * Resolves the best supported image format based on Imagick availability.
@@ -135,7 +131,6 @@ function createViaImagick($file): array
     $content = '<svg width="800" height="1280" viewBox="0 0 800 1280" xmlns="http://www.w3.org/2000/svg">'
         . "$content</svg>";
     $format = getSupportedImageFormat($intendedFormat);
-    header("debug-data: \$format=$format; \$intendedFormat=$intendedFormat");
     if (is_null($format)) {
         $file = $http404File;
         $sha256 = sha256($fileContent = file_get_contents("$file"));
@@ -151,7 +146,6 @@ function createViaImagick($file): array
         $content = preg_replace('/<(path|circle)/',
             '<${1} fill="none" stroke-width="4" stroke="#000000"',
             "$rect$content");
-        //header('content-type: application/xml');echo $content;exit;
         $content = base64_encode("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n$content");
         $svg->readImage("data:image/svg+xml;charset=UTF-8;base64,$content");
         // $svg->setResolution(300, 300);
@@ -198,8 +192,7 @@ if (array_key_exists('token', $_GET)) {
         }
     }
 } else {
-    //header("cache-control: max-age=3600");
-    header("cache-control: max-age=0");
+    header("cache-control: max-age=3600");
     if (str_starts_with($_SERVER['HTTP_REFERER'], "https://antrequest.nl")) {
         $sha256 = sha256($fileContent = file_get_contents("$file"));
     } else {
@@ -215,13 +208,16 @@ if (array_key_exists('token', $_GET)) {
 
 $ext = getimagesizefromstring("$fileContent");
 header("Content-Disposition: inline; filename=\"$name\"");
-header("content-length:" . strlen($fileContent));
+//header("content-length:" . strlen($fileContent));
 header("content-type:{$ext['mime']}");
 header("etag: \"sha256b64-$sha256\"");
 header("image-width: $ext[0]");
 header("image-height:$ext[1]");
 $checked = 0;
-if (array_key_exists('HTTP_IF_NONE_MATCH', $_SERVER)) {
+if ($status === 404) {
+    echo "$fileContent";
+    exit;
+} elseif (array_key_exists('HTTP_IF_NONE_MATCH', $_SERVER)) {
     if (trim("{$_SERVER['HTTP_IF_NONE_MATCH']}") === '*') {
         http_response_code(304);
         exit;
@@ -238,6 +234,7 @@ if (array_key_exists('HTTP_IF_NONE_MATCH', $_SERVER)) {
         }
     }
 }
+http_response_code($status);
 echo "$fileContent";
 
 function handleCORS(array $options = ['allowlistedDomains' => ['antrequest.nl'], 'allowCredentials' => true,
