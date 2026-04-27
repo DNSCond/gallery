@@ -1,6 +1,7 @@
 <?php use function ANTHeader\sha256Base64;
-use function JWT\validateToken;
 
+//use function JWT\validateToken;
+date_default_timezone_set('Europe/Amsterdam');
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
 $http = array_key_exists('img', $_GET) ? "{$_GET['img']}" : '';
 require_once "JWT.php";
@@ -168,8 +169,9 @@ function createViaImagick($file): array
     return [$sha256, $fileContent];
 }
 
+$chosen_file = null;
 $watermarked = preg_replace('/\\.([a-z]+)$/D', '.watermarked.${1}', $file);
-if (array_key_exists('token', $_GET)) {
+/*if (array_key_exists('token', $_GET)) {
     // jwt is used as a secure nonce, does not repeat, therefore immutable
     header("cache-control: private, max-age=3600");
     $token = array();
@@ -191,13 +193,16 @@ if (array_key_exists('token', $_GET)) {
             $sha256 = sha256($fileContent = file_get_contents("$http404FilePng"));
         }
     }
-} else {
+} else*/
+{
     header("cache-control: max-age=3600");
     if (str_starts_with($_SERVER['HTTP_REFERER'], "https://antrequest.nl")) {
         $sha256 = sha256($fileContent = file_get_contents("$file"));
+        $chosen_file = $file;
     } else {
         if (file_exists($watermarked)) {
             $sha256 = sha256($fileContent = file_get_contents("$watermarked"));
+            $chosen_file = $watermarked;
         } elseif (file_exists($http404File)) {
             $sha256 = sha256($fileContent = file_get_contents("$http404File"));
         } else {
@@ -215,9 +220,16 @@ header("image-width: $ext[0]");
 header("image-height:$ext[1]");
 $checked = 0;
 if ($status === 404) {
+    http_response_code($status);
     echo "$fileContent";
     exit;
-} elseif (array_key_exists('HTTP_IF_NONE_MATCH', $_SERVER)) {
+}
+if (is_string($chosen_file)) {
+    $filemtime = filemtime($chosen_file);
+    header("Last-Modified:" . gmdate(DATE_RFC7231, $filemtime));
+    header("FX-filemtime:" . date('D M Y-m-d \\TH:i:s \\U\\T\\CO (e)', $filemtime));
+}
+if (array_key_exists('HTTP_IF_NONE_MATCH', $_SERVER)) {
     if (trim("{$_SERVER['HTTP_IF_NONE_MATCH']}") === '*') {
         http_response_code(304);
         exit;
