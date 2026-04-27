@@ -54,8 +54,8 @@ foreach (['sha1' => 'SHA-1', 'md5' => 'MD5'] as $identifierHash => $nameHash) {
     // binary hashes.
     foreach ($bases as $identifierDecode => $nameDecode) {
         $alt = $nameDecode['multibase'] === null ? 'N&#x2f;A' : "$identifierHash{$nameDecode['multibase']}";
-        echo "\n    <tr><td>$nameHash (Legacy)<td>{$nameDecode['name']}<td>$identifierHash$identifierDecode<td>".
-            "$alt<td>{$nameDecode['multibase']}";
+        echo "\n    <tr><td>$nameHash (Legacy)<td>{$nameDecode['name']}<td>$identifierHash$identifierDecode<td>" .
+            "$alt<td>" . ($nameDecode['multibase'] === null ? 'N&#x2f;A' : $nameDecode['multibase']);
     }
 }
 echo "\n</tbody></table>\n</div>\n";
