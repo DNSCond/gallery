@@ -89,14 +89,31 @@ class GitIgnore:
                 for child in current_src.iterdir():
                     _copy_recursive(child, current_dst / child.name)
             else:
-                moved += 1
                 current_dst.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(current_src, current_dst)
+                if str(current_src).replace('\\', '/').endswith('/blog/dbc/database.json'):
+                    return
+                moved += 1
+                # if str(current_src).replace('\\', '/').endswith('/blog/dbc/database.prod.json'):
+                #     print(current_src, current_dst)
+                shutil.copy2(current_src, clean_prod_suffix(current_dst))
 
         _copy_recursive(src, dst)
         return moved
 
     pass
+
+
+def clean_prod_suffix(path_obj):
+    suffixes = path_obj.suffixes
+
+    # Check if there are at least 2 suffixes and the second to last is '.prod'
+    if len(suffixes) >= 2 and suffixes[-2] == ".prod":
+        # Remove the second to last element
+        new_suffixes = suffixes[:-2] + [suffixes[-1]]
+        # path_obj.stem gives the filename without ANY suffixes
+        return path_obj.parent / (path_obj.name.split('.')[0] + "".join(new_suffixes))
+
+    return path_obj
 
 
 pass
@@ -141,7 +158,7 @@ def copysite(path):
 
 def main():
     zero = int()
-    for i in ('gallery', 'require', 'dollmaker2', 'svgViewer','standard'):
+    for i in ('gallery', 'require', 'dollmaker2', 'svgViewer', 'standard', 'blog'):
         zero += (one := copysite(i))
         print('moved', one, 'items in', i)
     print('moved', zero, 'items')

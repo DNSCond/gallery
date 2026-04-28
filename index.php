@@ -6,7 +6,6 @@ use function Helpers\htmlspecialchars12;
 use function readCharacterJSON\readCharacterJSON;
 use function ANTHeader\ANTNavBinary;
 
-// Evanthia
 date_default_timezone_set('UTC');
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
 $baseURL = __DIR__ . '/';
