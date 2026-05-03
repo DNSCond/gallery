@@ -19,7 +19,7 @@ function sha256(string $string): string
     return sha256Base64($string);
 }
 
-header("vary: origin, referer, if-none-match", false);
+header("vary: origin, referer", false);
 handleCORS();
 $intendedFormat = null;
 if (preg_match('/^[a-zA-Z0-9\\-]+(?:\\.[a-zA-Z0-9\\-]+)?(?:\\.[a-zA-Z0-9\-]+)?(?:\\.[a-zA-Z0-9\\-]+)?' .
