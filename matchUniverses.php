@@ -11,6 +11,7 @@ function matchUniverses(string $universe): string
         'inverConds' => 'Animalcond',
         'Favicond-2' => 'Dresscond',
         'Favicond-All' => 'All',
+        'AttachedEdu' => 'Attached Education',
         default => "$universe",
     };
 }

@@ -51,6 +51,7 @@ async def fetch(path: str, session: aiohttp.ClientSession):
 
 
 async def main():
+    print('starting job')
     tasks = set()
     async with aiohttp.ClientSession() as session:
         async with asyncio.TaskGroup() as taskgrp:

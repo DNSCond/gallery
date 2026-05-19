@@ -1,6 +1,7 @@
 <?php use function ANTHeader\sha256Base64;
 
-//use function JWT\validateToken;
+use function JWT\validateToken;
+
 date_default_timezone_set('Europe/Amsterdam');
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
 $http = array_key_exists('img', $_GET) ? "{$_GET['img']}" : '';
@@ -171,7 +172,7 @@ function createViaImagick($file): array
 
 $chosen_file = null;
 $watermarked = preg_replace('/\\.([a-z]+)$/D', '.watermarked.${1}', $file);
-/*if (array_key_exists('token', $_GET)) {
+if (array_key_exists('token', $_GET)) {
     // jwt is used as a secure nonce, does not repeat, therefore immutable
     header("cache-control: private, max-age=3600");
     $token = array();
@@ -193,21 +194,21 @@ $watermarked = preg_replace('/\\.([a-z]+)$/D', '.watermarked.${1}', $file);
             $sha256 = sha256($fileContent = file_get_contents("$http404FilePng"));
         }
     }
-} else*/
-{
+} else {
     header("cache-control: max-age=3600");
     if (str_starts_with($_SERVER['HTTP_REFERER'], "https://antrequest.nl")) {
         $sha256 = sha256($fileContent = file_get_contents("$file"));
         $chosen_file = $file;
+    } elseif (file_exists("{$_SERVER['DOCUMENT_ROOT']}/../auth.json")) {
+        $sha256 = sha256($fileContent = file_get_contents("$file"));
+        $chosen_file = $file;
+    } elseif (file_exists($watermarked)) {
+        $sha256 = sha256($fileContent = file_get_contents("$watermarked"));
+        $chosen_file = $watermarked;
+    } elseif (file_exists($http404File)) {
+        $sha256 = sha256($fileContent = file_get_contents("$http404File"));
     } else {
-        if (file_exists($watermarked)) {
-            $sha256 = sha256($fileContent = file_get_contents("$watermarked"));
-            $chosen_file = $watermarked;
-        } elseif (file_exists($http404File)) {
-            $sha256 = sha256($fileContent = file_get_contents("$http404File"));
-        } else {
-            $sha256 = sha256($fileContent = file_get_contents("$http404FilePng"));
-        }
+        $sha256 = sha256($fileContent = file_get_contents("$http404FilePng"));
     }
 }
 
