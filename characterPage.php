@@ -23,7 +23,7 @@ if (!file_exists($path)) {
     exit;
 }
 $characterData = json_decode(file_get_contents($path) ?? '{}', true);
-$title = "{$characterData['name']} (ANT's Gallery)";
+$title = "{$characterData['name']} (ANT's Character Gallery)";
 
 $navigator = ANTNavFavicond("char/$char", $title, true);
 if (array_key_exists('primaryColor', $characterData) && array_key_exists('secondaryColor', $characterData)) {
@@ -64,21 +64,38 @@ function new_style_shades(string $name, Color $color): array
     return $glitched;
 }
 
-create_head2($title, [
-        'base' => '/gallery/'], [
+require_once "readCharacterJSON.php";
+$array = readCharacterJSON($path, true);
+if (empty($array)) {
+    http_response_code(307);
+    header("Location: /");
+    exit;
+} else {
+    $array = $array['data'];
+}
+$uniName = $array['UniverseId'] = matchUniverses($array['UniverseId']);
+ob_start();
+$desc = $GLOBALS['defaultDesc'] = ($name = htmlspecialchars12($characterData['name'] ?? $char)) .
+        "\x20is a character of the $uniName Universe on ANTRequest.nl.";
+if (!include_once "htignore/images/$char/main.php") echo "<p>" . htmlspecialchars12($desc);
+$characterInfo = ob_get_clean();
+
+if (isset($GLOBALS['desc'])) {
+    $desc = "{$GLOBALS['desc']}";
+}
+create_head2($title, ['base' => '/gallery/', 'desc' => $desc], [
         new ANTNavLinkTag('stylesheet', [
                 "cssx.css", "characterPage.css", 'ddDL-table.css',
         ]), new ANTNavIStyle("body{background-size: 100vw auto;background-image:url(\"$bgURL\")}"),
         new ANTNavIStyle('h1{margin-bottom:0.5em}.store-img{border:none;border-bottom:3px solid gray}'),
         new ANTNavIStyle(".store-img,.store-div{width:20em;}.overflox>div,.charname{width:calc(20em - 2ch);" .
                 "overflow-x:hidden;white-space:nowrap;text-overflow:ellipsis;}"),
+        new ANTNavLinkTag('canonical', "https://antrequest.nl/gallery/char/$char"),
 ], [ANTNavFavicond('/', 'Home'), $navigator]);
 require_once "dataDescriptionList.php";
-require_once "readCharacterJSON.php";
-require_once "imageTag.php";
-$name = htmlspecialchars12($characterData['name'] ?? $char);
-$imgsrc = "images/$char.png";
 require_once "loginService.php";
+require_once "imageTag.php";
+$imgsrc = "images/$char.png";
 global $JWT;
 if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
     $currentUsername = htmlspecialchars12("{$token['username']}");
@@ -91,21 +108,12 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
     <h1 style=text-align:center><?= "Character &quot;$name&quot;" ?></h1>
     <div style=text-align:center;margin-bottom:1em><?= imageTag($char, 'main',
                 "$name's introductory appearance", null,
-                false, ['introImage border']) ?></div>
-    <!--<?= "hello";
-    $array = readCharacterJSON($path, true);
-    if (empty($array)) {
-        http_response_code(307);
-        header("Location: /");
-        exit;
-    } else {
-        $array = $array['data'];
-    }
-    $array['UniverseId'] = matchUniverses($array['UniverseId']);
-    foreach (['creationDate-epoch', 'LastModified-epoch', 'registerDate-epoch'] as $rm) {
-        unset($array[$rm]);
-    }
-    $array['Section'] = new HTMLSafeEscaped("<a href=#sec-$char>$name</a>") ?>-->
+                false, ['introImage border']);
+        foreach (['creationDate-epoch', 'LastModified-epoch', 'registerDate-epoch'] as $rm) {
+            unset($array[$rm]);
+        }
+        $array['Section'] = new HTMLSafeEscaped("<a href=#sec-$char>$name</a>")
+        ?></div>
     <div style="border-left: 2px solid gray;border-right: 2px solid gray;border-bottom: 2px solid gray;"><?= dataDescriptionList($array, array(), [
                 'registerDate' => '/#what-is-registerDate',
                 'creationDate' => '/#what-is-creationDate',
@@ -114,10 +122,7 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
                 'UniverseId' => '/#what-is-UniverseId',
         ]);
         $styleLink = '/dollmaker2/ddDL-table.css' ?></div>
-    <div class=character-profile><?= "<!-- Character Insertion -->\n";
-        if (!include_once "htignore/images/$char/main.php")
-            echo "<p>no information found";
-        echo "\n<!-- Character Insertion END -->";
+    <div class=character-profile><?= "<!-- Character Insertion -->\n$characterInfo\n<!-- Character Insertion END -->";
         function galleryListing(string $charId, string $variant, string $alt, bool $ai, $prefixed = null, bool $mustsourced = true): string
         {
             $token = createJWT();
@@ -144,9 +149,5 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
                 echo galleryListing($char, $matches[2], 'Alt Text',
                         $matches[1] === 'ai.', 'gallery', false);
             }
-        }
-        //echo phpArrayToHTML($array);
-        //function phpArrayToHTML(array $array): string
-        //{return "<ul><li>" . implode('<li>', $array) . "</ul>";}
-        ?></div>
+        } ?></div>
 </main>
