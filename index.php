@@ -114,14 +114,16 @@ foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
         if ($universe !== 'Favicond-All') if ($universe !== $array['UniverseId']) continue;
         $char['UniverseName'] = $array['UniverseId'] = matchUniverses($array['UniverseId']);
         unset($array['charId']);
-        $img = imageTag($charId, 'main', $altText, null, $AiArt, ['store-img'],);
+        $img = imageTag($charId, 'main', $altText, null, $AiArt, ['store-img']);
         if ($img === false) continue;
         if (str_starts_with($width, '/*smallest*/')) {
             $echo = "<div class=store-div id=sec-$charId style=border-top:none><a href=char/$charId>$img</a></div>";
         } else {
             if (str_starts_with($width, '/*smaller*/')) {
-                if (array_key_exists('FavicondId', $array))
-                    $dataDescriptionList = "<div class=FId>F-ID: {$array['FavicondId']}</div>";
+                /** @noinspection PhpStatementHasEmptyBodyInspection */
+                if (array_key_exists('FavicondId', $array)) {
+                    //$dataDescriptionList = "<div class=FId>F-ID: {$array['FavicondId']}</div>";
+                }
             } else if (str_starts_with($width, '/*normal*/')) {
                 if (str_starts_with($width, '/*normal*//*dev*/')) {
                     $array['internalName'] = $charId;
@@ -143,10 +145,8 @@ foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
                         'UniverseId' => '#what-is-UniverseId',
                 ]);
             }
-            $echo = <<<HTML
-            <div class=store-div id=sec-$charId><div class=charname><a href="char/$charId"
-            >$name</a></div><a href="char/$charId">$img</a><div>$dataDescriptionList</div>
-            HTML. '</div>';
+            $echo = "<article class=store-div id=sec-$charId><h3 class=charname><a href=char/$charId>" .
+                    "$name</a></h3><a href=char/$charId>$img</a><div>$dataDescriptionList</div></article>";
         }
         $char['html'] = "-->" . preg_replace('/[\\r\\n]+/', ' ', $echo) . "<!--\n";
         if (!preg_match('/^\\d{2}$/D', $char['listing'])) $char['listing'] = '00';
@@ -289,7 +289,12 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
             }
         }
         $universe = null;
-
+        $queryString = htmlspecialchars12("?{$_SERVER['QUERY_STRING']}");
+        if (!($selectedBorder === 'n' || $selectedBorder === 's')) {
+            echo "-->";
+            echo "<h2 class=h2-border>Characters</h2>";
+            echo "<!--\n";
+        }
         foreach ($characters as $character) {
             //if ($character['charId'] !== '17-R') continue;
             if ($selectedBorder) if ($universe !== $character['UniverseId']) {
@@ -297,9 +302,10 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
                 $universe = $character['UniverseId'];
                 if ($selectedBorder === 'n' || $selectedBorder === 's') {
                     $universeName = htmlspecialchars12(matchUniverses($universe));
-                    echo "[--><h2 class=h2-border id=\"secuni-$universe\">";
-                    echo "<a href=#secuni-$universe>$universeName</a></h2>";
-                    echo "<!--]\n";
+                    echo "-->";
+                    echo "<h2 class=h2-border id=\"secuni-$universe\"><a href=\"" .
+                            "$queryString#secuni-$universe\">$universeName</a></h2>";
+                    echo "<!--\n";
                 } elseif ($was_null) {
                     echo "[--><hr class=hr-border><!--]\n";
                 }
