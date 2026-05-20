@@ -36,6 +36,7 @@ $overflox = ".overflox>div,.charname{width:calc({$overflox}em - 2ch);overflow-x:
 create_head2($title = 'ANT\'s Gallery', ['base' => '/gallery/',
         'desc' => 'Explore the official character gallery of Favi Favicond at ANTRequest.nl!',
 ], [new ANTNavLinkTag('stylesheet', ["cssx.css", 'ddDL-table.css']),
+        new ANTNavLinkTag('canonical', 'https://antrequest.nl'),
         new ANTNavIStyle("$width$overflox"),
 ], [
         ANTNavFavicond('https://ANTRequest.nl', $title, true),

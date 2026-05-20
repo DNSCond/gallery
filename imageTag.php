@@ -47,8 +47,8 @@ function imageTag(string  $charId, string $variant, string $alt,
     if (!str_contains($result, '<source ') && str_contains($classes, 'mustsourced')) {
         return false;
     } else {
-        $result .= "<img src=\"$baseURL.png$suffix\" width=800 height=1280 alt=\"$alt\"".
-            " class=\"$classes\" fetchpriority=auto loading=lazy>";
+        $result .= "<img src=\"$baseURL.png$suffix\" width=800 height=1280 " .
+            "alt=\"$alt\" class=\"$classes\" fetchpriority=auto loading=lazy>";
         return "$result</picture>";
     }
 }
