@@ -1,0 +1,30 @@
+<script type=text/plain>
+    function* asynctimer(iterator, milliseconds) {
+        let {promise, resolve, reject} = Promise.withResolvers();
+        if (Number.isSafeInteger(milliseconds) && milliseconds > 0) {
+            for (const iteratorElement of iterator) {
+                setTimeout(resolve, milliseconds);
+                yield promise.then(() => iteratorElement);
+                ({promise, resolve, reject} = Promise.withResolvers());
+            }
+        }
+    }
+
+    class TimedEventSource extends EventTarget {
+        constructor() {
+            super();
+        }
+
+        async runTimer(name, length, millisecondsPerInterval) {
+            name = `${name}`;
+            for await(const detail of asynctimer(Array.from({length}, (_, index) => index), millisecondsPerInterval)) {
+                const event = new CustomEvent(name, {detail});
+                this.dispatchEvent(event);
+            }
+        }
+    }
+
+    const timer = new TimedEventSource;
+    timer.addEventListener('timer', ({detail}) => console.log(detail));
+    timer.runTimer('timer', 15, 100);
+</script>

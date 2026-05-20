@@ -4,13 +4,12 @@ use function JWT\generateToken;
 
 $dir = __DIR__;
 require_once "$dir/loginService.php";
-require_once "$dir/JWT.php";
-global $JWT;
+//require_once "$dir/JWT.php";
 function imageTag(string  $charId, string $variant, string $alt,
                   ?string $prefixed, bool|int $ai, array $classes,
-                  ?string $token = null): string|false
+                  ?string $_token = null): string|false
 {
-    global $JWT;
+    // global $JWT;
     $prefixed = is_string($prefixed) ? "$prefixed." : "";
     $baseURLAi = "images/ai/$prefixed$charId.$variant";
     $baseURL = "images/$prefixed$charId.$variant";
@@ -18,16 +17,9 @@ function imageTag(string  $charId, string $variant, string $alt,
     $basePath = __DIR__ . "/htignore/images/$charId/$prefixed$variant";
     $result = "<picture>";
     $suffix = '';
-    if ($token) {
-        $suffix = "?token=$token";
-    } elseif ($_COOKIE['hidewatermarks']) {
-        if (is_array($JWT->validate("{$_COOKIE['htpasswd']}"))) {
-            $suffix = "?token=" . generateToken([
-                    'nonce' => bin2hex(random_bytes(8)),
-                    'nowatermark' => true,
-                ], 86400);
-        }
-    }
+    /*if ($token) {$suffix="?token=$token";}elseif($_COOKIE['hidewatermarks']){
+    if(is_array($JWT->validate("{$_COOKIE['htpasswd']}"))){$suffix="?token=".
+    generateToken(['nonce'=>bin2hex(random_bytes(8)),'nowatermark'=>true],86400);}}*/
     if ($ai) {
         $basePath = $basePathAi;
         $baseURL = $baseURLAi;
@@ -55,7 +47,8 @@ function imageTag(string  $charId, string $variant, string $alt,
     if (!str_contains($result, '<source ') && str_contains($classes, 'mustsourced')) {
         return false;
     } else {
-        $result .= "<img src=\"$baseURL.png$suffix\" width=800 height=1280 alt=\"$alt\" class=\"$classes\" loading=lazy>";
+        $result .= "<img src=\"$baseURL.png$suffix\" width=800 height=1280 alt=\"$alt\"".
+            " class=\"$classes\" fetchpriority=auto loading=lazy>";
         return "$result</picture>";
     }
 }

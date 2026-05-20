@@ -1,10 +1,11 @@
 <?php use ANTHeader\ANTNavIStyle;
-use ANTHeader\ANTNavLinkTag;
 use function ANTHeader\create_head2;
 use function ANTHeader\ANTNavFavicond;
 use function Helpers\htmlspecialchars12;
 use function readCharacterJSON\readCharacterJSON;
 use function ANTHeader\ANTNavBinary;
+use ANTHeader\ANTNavLinkTag;
+use ANTHeader\ANTNavMetaTag;
 
 date_default_timezone_set('UTC');
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
@@ -32,7 +33,8 @@ if (preg_match('/\\.store-img\\{width:(\\d+)em;?}/', $width, $matches)) {
 }
 $overflox = ".overflox>div,.charname{width:calc({$overflox}em - 2ch);overflow-x:hidden;" .
         "white-space:nowrap;text-overflow:ellipsis;}";
-create_head2($title = 'ANT\'s Gallery', ['base' => '/gallery/',//'//cdn.localhost/gallery/',//'/gallery/',
+create_head2($title = 'ANT\'s Gallery', ['base' => '/gallery/',
+        'desc' => 'Explore the official character gallery of Favi Favicond at ANTRequest.nl!',
 ], [new ANTNavLinkTag('stylesheet', ["cssx.css", 'ddDL-table.css']),
         new ANTNavIStyle("$width$overflox"),
 ], [
@@ -114,7 +116,8 @@ foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
         if ($universe !== 'Favicond-All') if ($universe !== $array['UniverseId']) continue;
         $char['UniverseName'] = $array['UniverseId'] = matchUniverses($array['UniverseId']);
         unset($array['charId']);
-        $img = imageTag($charId, 'main', $altText, null, $AiArt, ['store-img']);
+        $img = imageTag($charId, 'main', $altText, null, $AiArt,
+                ['store-img'], null);
         if ($img === false) continue;
         if (str_starts_with($width, '/*smallest*/')) {
             $echo = "<div class=store-div id=sec-$charId style=border-top:none><a href=char/$charId>$img</a></div>";
@@ -165,9 +168,9 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
     <div style="width:88%;max-width:88%;margin:auto">ANT//$currentUsername</div></div>
     ACCOUNT. "\n\n";
 } ?>
-<div class=divs>
+<main class=divs>
     <h1><?= $title ?></h1>
-    <p>WELCOME to ANTRequest.nl. a hobby site of the Fictional Character Favi Favicond!
+    <p>Welcome to ANTRequest.nl. a hobby site of the Fictional Character Favi Favicond!
         there are a total of <span><?= $characters_total ?></span> characters on the site, and
         <span><?= count($characters) ?></span> of them are displayed below due to the filters.
     <form method=get style=padding:0.5em;border-bottom:none class=border>
@@ -299,6 +302,7 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
             echo "<h2 class=h2-border>Characters</h2>";
             echo "<!--\n";
         }
+        $index = 0;
         foreach ($characters as $character) {
             //if ($character['charId'] !== '17-R') continue;
             if ($selectedBorder) if ($universe !== $character['UniverseId']) {
@@ -311,44 +315,17 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
                             "$queryString#secuni-$universe\">$universeName</a></h2>";
                     echo "<!--\n";
                 } elseif ($was_null) {
-                    echo "[--><hr class=hr-border><!--]\n";
+                    echo "[-->\x3chr class=hr-border><!--]\n";
                 }
             }
-            echo "{$character['html']}";
+            $settings = 'fetchpriority=' . (++$index <= 3 ? 'high' : 'auto');
+            if ($index > 15) $settings = "$settings loading=lazy";
+            echo str_replace('fetchpriority=auto loading=lazy', $settings, "{$character['html']}");
         }
         echo "-->" ?></div>
-</div>
-<script type=text/plain>
-    function* asynctimer(iterator, milliseconds) {
-        let {promise, resolve, reject} = Promise.withResolvers();
-        if (Number.isSafeInteger(milliseconds) && milliseconds > 0) {
-            for (const iteratorElement of iterator) {
-                setTimeout(resolve, milliseconds);
-                yield promise.then(() => iteratorElement);
-                ({promise, resolve, reject} = Promise.withResolvers());
-            }
-        }
-    }
-
-    class TimedEventSource extends EventTarget {
-        constructor() {
-            super();
-        }
-
-        async runTimer(name, length, millisecondsPerInterval) {
-            name = `${name}`;
-            for await(const detail of asynctimer(Array.from({length}, (_, index) => index), millisecondsPerInterval)) {
-                const event = new CustomEvent(name, {detail});
-                this.dispatchEvent(event);
-            }
-        }
-    }
-
-    const timer = new TimedEventSource;
-    timer.addEventListener('timer', ({detail}) => console.log(detail));
-    timer.runTimer('timer', 15, 100);
-</script>
-<div class=divs><h2>Definitions</h2>
+</main>
+<div class=divs>
+    <h2>Definitions</h2>
     <dl class=descLi>
         <div>
             <dt id=what-is-registerDate><dfn>registerDate</dfn></dt>

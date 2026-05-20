@@ -37,3 +37,12 @@ function toJSONDocument() {
 }
 
 toJSONDocument();
+Object.defineProperty(Document.prototype, 'description', {
+    get() {
+        return this?.querySelector("meta[name=description]")?.content;
+    },
+    set(value) {
+        const doc = this?.querySelector("meta[name=description]");
+        if (doc) doc.content = value;
+    },
+});

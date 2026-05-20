@@ -195,7 +195,7 @@ if (array_key_exists('token', $_GET)) {
         }
     }
 } else {
-    header("cache-control: max-age=3600");
+    header("cache-control: public, max-age=" . (3600 * 24));
     if (str_starts_with($_SERVER['HTTP_REFERER'], "https://antrequest.nl")) {
         $sha256 = sha256($fileContent = file_get_contents("$file"));
         $chosen_file = $file;
