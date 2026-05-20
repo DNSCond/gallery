@@ -98,8 +98,7 @@ create_head2($title, ['base' => '/gallery/', 'desc' => $desc], [
                 "<meta property=og:description content=\"$htmlDescription\">" .
                 "<meta property=og:title content=\"" . htmlspecialchars12($title) . '">' .
                 "<meta property=og:url content=https://antrequest.nl/gallery/char/$char>" .
-                //"<meta property=og:image content=https://antrequest.nl/gallery/images/$char.main.png>" .
-                "<meta property=og:image content=https://localhost/gallery/images/$char.main.png>" .
+                "<meta property=og:image content=https://antrequest.nl/gallery/images/$char.main.png>" .
                 "<meta property=og:image:width content=800><meta property=og:image:height content=1280>"),
 ], [ANTNavFavicond('/', 'Home'), $navigator]);
 require_once "dataDescriptionList.php";
