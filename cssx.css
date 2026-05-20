@@ -61,3 +61,8 @@ h3.charname {
 .margin-tb > li {
     margin: 1ch 0;
 }
+
+.grid-3x {
+    display: inline-grid;
+    grid-template-columns: auto;
+}

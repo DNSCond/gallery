@@ -171,54 +171,58 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
         there are a total of <span><?= $characters_total ?></span> characters on the site, and
         <span><?= count($characters) ?></span> of them are displayed below due to the filters.
     <form method=get style=padding:0.5em;border-bottom:none class=border>
-        <label><?= 'Icon Size: ' . createSelectElement("iconSize", [
-                    'smallest' => 'Smallest',
-                    'smaller' => 'Smaller',
-                    'normal' => 'Normal',
-                    'expand' => 'Expanded',
-            ], function ($key) use ($width) {
-                echo "<!--\$width=$width; \$key=$key-->";
-                return ((str_starts_with($width, '/*smallest*/') && $key === 'smallest') ||
-                        (str_starts_with($width, '/*smaller*/') && $key === 'smaller') ||
-                        (str_starts_with($width, '/*normal*//*expanded*/') && $key === 'expand')
-                        || (str_starts_with($width, '/*normal*/.') && $key === 'normal'));
-            }) ?></label>.
-        <label><?= 'With Description: ' . createSelectElement("with-desc", [
-                    'either' => 'Both', 'with' => 'Yes', 'no' => 'No',
-            ], $selectedFilter) ?></label>.
-        <label><?= 'With Borders: ' . createSelectElement("with-bord", [
-                    'n' => 'Named', 's' => 'Sorted', '1' => 'Yes', '0' => 'No',
-            ], $selectedBorder) ?></label>.
-        <label><?= 'AiArt: ' . createSelectElement("AiArt", [
-                    '2' => 'Only', '1' => 'Show', '0' => 'Hide',
-            ], $AiArt) ?></label>.<br>
-        <label><?= 'Sorted: ' . createSelectElement("sorted", [
-                    '0' => 'Internal Name',
-                    'displayName' => 'Display Name',
-                    'UniverseName' => 'Universe Name',
-                    'creationDate' => 'Chronologically',
-                    'LastModified' => 'Last Updated',
-                    'registerDate' => 'Registration Date',
-                    'listing' => 'Legacy Listing',
-                    'joinId' => 'join Id',
-                    'random' => 'Random',
-            ], $sorted = (string)($_GET['sorted'] ?? 'UniverseName')) ?></label>.<br>
-        <!-- Array.from(document.querySelectorAll('html body div.divs form.border label select[name=\'universe\'] option'), str => str.value).join(); -->
-        <label><?= 'Universe: ' . createSelectElement("universe",
-                    (function () use ($universes, $unisort): array {
-                        $result = array();
-                        foreach ($universes as $universe) {
-                            $result[$universe] = matchUniverses($universe) . " ($unisort[$universe])";
-                        }
-                        return $result;
-                    })(), $universe) ?></label>.<br>
-        <label><?= 'Sort Order: ' . createSelectElement("reversed", [
-                    '0' => 'Normal (A-z, Oldest First)', '1' => 'Reversed (z-A, Newest First)',
-            ], ($reversed = !!(match ($_GET['reversed']) {
-                '1', 'true' => '1',
-                default => '0',
-            })) ? '1' : '0') ?></label>.<br>
-        <button type=submit>apply filters</button>
+        <details>
+            <summary>Filter Options</summary>
+            <div class=grid-3x>
+                <label><?= 'Icon Size: ' . createSelectElement("iconSize", [
+                            'smallest' => 'Smallest',
+                            'smaller' => 'Smaller',
+                            'normal' => 'Normal',
+                            'expand' => 'Expanded',
+                    ], function ($key) use ($width) {
+                        echo "<!--\$width=$width; \$key=$key-->";
+                        return ((str_starts_with($width, '/*smallest*/') && $key === 'smallest') ||
+                                (str_starts_with($width, '/*smaller*/') && $key === 'smaller') ||
+                                (str_starts_with($width, '/*normal*//*expanded*/') && $key === 'expand')
+                                || (str_starts_with($width, '/*normal*/.') && $key === 'normal'));
+                    }) ?></label>
+                <label><?= 'With Description: ' . createSelectElement("with-desc", [
+                            'either' => 'Both', 'with' => 'Yes', 'no' => 'No',
+                    ], $selectedFilter) ?></label>
+                <label><?= 'With Borders: ' . createSelectElement("with-bord", [
+                            'n' => 'Named', 's' => 'Sorted', '1' => 'Yes', '0' => 'No',
+                    ], $selectedBorder) ?></label>
+                <label><?= 'AiArt: ' . createSelectElement("AiArt", [
+                            '2' => 'Only', '1' => 'Show', '0' => 'Hide',
+                    ], $AiArt) ?></label>
+                <label><?= 'Sorted: ' . createSelectElement("sorted", [
+                            '0' => 'Internal Name',
+                            'displayName' => 'Display Name',
+                            'UniverseName' => 'Universe Name',
+                            'creationDate' => 'Chronologically',
+                            'LastModified' => 'Last Updated',
+                            'registerDate' => 'Registration Date',
+                            'listing' => 'Legacy Listing',
+                            'joinId' => 'join Id',
+                            'random' => 'Random',
+                    ], $sorted = (string)($_GET['sorted'] ?? 'UniverseName')) ?></label>
+                <label><?= 'Universe: ' . createSelectElement("universe",
+                            (function () use ($universes, $unisort): array {
+                                $result = array();
+                                foreach ($universes as $universe) {
+                                    $result[$universe] = matchUniverses($universe) . " ($unisort[$universe])";
+                                }
+                                return $result;
+                            })(), $universe) ?></label>
+                <label><?= 'Sort Order: ' . createSelectElement("reversed", [
+                            '0' => 'Normal (A-z, Oldest First)', '1' => 'Reversed (z-A, Newest First)',
+                    ], ($reversed = !!(match ($_GET['reversed']) {
+                        '1', 'true' => '1',
+                        default => '0',
+                    })) ? '1' : '0') ?></label>
+                <button type=submit>apply filters</button>
+            </div>
+        </details>
     </form>
     <div style=margin-left:0;padding-bottom:1em class=border id=the-store><?= "<!--\n";
         if ($type = match ($sorted) {
