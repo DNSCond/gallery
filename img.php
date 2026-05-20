@@ -1,5 +1,4 @@
 <?php use function ANTHeader\sha256Base64;
-
 use function JWT\validateToken;
 
 date_default_timezone_set('Europe/Amsterdam');
@@ -250,14 +249,15 @@ if (array_key_exists('HTTP_IF_NONE_MATCH', $_SERVER)) {
 http_response_code($status);
 echo "$fileContent";
 
-function handleCORS(array $options = ['allowlistedDomains' => ['antrequest.nl'], 'allowCredentials' => true,
-    'allowedCustomHeaders' => ['FX-HashApi-Nonce', 'FX-HashApi-CHash', 'FX-HashApi-DateTime'], 'autoExitOPTIONS' => true,
-    'allowedMethods' => ['GET'], 'maxage' => 60, 'allowedRequestHeaders' => array()]): void
+function handleCORS(array $options = array()): void
 {
+    $options = array_merge(['allowlistedDomains' => ['antrequest.nl'], 'allowCredentials' => false,
+        'allowedCustomHeaders' => [], 'autoExitOPTIONS' => true, 'allowedMethods' => ['GET'], 'maxage' => 60,
+        'allowedRequestHeaders' => array()], $options);
     $matched = false;
     $HTTP_ORIGIN = "{$_SERVER['HTTP_ORIGIN']}";
     $allowlistedDomains = array_key_exists('allowlistedDomains', $options) ? $options['allowlistedDomains'] : array();
-    if (preg_match('/^https:\\/\\/([a-z_\\-.]+)$/D', $HTTP_ORIGIN, $matches)) {
+    if (preg_match('/^https:\\/\\/([a-z0-9\\-.]+)$/D', $HTTP_ORIGIN, $matches)) {
         if (in_array($matches[1], $allowlistedDomains)) {
             header("Access-Control-Allow-Origin: $HTTP_ORIGIN");
             $matched = true;
@@ -266,7 +266,12 @@ function handleCORS(array $options = ['allowlistedDomains' => ['antrequest.nl'],
             '/^https?:\\/\\/localhost(?::\\d+)?$/D', $HTTP_ORIGIN)) {
         header("Access-Control-Allow-Origin: $HTTP_ORIGIN");
         $matched = true;
+    } elseif (in_array('*', $allowlistedDomains)) {
+        header("Access-Control-Allow-Origin: *");
+        $options['allowCredentials'] = false;
+        $matched = true;
     }
+    header('matched:?' . (int)($matched));
     if ($matched) {
         if (array_key_exists('allowCredentials', $options) && $options['allowCredentials'])
             header('Access-Control-Allow-Credentials: true');
@@ -276,7 +281,7 @@ function handleCORS(array $options = ['allowlistedDomains' => ['antrequest.nl'],
             header('Access-Control-Allow-Methods: ' . implode(', ', $options['allowedMethods']));
         if (array_key_exists('allowedCustomHeaders', $options) && !empty($options['allowedCustomHeaders']))
             header('Access-Control-Expose-Headers: ' . implode(', ', $options['allowedCustomHeaders']));
-        header('Access-Control-Max-Age: ' . (array_key_exists('maxage', $options) ? $options['maxage'] : 5));
+        header('Access-Control-Max-Age: ' . (int)(array_key_exists('maxage', $options) ? $options['maxage'] : 5));
     }
     if ($options['autoExitOPTIONS'] && ($_SERVER['REQUEST_METHOD'] === 'OPTIONS')) exit;
 }

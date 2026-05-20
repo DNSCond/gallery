@@ -1,6 +1,8 @@
-<?php use ANTHeader\ANTNavIStyle;
-use ANTHeader\ANTNavLinkTag;
+<?php // ANTHeader
+use ANTHeader\ANTNavIStyle;
 use ANTHeader\ANTNavOption;
+use ANTHeader\ANTNavLinkTag;
+use ANTHeader\ANTNavArbitraryHTML;
 use function ANTHeader\ANTNavFavicond;
 use function ANTHeader\create_head2;
 use function readCharacterJSON\createJWT;
@@ -83,6 +85,7 @@ $characterInfo = ob_get_clean();
 if (isset($GLOBALS['desc'])) {
     $desc = "{$GLOBALS['desc']}";
 }
+$htmlDescription = htmlspecialchars12($desc);
 create_head2($title, ['base' => '/gallery/', 'desc' => $desc], [
         new ANTNavLinkTag('stylesheet', [
                 "cssx.css", "characterPage.css", 'ddDL-table.css',
@@ -91,6 +94,13 @@ create_head2($title, ['base' => '/gallery/', 'desc' => $desc], [
         new ANTNavIStyle(".store-img,.store-div{width:20em;}.overflox>div,.charname{width:calc(20em - 2ch);" .
                 "overflow-x:hidden;white-space:nowrap;text-overflow:ellipsis;}"),
         new ANTNavLinkTag('canonical', "https://antrequest.nl/gallery/char/$char"),
+        new ANTNavArbitraryHTML('open-graph',
+                "<meta property=og:description content=\"$htmlDescription\">" .
+                "<meta property=og:title content=\"" . htmlspecialchars12($title) . '">' .
+                "<meta property=og:url content=https://antrequest.nl/gallery/char/$char>" .
+                //"<meta property=og:image content=https://antrequest.nl/gallery/images/$char.main.png>" .
+                "<meta property=og:image content=https://localhost/gallery/images/$char.main.png>" .
+                "<meta property=og:image:width content=800><meta property=og:image:height content=1280>"),
 ], [ANTNavFavicond('/', 'Home'), $navigator]);
 require_once "dataDescriptionList.php";
 require_once "loginService.php";
@@ -112,8 +122,7 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
         foreach (['creationDate-epoch', 'LastModified-epoch', 'registerDate-epoch'] as $rm) {
             unset($array[$rm]);
         }
-        $array['Section'] = new HTMLSafeEscaped("<a href=#sec-$char>$name</a>")
-        ?></div>
+        $array['Section'] = new HTMLSafeEscaped("<a href=#sec-$char>$name</a>") ?></div>
     <div style="border-left: 2px solid gray;border-right: 2px solid gray;border-bottom: 2px solid gray;"><?= dataDescriptionList($array, array(), [
                 'registerDate' => '/#what-is-registerDate',
                 'creationDate' => '/#what-is-creationDate',
@@ -123,7 +132,8 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
         ]);
         $styleLink = '/dollmaker2/ddDL-table.css' ?></div>
     <div class=character-profile><?= "<!-- Character Insertion -->\n$characterInfo\n<!-- Character Insertion END -->";
-        function galleryListing(string $charId, string $variant, string $alt, bool $ai, $prefixed = null, bool $mustsourced = true): string
+        function galleryListing(string $charId, string $variant, string $alt, bool $ai,
+                                       $prefixed = null, bool $mustsourced = true): string
         {
             $token = createJWT();
             $classArray = ['store-img', 'listing'];
