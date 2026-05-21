@@ -5,7 +5,6 @@ use function Helpers\htmlspecialchars12;
 use function readCharacterJSON\readCharacterJSON;
 use function ANTHeader\ANTNavBinary;
 use ANTHeader\ANTNavLinkTag;
-use ANTHeader\ANTNavMetaTag;
 
 date_default_timezone_set('UTC');
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
