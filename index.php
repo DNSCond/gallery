@@ -21,9 +21,7 @@ if (array_key_exists('iconSize', $_GET)) {
         'smaller' => "$smaller",
         default => "$width",
     };
-} else {
-    $width = $smaller;
-}
+} else $width = $smaller;
 $overflox = 20;
 if (preg_match('/\\.store-img\\{width:(\\d+)em;?}/', $width, $matches)) {
     $overflox = $matches[1];
@@ -34,7 +32,8 @@ $overflox = ".overflox>div,.charname{width:calc({$overflox}em - 2ch);overflow-x:
         "white-space:nowrap;text-overflow:ellipsis;}";
 create_head2($title = 'ANT\'s Character Gallery', ['base' => '/gallery/',
         'desc' => 'Explore the official character gallery of Favi Favicond at ANTRequest.nl!',
-], [new ANTNavLinkTag('stylesheet', ["cssx.css", 'ddDL-table.css']),
+],[
+        new ANTNavLinkTag('stylesheet', ["cssx.css", 'ddDL-table.css']),
         new ANTNavLinkTag('canonical', 'https://antrequest.nl'),
         new ANTNavIStyle("$width$overflox"),
 ], [
