@@ -107,9 +107,9 @@ foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
         $name = $char['name'];
         $charId = $char['charId'];
         $altText = "$name's Main Appearance";
-        $char['subchars'] = array();
         $dataDescriptionList = '';
         $array = $char;
+        $char['subchars'] = array();
         $universes[] = $char['UniverseId'];
         if (!array_key_exists($array['UniverseId'], $unisort)) $unisort[$array['UniverseId']] = 0;
         $unisort[$array['UniverseId']]++;
@@ -189,8 +189,8 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
                 <label><?= 'Icon Size: ' . createSelectElement("iconSize", [
                             'smallest' => 'Smallest',
                             'smaller' => 'Smaller',
-                            'normal' => 'Normal',
-                            'expand' => 'Expanded',
+                            //'normal' => 'Normal',
+                            //'expand' => 'Expanded',
                     ], function ($key) use ($width) {
                         echo "<!--\$width=$width; \$key=$key-->";
                         return ((str_starts_with($width, '/*smallest*/') && $key === 'smallest') ||
