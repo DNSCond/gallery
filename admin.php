@@ -44,26 +44,7 @@ if (array_key_exists('username', $_POST) && array_key_exists('password', $_POST)
     }
 }
 
-function createSelectElement(string $name, array $options, null|string|callable|array $select = null): string
-{
-    $name = htmlspecialchars12($name);
-    $result = array("<select name=\"$name\">");
-    foreach ($options as $key => $val) {
-        $selected = false;
-        if (is_string($select)) {
-            $selected = $select === "$key";
-        } elseif (is_callable($select)) {
-            $selected = !!$select("$key", $val);
-        } elseif (is_array($select)) {
-            $selected = in_array("$key", $select);
-        }
-        $key = htmlspecialchars12($key);
-        $val = htmlspecialchars12($val);
-        $selected = $selected ? 'selected' : '';
-        $result[] = "<option $selected value=\"$key\">$val</option>";
-    }
-    return implode('', $result) . '</select>';
-}
+require_once "{$_SERVER['DOCUMENT_ROOT']}/gallery/createSelectElement.php";
 
 create_head2($title = 'ANT\'s ANTMIN', ['base' => '/gallery/',
 ], [new ANTNavLinkTag('stylesheet', ["cssx.css", 'ddDL-table.css']),

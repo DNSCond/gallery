@@ -42,26 +42,7 @@ create_head2($title = 'ANT\'s Character Gallery', ['base' => '/gallery/',
         ANTNavBinary('/gallery/ascii-table.php', 'Ascii Table'),
 ]);
 
-function createSelectElement(string $name, array $options, null|string|callable|array $select = null): string
-{
-    $name = htmlspecialchars12($name);
-    $result = array("<select name=\"$name\">");
-    foreach ($options as $key => $val) {
-        $selected = false;
-        if (is_string($select)) {
-            $selected = $select === "$key";
-        } elseif (is_callable($select)) {
-            $selected = !!$select("$key", $val);
-        } elseif (is_array($select)) {
-            $selected = in_array("$key", $select);
-        }
-        $key = htmlspecialchars12($key);
-        $val = htmlspecialchars12($val);
-        $selected = $selected ? 'selected' : '';
-        $result[] = "<option $selected value=\"$key\">$val</option>";
-    }
-    return implode('', $result) . '</select>';
-}
+require_once "{$_SERVER['DOCUMENT_ROOT']}/gallery/createSelectElement.php";
 
 /** @noinspection PhpIncludeInspection */
 require_once "{$baseURL}sorters.php";
@@ -195,7 +176,7 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
         there are a total of <span><?= $characters_total ?></span> characters on the site, and
         <span><?= count($characters) ?></span> of them are displayed below due to the filters.
     <form method=get style=padding:0.5em;border-bottom:none class=border>
-        <details>
+        <details open>
             <summary>Filter Options</summary>
             <div class=grid-3x>
                 <label><?= 'Icon Size: ' . createSelectElement("iconSize", [
@@ -206,7 +187,7 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
                         //'expand' => 'Expanded',
                     ], function ($key) use ($width) {
                         return ((str_starts_with($width, '/*smallest*//*toosmall*/') && $key === 'toosmall') ||
-                                (str_starts_with($width, '/*smallest*/') && $key === 'smallest') ||
+                                (str_starts_with($width, '/*smallest*/.') && $key === 'smallest') ||
                                 (str_starts_with($width, '/*smaller*/') && $key === 'smaller') ||
                                 (str_starts_with($width, '/*normal*//*expanded*/') && $key === 'expand')
                                 || (str_starts_with($width, '/*normal*/.') && $key === 'normal'));
