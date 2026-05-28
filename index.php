@@ -16,6 +16,7 @@ $smaller = '/*smaller*/.store-img{width:10em}.store-div{margin:0.5em 0 0 0.5em;}
 if (array_key_exists('iconSize', $_GET)) {
     $width = match ("{$_GET['iconSize']}") {
         'smallest' => '/*smallest*/.store-img{width:7em}.store-div{margin:0.5em 0 0 0.5em;}',
+        'toosmall' => '/*smallest*//*toosmall*/.store-img{width:5em}.store-div{margin:0.5em 0 0 0.5em;}',
         'expand' => "$width/*expanded*/",
         'dev' => "$width/*dev*/",
         'smaller' => "$smaller",
@@ -120,20 +121,11 @@ foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
         if (!str_starts_with($width, '/*smaller*/')) if ($img === false) continue;
         if (str_starts_with($width, '/*smallest*/')) {
             $echo = "<div class=store-div id=sec-$charId style=border-top:none><a href=char/$charId>$img</a></div>";
+            createAlternates($charId, $char, $name, $AiArt, 'smallest');
         } else {
             if (str_starts_with($width, '/*smaller*/')) {
                 //$dataDescriptionList = "<div class=FId>F-ID: {$array['FavicondId']}</div>";
-                foreach (glob("{$baseURL}htignore/images/$charId/*gallery.*.png") as $alternate) {
-                    if (str_contains($alternate, 'watermarked')) continue;
-                    if (preg_match('/(ai\\.)?gallery\\.([^.]+)\\.png$/D', $alternate, $variant)) {
-                        if ($variant[1] && !$AiArt) continue;
-                        if ($AiArt === '2' && !$variant[1]) continue;
-                        $newchar = imageTag($charId, $variant[2], "Alternate of $name",
-                                'gallery', $variant[1], ['store-img']);
-                        $char['subchars'][] = "<article class=store-div><h3 class=charname><a href=char/$charId"
-                                . "#gallery>$name (Alt)</a></h3><a href=char/$charId>$newchar</a></article>";
-                    }
-                }
+                createAlternates($charId, $char, $name, $AiArt);
             } else if (str_starts_with($width, '/*normal*/')) {
                 if (str_starts_with($width, '/*normal*//*dev*/')) {
                     $array['internalName'] = $charId;
@@ -166,6 +158,26 @@ foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
         $characters[] = $char;
     }
 }
+function createAlternates(string $charId, array &$char, string $name, int $AiArt, string $type = 'smaller'): void
+{
+    global $baseURL;
+    foreach (glob("{$baseURL}htignore/images/$charId/*gallery.*.png") as $alternate) {
+        if (str_contains($alternate, 'watermarked')) continue;
+        if (preg_match('/(ai\\.)?gallery\\.([^.]+)\\.png$/D', $alternate, $variant)) {
+            if ($variant[1] && !$AiArt) continue;
+            if ($AiArt === '2' && !$variant[1]) continue;
+            $newchar = imageTag($charId, $variant[2], "Alternate of $name",
+                    'gallery', $variant[1], ['store-img']);
+            if ($type === 'smallest') {
+                $char['subchars'][] = "<div class=store-div id=sec-$charId style=border-top:none><a href=char/$charId>$newchar</a></div>";
+            } else {
+                $char['subchars'][] = "<article class=store-div><h3 class=charname><a href=char/$charId"
+                        . "#gallery>$name (Alt)</a></h3><a href=char/$charId>$newchar</a></article>";
+            }
+        }
+    }
+}
+
 $unisort['Favicond-All'] = $characters_total;
 array_unshift($universes, 'Favicond-All');
 require_once "loginService.php";
@@ -187,13 +199,14 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
             <summary>Filter Options</summary>
             <div class=grid-3x>
                 <label><?= 'Icon Size: ' . createSelectElement("iconSize", [
+                            'toosmall' => 'Too Small',
                             'smallest' => 'Smallest',
                             'smaller' => 'Smaller',
-                            //'normal' => 'Normal',
-                            //'expand' => 'Expanded',
+                        //'normal' => 'Normal',
+                        //'expand' => 'Expanded',
                     ], function ($key) use ($width) {
-                        echo "<!--\$width=$width; \$key=$key-->";
-                        return ((str_starts_with($width, '/*smallest*/') && $key === 'smallest') ||
+                        return ((str_starts_with($width, '/*smallest*//*toosmall*/') && $key === 'toosmall') ||
+                                (str_starts_with($width, '/*smallest*/') && $key === 'smallest') ||
                                 (str_starts_with($width, '/*smaller*/') && $key === 'smaller') ||
                                 (str_starts_with($width, '/*normal*//*expanded*/') && $key === 'expand')
                                 || (str_starts_with($width, '/*normal*/.') && $key === 'normal'));
