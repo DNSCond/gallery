@@ -32,7 +32,7 @@ $overflox = ".overflox>div,.charname{width:calc({$overflox}em - 2ch);overflow-x:
         "white-space:nowrap;text-overflow:ellipsis;}";
 create_head2($title = 'ANT\'s Character Gallery', ['base' => '/gallery/',
         'desc' => 'Explore the official character gallery of Favi Favicond at ANTRequest.nl!',
-],[
+], [
         new ANTNavLinkTag('stylesheet', ["cssx.css", 'ddDL-table.css']),
         new ANTNavLinkTag('canonical', 'https://antrequest.nl'),
         new ANTNavIStyle("$width$overflox"),
@@ -89,10 +89,11 @@ $universe = $_GET['universe'] ?? 'Favicond-All';
 require_once "{$baseURL}imageTag.php";
 
 $AiArt = match ($_GET['AiArt']) {
-    '1' => '1',
-    '2' => '2',
-    default => '0',
+    '1' => '1', // show
+    '2' => '2', // only
+    default => '0', // hide
 };
+$gallery = !!$_GET['gallery'];
 foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
     if ($char = readCharacterJSON($item)) {
         if ($char['json']['private']) continue;
@@ -106,7 +107,7 @@ foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
         $name = $char['name'];
         $charId = $char['charId'];
         $altText = "$name's Main Appearance";
-
+        $char['subchars'] = array();
         $dataDescriptionList = '';
         $array = $char;
         $universes[] = $char['UniverseId'];
@@ -115,16 +116,23 @@ foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
         if ($universe !== 'Favicond-All') if ($universe !== $array['UniverseId']) continue;
         $char['UniverseName'] = $array['UniverseId'] = matchUniverses($array['UniverseId']);
         unset($array['charId']);
-        $img = imageTag($charId, 'main', $altText, null, $AiArt,
-                ['store-img'], null);
-        if ($img === false) continue;
+        $img = imageTag($charId, 'main', $altText, null, $AiArt, ['store-img']);
+        if (!str_starts_with($width, '/*smaller*/')) if ($img === false) continue;
         if (str_starts_with($width, '/*smallest*/')) {
             $echo = "<div class=store-div id=sec-$charId style=border-top:none><a href=char/$charId>$img</a></div>";
         } else {
             if (str_starts_with($width, '/*smaller*/')) {
-                /** @noinspection PhpStatementHasEmptyBodyInspection */
-                if (array_key_exists('FavicondId', $array)) {
-                    //$dataDescriptionList = "<div class=FId>F-ID: {$array['FavicondId']}</div>";
+                //$dataDescriptionList = "<div class=FId>F-ID: {$array['FavicondId']}</div>";
+                foreach (glob("{$baseURL}htignore/images/$charId/*gallery.*.png") as $alternate) {
+                    if (str_contains($alternate, 'watermarked')) continue;
+                    if (preg_match('/(ai\\.)?gallery\\.([^.]+)\\.png$/D', $alternate, $variant)) {
+                        if ($variant[1] && !$AiArt) continue;
+                        if ($AiArt === '2' && !$variant[1]) continue;
+                        $newchar = imageTag($charId, $variant[2], "Alternate of $name",
+                                'gallery', $variant[1], ['store-img']);
+                        $char['subchars'][] = "<article class=store-div><h3 class=charname><a href=char/$charId"
+                                . "#gallery>$name (Alt)</a></h3><a href=char/$charId>$newchar</a></article>";
+                    }
                 }
             } else if (str_starts_with($width, '/*normal*/')) {
                 if (str_starts_with($width, '/*normal*//*dev*/')) {
@@ -150,7 +158,9 @@ foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
             $echo = "<article class=store-div id=sec-$charId><h3 class=charname><a href=char/$charId>" .
                     "$name</a></h3><a href=char/$charId>$img</a><div>$dataDescriptionList</div></article>";
         }
-        $char['html'] = "-->" . preg_replace('/[\\r\\n]+/', ' ', $echo) . "<!--\n";
+        if ($img === false && count($char['subchars']) === 0) continue;
+        elseif ($img === false && count($char['subchars']) !== 0) $char['subonly'] = true;
+        $char['html'] = preg_replace('/[\\r\\n]+/', ' ', $echo);
         if (!preg_match('/^\\d{2}$/D', $char['listing'])) $char['listing'] = '00';
         if (!preg_match('/^\\d{2}$/D', $char['join-Id'])) $char['join-Id'] = '00';
         $characters[] = $char;
@@ -222,11 +232,14 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
                         '1', 'true' => '1',
                         default => '0',
                     })) ? '1' : '0') ?></label>
+                <label><?= 'Include alternate Depictions: ' . createSelectElement("gallery", [
+                            '0' => 'No', '1' => 'Yes',
+                    ], (int)$gallery) ?></label>
                 <button type=submit>apply filters</button>
             </div>
         </details>
     </form>
-    <div style=margin-left:0;padding-bottom:1em class=border id=the-store><?= "<!--\n";
+    <div style=margin-left:0;padding-bottom:1em class=border id=the-store><?php
         if ($type = match ($sorted) {
             'displayName' => 'displayName',
             'creationDate' => 'creationDate',
@@ -297,31 +310,33 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
         $universe = null;
         $queryString = htmlspecialchars12("?{$_SERVER['QUERY_STRING']}");
         if (!($selectedBorder === 'n' || $selectedBorder === 's')) {
-            echo "-->";
-            echo "<h2 class=h2-border>Characters</h2>";
-            echo "<!--\n";
+            echo "<h2 class=h2-border id=Characters>Characters</h2>";
+
         }
         $index = 0;
         foreach ($characters as $character) {
-            //if ($character['charId'] !== '17-R') continue;
             if ($selectedBorder) if ($universe !== $character['UniverseId']) {
                 $was_null = !is_null($universe);
                 $universe = $character['UniverseId'];
                 if ($selectedBorder === 'n' || $selectedBorder === 's') {
                     $universeName = htmlspecialchars12(matchUniverses($universe));
-                    echo "-->";
                     echo "<h2 class=h2-border id=\"secuni-$universe\"><a href=\"" .
-                            "$queryString#secuni-$universe\">$universeName</a></h2>";
-                    echo "<!--\n";
+                            "$queryString#secuni-$universe\">$universeName</a>";
+                    echo "\x3c/h2>";
                 } elseif ($was_null) {
-                    echo "[-->\x3chr class=hr-border><!--]\n";
+                    echo "\x3chr class=hr-border>";
                 }
             }
             $settings = 'fetchpriority=' . (++$index <= 3 ? 'high' : 'auto');
             if ($index > 15) $settings = "$settings loading=lazy";
-            echo str_replace('fetchpriority=auto loading=lazy', $settings, "{$character['html']}");
-        }
-        echo "-->" ?></div>
+            if (!$character['subonly']) echo str_replace('fetchpriority=auto loading=lazy',
+                    $settings, "{$character['html']}");
+            foreach ($character['subchars'] as $char) {
+                $settings = 'fetchpriority=' . (++$index <= 3 ? 'high' : 'auto');
+                if ($index > 15) $settings = "$settings loading=lazy";
+                echo str_replace('fetchpriority=auto loading=lazy', $settings, $char);
+            }
+        } ?></div>
 </main>
 <div class=divs>
     <h2>Definitions</h2>
