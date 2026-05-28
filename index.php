@@ -121,11 +121,11 @@ foreach (glob("{$baseURL}htignore/images/*/main.json") as $item) {
         if (!str_starts_with($width, '/*smaller*/')) if ($img === false) continue;
         if (str_starts_with($width, '/*smallest*/')) {
             $echo = "<div class=store-div id=sec-$charId style=border-top:none><a href=char/$charId>$img</a></div>";
-            createAlternates($charId, $char, $name, $AiArt, 'smallest');
+            if ($gallery) createAlternates($charId, $char, $name, $AiArt, 'smallest');
         } else {
             if (str_starts_with($width, '/*smaller*/')) {
                 //$dataDescriptionList = "<div class=FId>F-ID: {$array['FavicondId']}</div>";
-                createAlternates($charId, $char, $name, $AiArt);
+                if ($gallery) createAlternates($charId, $char, $name, $AiArt);
             } else if (str_starts_with($width, '/*normal*/')) {
                 if (str_starts_with($width, '/*normal*//*dev*/')) {
                     $array['internalName'] = $charId;
