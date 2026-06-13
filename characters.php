@@ -23,7 +23,7 @@ global $gallery, $universe, $AiArt, $sorted;
 /** @noinspection PhpIncludeInspection */
 require_once "{$baseURL}settings.php";
 if (!isset($width)) $width = '/*smaller*/.store-img{width:10em}.store-div{margin:0.5em 0 0 0.5em;}';
-$base = $imageDirector !== 'images' ? "universe/$imageDirector/" : '';
+$base = $imageDirector !== 'images' ? "universe/$imageDirector/" : 'char/';
 
 foreach (glob("{$baseURL}htignore/$baseDirectory/*/main.json") as $item) {
     if ($char = readCharacterJSON($item)) {
@@ -61,7 +61,7 @@ foreach (glob("{$baseURL}htignore/$baseDirectory/*/main.json") as $item) {
             null, $AiArt, ['store-img'], $baseDirectory);
         if (!str_starts_with($width, '/*smaller*/')) if ($img === false) continue;
         if (str_starts_with($width, '/*smallest*/')) {
-            $echo = "<div class=store-div id=sec-$charId style=border-top:none><a href={$base}$charId>$img</a></div>";
+            $echo = "<div class=store-div id=sec-$charId style=border-top:none><a href=$base$charId>$img</a></div>";
             if ($gallery) createAlternates($charId, $char, $name,
                 $AiArt, 'smallest', $_boxcolor);
         } else {
@@ -90,8 +90,8 @@ foreach (glob("{$baseURL}htignore/$baseDirectory/*/main.json") as $item) {
                 ]);
             }
             $echo = "<article class=store-div style=--box-color:$_boxcolor; is=shadowboxed-hover id=sec-" .
-                "$charId><h3 class=charname><a href={$base}$charId>$name</a></h3><a href=" .
-                "{$base}$charId>$img</a><div>$dataDescriptionList</div></article>";
+                "$charId><h3 class=charname><a href=$base$charId>$name</a></h3><a href=" .
+                "$base$charId>$img</a><div>$dataDescriptionList</div></article>";
         }
         if ($img === false && count($char['subchars']) === 0) continue;
         elseif ($img === false && count($char['subchars']) !== 0) $char['subonly'] = true;
@@ -156,11 +156,11 @@ function createAlternates(string $charId, array &$char, string $name, int $AiArt
                 'gallery', $variant[1], ['store-img'], $baseDirectory);
             if ($type === 'smallest') {
                 $char['subchars'][] = "<div class=store-div id=sec-$charId style="
-                    . "border-top:none><a href={$base}$charId>$newchar</a></div>";
+                    . "border-top:none><a href=$base$charId>$newchar</a></div>";
             } else {
                 $char['subchars'][] = "<article class=store-div style=--box-color:$_boxcolor; is"
                     . "=shadowboxed-hover><h3 class=charname><a href=$charId#gallery>"
-                    . "$name (Alt)</a></h3><a href={$base}$charId>$newchar</a></article>";
+                    . "$name (Alt)</a></h3><a href=$base$charId>$newchar</a></article>";
             }
         }
     }
