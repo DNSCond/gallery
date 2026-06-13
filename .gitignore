@@ -1,0 +1,12 @@
+*.png
+*.kra
+piout
+*.jpg
+*.jpeg
+*.webp
+*.avif
+htignore/*images*/
+auth.txt
+output_svgs
+ususable
+*.zip

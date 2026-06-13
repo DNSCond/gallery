@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang=en>
+<title>Tester</title>
+<style>
+    body {
+        font-family: monospace;
+    }
+</style>
+<script type=module>
+    import {decodeSVGB, SVGBEncode} from "./SVGB.js";
+
+    const svgb = new SVGBEncode(100, 100);
+    // svgb.addPath('#00a8f3', 'M 10 10 l 50 50 l -55 05', '#ff4500', 4);
+    svgb.addCircle('#00ff00', 50, 50, 25, '#ff4500', 4);
+    const binary = svgb.constructBinary();
+    document.body.append(createOrderedListFromArrayLike(new Uint8Array(binary), each => '0x' + each.toString(16), 0));
+    document.body.prepend(decodeSVGB(binary));
+
+    function createOrderedListFromArrayLike(arayLike, converter = String, start = 1) {
+        const dom = document.createElement('ol'), array = Array.from(arayLike, converter);
+        array.forEach(textContent => dom.append(Object.assign(document.createElement('li'), {
+            textContent, className: 'createOrderedListFromArrayLike',
+        })));
+        if (!isNaN(start)) start = +start;
+        return Object.assign(dom, {start});
+    }
+</script>
+</html>

@@ -1,0 +1,22 @@
+/**/
+.introImage {
+    width: auto;
+    max-height: 50vh;
+}
+
+.character-profile {
+    font-family: system-ui, sans-serif;
+
+    dt {
+        font-family: monospace;
+    }
+
+    /*dl { border: 3px solid #7c7c7c; margin: 0; div { border-top: 3px solid #7c7c7c; padding: 1ch 1ch 1ch 0; }
+    div:first-child { border-top: none; } dd, dt { display: inline; padding: 1ch; } dt { /!*border-right:
+    3px solid #7c7c7c;*!/ font-family: monospace; } dd { margin-left: 0; border-left: 3px solid #7c7c7c; }
+    /!*dt:after{content:": ";} }*!/*/
+}
+
+.altText {
+    padding: 1ch;
+}

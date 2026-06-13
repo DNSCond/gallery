@@ -1,0 +1,154 @@
+<script type=text/plain>
+    function* asynctimer(iterator, milliseconds) {
+        let {promise, resolve, reject} = Promise.withResolvers();
+        if (Number.isSafeInteger(milliseconds) && milliseconds > 0) {
+            for (const iteratorElement of iterator) {
+                setTimeout(resolve, milliseconds);
+                yield promise.then(() => iteratorElement);
+                ({promise, resolve, reject} = Promise.withResolvers());
+            }
+        }
+    }
+
+    class TimedEventSource extends EventTarget {
+        constructor() {
+            super();
+        }
+
+        async runTimer(name, length, millisecondsPerInterval) {
+            name = `${name}`;
+            for await(const detail of asynctimer(Array.from({length}, (_, index) => index), millisecondsPerInterval)) {
+                const event = new CustomEvent(name, {detail});
+                this.dispatchEvent(event);
+            }
+        }
+    }
+
+    const timer = new TimedEventSource;
+    timer.addEventListener('timer', ({detail}) => console.log(detail));
+    timer.runTimer('timer', 15, 100);
+</script>
+
+
+    /*const downloadablePicture = document.getElementById('downloadablePicture');
+
+    class DownloadablePicture extends HTMLPictureElement {
+        #anchor = document.createElement('a');
+        #abortController;
+
+        connectedCallback() {
+            this.#abortController?.abort();
+            const {signal} = this.#abortController = new AbortController;
+            this.addEventListener('contextmenu', event => {
+                if (event.shiftKey) return;
+                event.preventDefault();
+                const fragment = downloadablePicture.content.cloneNode(true);
+                const dialog = fragment.querySelector("dialog");
+                document.body.append(dialog);
+                dialog.showModal();
+                (new Promise(resolve => {
+                    dialog.addEventListener("close", () => resolve(dialog.returnValue), {once: true, signal});
+                })).then(value => {
+                    dialog.remove();
+                    return value;
+                }, value => {
+                    dialog.remove();
+                    throw value;
+                }).then(format => {
+                    if (format) this.convertTo(format);
+                });
+            }, {signal});
+        }
+
+        disconnectedCallback() {
+            this.#abortController?.abort();
+            this.#anchor.remove();
+        }
+
+        convertTo(type) {
+            if (type === 'neither') return;
+            createImageBitmap(this.querySelector('img')).then(imageBitmap => {
+                const canvas = new OffscreenCanvas(imageBitmap.width, imageBitmap.height);
+                canvas.getContext("2d").drawImage(imageBitmap, 0, 0);
+                return canvas.convertToBlob({type});
+            }).then(blob => {
+                const a = this.#anchor;
+                console.log(a)
+                a.download = this.dataset.charname ?? Date();
+                const blobHref = a.href = URL.createObjectURL(blob);
+                document.body.append(this.#anchor);
+                a.click();
+                return new Promise(resolve => setTimeout(resolve, 5000, blobHref));
+            }).then(URL.revokeObjectURL).finally(() => this.#anchor.remove());
+        }
+    }
+
+    customElements.define('downloadable-picture', DownloadablePicture, {extends: 'picture'});*/
+</script>
+<!--template id=downloadablePicture>
+    <dialog>
+        <form method=dialog>
+            <h2 style=margin-top:0>Choose a format for download</h2>
+            <ul>
+                <li>If your choice isnt supported then png is downloaded instead.
+                <li>To access the native context menu hold shift instead.
+            </ul><?= implode("\x20",
+                    array_map(fn(string $string): string => "<button value=$string>$string</button>",
+                            ['image/png', 'image/jpeg', 'image/webp', 'image/avif', 'neither'])) ?></form>
+    </dialog>
+</template>-->
+
+    <details>
+        <summary>Image Format</summary>
+        <mam-tree>
+            <mam-node img-src=images/gallery.wallpaper.format.png img-width=800 img-height=1280
+                      img-alt="Alt Text" img-style=width:20em;display:block;height:auto>
+                <!--suppress HtmlUnknownTarget -->
+                <source srcset=images/gallery.wallpaper.format.avif type=image/avif is=source-clone>
+                <!--suppress HtmlUnknownTarget -->
+                <source srcset=images/gallery.wallpaper.format.webp type=image/webp is=source-clone>
+                <!--suppress HtmlUnknownTarget -->
+                <source srcset=images/gallery.wallpaper.format.png type=image/png is=source-clone>
+                <!--suppress HtmlUnknownTarget -->
+                <source srcset=images/gallery.wallpaper.format.jpg type=image/jpeg is=source-clone>
+            </mam-node>
+        </mam-tree>
+    </details>
+---
+
+//function handleCORS(array $options = array()): void
+//{
+//    $options = array_merge(['allowlistedDomains' => ['antrequest.nl'], 'allowCredentials' => false,
+//        'allowedCustomHeaders' => [], 'autoExitOPTIONS' => true, 'allowedMethods' => ['GET'], 'maxage' => 60,
+//        'allowedRequestHeaders' => array()], $options);
+//    $matched = false;
+//    $HTTP_ORIGIN = "{$_SERVER['HTTP_ORIGIN']}";
+//    $allowlistedDomains = array_key_exists('allowlistedDomains', $options) ? $options['allowlistedDomains'] : array();
+//    if (preg_match('/^https:\\/\\/([a-z0-9\\-.]+)$/D', $HTTP_ORIGIN, $matches)) {
+//        if (in_array($matches[1], $allowlistedDomains)) {
+//            header("Access-Control-Allow-Origin: $HTTP_ORIGIN");
+//            $matched = true;
+//        }
+//    } elseif (in_array('localhost', $allowlistedDomains) && preg_match(
+//            '/^https?:\\/\\/localhost(?::\\d+)?$/D', $HTTP_ORIGIN)) {
+//        header("Access-Control-Allow-Origin: $HTTP_ORIGIN");
+//        $matched = true;
+//    } elseif (in_array('*', $allowlistedDomains)) {
+//        header("Access-Control-Allow-Origin: *");
+//        $options['allowCredentials'] = false;
+//        $matched = true;
+//    }
+//    header('matched:?' . (int)($matched));
+//    if ($matched) {
+//        if (array_key_exists('allowCredentials', $options) && $options['allowCredentials'])
+//            header('Access-Control-Allow-Credentials: true');
+//        if (array_key_exists('allowedRequestHeaders', $options) && !empty($options['allowedRequestHeaders']))
+//            header('Access-Control-Allow-Headers: ' . implode(', ', $options['allowedRequestHeaders']));
+//        if (array_key_exists('allowedMethods', $options) && !empty($options['allowedMethods']))
+//            header('Access-Control-Allow-Methods: ' . implode(', ', $options['allowedMethods']));
+//        if (array_key_exists('allowedCustomHeaders', $options) && !empty($options['allowedCustomHeaders']))
+//            header('Access-Control-Expose-Headers: ' . implode(', ', $options['allowedCustomHeaders']));
+//        header('Access-Control-Max-Age: ' . (int)(array_key_exists('maxage', $options) ? $options['maxage'] : 5));
+//    }
+//    if ($options['autoExitOPTIONS'] && ($_SERVER['REQUEST_METHOD'] === 'OPTIONS')) exit;
+//}
