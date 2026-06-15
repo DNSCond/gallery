@@ -4,13 +4,19 @@ import datetime
 import pathlib
 
 sem = asyncio.Semaphore(30)
+paths = [
+    # '404placeholder.png',
+    *pathlib.Path('images').glob('*/*.*'),
+    # *pathlib.Path('comic-images').glob('*/*/*.*'),
+    *pathlib.Path('universe-images').glob('*/*/*.*'),
+]
 
 
 async def fetch(path: str, session: aiohttp.ClientSession):
     p = pathlib.Path(path)
 
     if path.count('watermarked'):
-        #if (existing := pathlib.Path(path)).exists():
+        # if (existing := pathlib.Path(path)).exists():
         #    existing.unlink()
         return
     path = p
@@ -32,11 +38,7 @@ async def main():
     print('starting job')
     async with aiohttp.ClientSession() as session:
         async with asyncio.TaskGroup() as taskgrp:
-            for path in [
-                '404placeholder.png',
-                *pathlib.Path('images').glob('*/*.*'),
-                *pathlib.Path('images').glob('*/*.*.*'),
-                *pathlib.Path('comic-images').glob('*/*/*.*')]:
+            for path in paths:
                 taskgrp.create_task(fetch(str(path).replace('\\', '/'), session))
             pass
     pass

@@ -117,7 +117,7 @@ if (is_string($chosen_file)) {
     header("Last-Modified:" . gmdate(DATE_RFC7231, $filemtime));
     header("FX-filemtime:" . date('D M Y-m-d \\TH:i:s \\U\\T\\CO (e)', $filemtime));
 }
-if (array_key_exists('HTTP_IF_NONE_MATCH', $_SERVER)) {
+/*if (array_key_exists('HTTP_IF_NONE_MATCH', $_SERVER)) {
     if (trim("{$_SERVER['HTTP_IF_NONE_MATCH']}") === '*') {
         http_response_code(304);
         exit;
@@ -133,6 +133,6 @@ if (array_key_exists('HTTP_IF_NONE_MATCH', $_SERVER)) {
             }
         }
     }
-}
+}*/
 http_response_code($status);
 echo "$fileContent";
