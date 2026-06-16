@@ -152,3 +152,8 @@
 //    }
 //    if ($options['autoExitOPTIONS'] && ($_SERVER['REQUEST_METHOD'] === 'OPTIONS')) exit;
 //}
+---
+function camelToKebab(camel) {
+    return `${camel}`.replaceAll(/[A-Z]/g, substr => '-' + substr).toLowerCase().replace(/^-/, '');
+}
+---

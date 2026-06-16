@@ -13,7 +13,7 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
 $homeIconBase64 = htmlspecialchars(base64_encode(file_get_contents('home.svg')), ENT_HTML5 | ENT_QUOTES);
 if (!preg_match('/^[a-zA-Z0-9\\-]+$/D', $char = $_GET['char'])) on404();
 
-$canonicalPath = '/';
+$canonicalPath = '/gallery/';
 $baseDirectory = 'images';
 $imageDirector = 'images';
 if (array_key_exists('uni', $_GET)) {
@@ -146,10 +146,12 @@ function array__get_key_as_boolean(string $key, array $array): bool
     } else return false;
 } ?>
 <main>
+    <script type=application/json is=output-script><?= json_encode($array) ?></script>
+    <script type=module src=JSONScript.js></script>
     <div class=divs>
         <h1 style=text-align:center><?= "Character &quot;$name&quot;" ?></h1>
         <div style=text-align:center;margin-bottom:1em><?= imageTag($char, 'main',
-                    "$name's introductory appearance", null, $aichar = !!
+                    "$name's Main appearance", null, $aichar = !!
                     $json['aichar'], ['introImage border'], $baseDirectory);
             foreach (['creationDate-epoch', 'LastModified-epoch', 'registerDate-epoch'] as $rm) {
                 unset($array[$rm]);
@@ -187,7 +189,7 @@ function array__get_key_as_boolean(string $key, array $array): bool
         <div style=margin-left:0;padding-bottom:1em
              class=border><?= (function () use ($char, $name, $aichar, $altTexts) {
                 $altText1 = array_key_exists("main", $altTexts) ?
-                        $altTexts["main"] : "$name's intro appearance";
+                        $altTexts["main"] : "$name's Main appearance";
                 $altText2 = array_key_exists("ai.main", $altTexts) ?
                         $altTexts["ai.main"] : "Them as anime";
                 return (!$aichar ? galleryListing($char, 'main', $altText1, false) : '')

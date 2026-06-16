@@ -82,18 +82,7 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
 <template id=MAMNode>
 </template>
 <script type=module src=MAM.js></script>
-<!--suppress JSUnresolvedReference -->
-<script type=module>
-    import {JSONScript} from '<?= './JSONScript.js' ?>';
-
-    class OutputScript extends JSONScript {
-        connectedCallback() {
-            console.log(JSON.stringify(this, null, 2))
-        }
-    }
-
-    customElements.define('output-script', OutputScript, {extends: 'script'});
-</script>
+<script type=module src=JSONScript.js></script>
 <script type=module>
     class InitializationMain extends HTMLElement {
         connectedCallback() {
