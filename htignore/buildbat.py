@@ -162,7 +162,7 @@ def copysite(path):
 
 def main():
     zero = int()
-    for i in ('gallery', 'require', 'dollmaker2', 'svgViewer', 'standard', 'blog'):
+    for i in ('gallery', 'require', 'dollmaker2', 'dollmaker3', 'svgViewer', 'standard', 'blog'):
         zero += (one := copysite(i))
         print('moved', one, 'items in', i)
     print('moved', zero, 'items')

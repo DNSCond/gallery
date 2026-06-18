@@ -98,7 +98,16 @@ if (!array__get_key_as_boolean('noOpener', $json)) {
 if (isset($GLOBALS['desc'])) $desc = "{$GLOBALS['desc']}";
 
 $htmlDescription = htmlspecialchars12($desc);
-create_head2($title, ['base' => '/gallery/', 'desc' => $desc], [
+create_head2($title, [
+        'base' => '/gallery/', 'desc' => $desc,
+        'ventHref' => match ($char) {
+            'veloxcity' => 'https://www.roblox.com/games/1537690962/Bee-Swarm-Simulator',
+            '19-G' => 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status',
+            'moon' => '/dollmaker3/v1u._3AZGf_tzan_0eD9__j9jP_9wIX_JSgs_wDx_QQC0AcB0QcB',
+            'sun' => '/dollmaker3/v1u._1WU_f9VvP3_ZZW9_1W8_f80JNH_JSgs_wAAgAQC0AcB0QcB',
+            default => null,
+        },
+], [
         new ANTNavLinkTag('stylesheet', [
                 "cssx.css", "characterPage.css", 'ddDL-table.css',
         ]), new ANTNavIStyle(".divs>.character-profile{&>:first-child{margin-top:0}&>:last-child{margin-bottom:0}}"),
