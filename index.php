@@ -1,5 +1,6 @@
 <?php // date_default_timezone_set('UTC');
 use ANTHeader\ANTNavIStyle;
+use ANTHeader\ANTNavOption;
 use ANTHeader\ANTNavLinkTag;
 use function ANTHeader\create_head2;
 use function ANTHeader\ANTNavBinary;
@@ -56,7 +57,10 @@ create_head2($title = 'ANT\'s Character Gallery', ['base' => '/gallery/',
         new ANTNavIStyle("$width$overflox/**/.store-div{vertical-align: bottom;}"),
 ], array_merge([ANTNavFavicond('https://ANTRequest.nl', $title, $canonicalPath === '/')],
         $canonicalPath !== '/' ? [ANTNavReddcond($canonicalPath, matchUniverses($uniname), true)] : array(),
-        [ANTNavBinary('/gallery/ascii-table.php', 'Ascii Table')]));
+        [ANTNavBinary('/gallery/ascii-table.php', 'Ascii Table'), new ANTNavOption(
+                '/dollmaker3/', '/dollmaker2/icon/endpoint.php?preset=Bee',
+                'dollmakerV5 ANT', new Color('a68300'),
+                new Color('fff100')),]));
 require_once "{$_SERVER['DOCUMENT_ROOT']}/gallery/createSelectElement.php";
 global $characters_total, $reversed, $characters;
 global $width, $selectedFilter, $selectedBorder;

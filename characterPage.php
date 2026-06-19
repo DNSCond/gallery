@@ -105,7 +105,7 @@ create_head2($title, [
             '19-G' => 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status',
             'moon' => '/dollmaker3/v1u._3AZGf_tzan_0eD9__j9jP_9wIX_JSgs_wDx_QQC0AcB0QcB',
             'sun' => '/dollmaker3/v1u._1WU_f9VvP3_ZZW9_1W8_f80JNH_JSgs_wAAgAQC0AcB0QcB',
-            default => null,
+            default => array_key_exists('ventHref',$characterData)?$characterData['ventHref']:null,
         },
 ], [
         new ANTNavLinkTag('stylesheet', [
