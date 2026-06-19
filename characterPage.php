@@ -154,9 +154,9 @@ function array__get_key_as_boolean(string $key, array $array): bool
         return (bool)$array[$key];
     } else return false;
 } ?>
+<script type=application/json is=output-script>"<-?= json_encode() ?>"</script>
+<script type=module src=JSONScript.js></script>
 <main>
-    <script type=application/json is=output-script><?= json_encode($array) ?></script>
-    <script type=module src=JSONScript.js></script>
     <div class=divs>
         <h1 style=text-align:center><?= "Character &quot;$name&quot;" ?></h1>
         <div style=text-align:center;margin-bottom:1em><?= imageTag($char, 'main',

@@ -171,7 +171,6 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
     </form>
     <details style=padding:0.5em;border-bottom:none class=border>
         <summary>Alternate Universes</summary>
-        <script type=application/json is=output-script><?= json_encode($_GET) ?></script>
         <div><?= '<h2 id=Other-Universes>Other Universes</h2><ul class'
             . '=margin-tb><li><a href=\'/\'>Main page Universe</a>';
             foreach (glob(__DIR__ . '/htignore/universe-images/*/') as $item) {
