@@ -166,15 +166,14 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
     <details style=padding:0.5em;border-bottom:none class=border open>
         <summary>Alternate Universes</summary>
         <div><?= "<h2 id=Other-Universes style=margin-bottom:0>Other Universes</h2>\n";
-            echo '<div><h2 id=Other-Universes>Other Universes</h2><ul class'
-                    . '=margin-tb><li><a href=\'/\'>Main page Universe</a>';
+            echo '<ul class=margin-tb><li><a href=\'/\'>Main page Universe</a>';
             foreach (glob(__DIR__ . '/htignore/universe-images/*/') as $item) {
                 if (preg_match('/\\/([a-zA-Z0-9\\-]+)\\/?$/D', $item, $matches)) {
                     $matchUniverse = matchUniverses($matches[1]);
                     echo "<li><a href=/gallery/universe/$matches[1]/>$matchUniverse</a>";
                 }
             }
-            echo "</ul></div>";
+            echo "</ul>";
             ob_start(fn(string $string): string => preg_replace('/>\\s+</', '><',
                     preg_replace('/\\s+/', "\x20", $string)));
             function createUniverseIcon(string $universeSlug): void
@@ -192,6 +191,7 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
                 </article><?php
             }
 
+            /*
             $Universe = $matchUniverse = 'Main page';
             $universeSlug = 'Main';
             $univHref = "/" ?>
@@ -201,7 +201,7 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
                             style=width:10em class=store-img width=800
                             alt="<?= "Universe thumbnail for $Universe" ?>"
                             height=1280 src="<?= "universe-img/$universeSlug.webp" ?>"></a>
-            </article><?php
+            </article><?php */
             foreach (glob(__DIR__ . '/htignore/universe-images/*/') as $item) {
                 if (preg_match('/\\/([a-zA-Z0-9\\-]+)\\/?$/D', $item, $matches)) {
                     createUniverseIcon($matches[1]);
