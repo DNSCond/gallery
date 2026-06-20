@@ -3,6 +3,7 @@ RewriteRule ^universe/([a-zA-Z0-9\-]+)(?:/char)?/([a-zA-Z0-9\-]+)/?$ characterPa
 RewriteRule ^universe/([a-zA-Z0-9\-]+)/?$ index.php?uni=$1 [L,QSA]
 
 RewriteRule ^char/([a-zA-Z0-9\-]+)/?$ characterPage.php?char=$1 [L,QSA]
+RewriteRule ^universe-img/([a-zA-Z0-9\-]+)\.webp$ servimg.php?univ=$1&format=webp [L,QSA]
 RewriteRule ^images/ai/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ img.php?img=ai.$1.$2.$3 [L,QSA]
 
 

@@ -87,14 +87,8 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
 </template>
 <script type=module src=MAM.js></script>
 <script type=module src=JSONScript.js></script>
+<script type=application/json is=output-script><?= json_encode(["\$canonicalPath" => $canonicalPath]) ?></script>
 <script type=module>
-    class InitializationMain extends HTMLElement {
-        connectedCallback() {
-        }
-    }
-
-    customElements.define('initialization-main', InitializationMain, {extends: 'main'});
-
     class ShadowBoxedHover extends HTMLElement {
         connectedCallback() {
             this.classList.add('ShadowBoxedHover');
@@ -103,13 +97,13 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
 
     customElements.define('shadowboxed-hover', ShadowBoxedHover, {extends: 'article'});
 </script>
-<main class=divs is=initialization-main>
+<main class=divs><!-- is=initialization-main> -->
     <h1><?= $title ?></h1>
     <p>Welcome to ANTRequest.nl. a hobby site of the Fictional Character Favi Favicond!
         there are a total of <span><?= "$characters_total\x20characters on the site";
             $integer = count($characters);
-            // if ($characters_total !== ($integer = count($characters)))
-            echo ", and $integer of them are displayed below due to the filters." ?></span>
+            if ($characters_total !== ($integer = count($characters)))
+                echo ", and $integer of them are displayed below due to the filters." ?></span>
         <!--<div><mam-tree><mam-node img-src=icon.png img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node></mam-tree></div>-->
     <form method=get style=padding:0.5em;border-bottom:none class=border>
         <details>
@@ -169,17 +163,41 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
             </div>
         </details>
     </form>
-    <details style=padding:0.5em;border-bottom:none class=border>
+    <details style=padding:0.5em;border-bottom:none class=border open>
         <summary>Alternate Universes</summary>
-        <div><?= '<h2 id=Other-Universes>Other Universes</h2><ul class'
-            . '=margin-tb><li><a href=\'/\'>Main page Universe</a>';
+        <div><?= "<h2 id=Other-Universes style=margin-bottom:0>Other Universes</h2>\n";
+            ob_start(fn(string $string): string => preg_replace('/>\\s+</', '><',
+                    preg_replace('/\\s+/', "\x20", $string)));
+            function createUniverseIcon(string $universeSlug): void
+            {
+                $matchUniverse = matchUniverses($universeSlug);
+                $Universe = htmlspecialchars12($matchUniverse);
+                $univHref = "/gallery/universe/$universeSlug/" ?>
+                <article class=store-div style=--box-color:#00a8f3; is=shadowboxed-hover>
+                <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
+                <a href="<?= $univHref ?>"><img
+                            style=width:10em class=store-img width=800
+                            alt="<?= "Universe thumbnail for $Universe" ?>"
+                            height=1280 src="<?= "universe-img/$universeSlug.webp" ?>"></a>
+                </article><?php
+            }
+
+            $Universe = $matchUniverse = 'Main page';
+            $universeSlug = 'Main';
+            $univHref = "/" ?>
+            <article class=store-div style=--box-color:#00a8f3; is=shadowboxed-hover>
+                <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
+                <a href="<?= $univHref ?>"><img
+                            style=width:10em class=store-img width=800
+                            alt="<?= "Universe thumbnail for $Universe" ?>"
+                            height=1280 src="<?= "universe-img/$universeSlug.webp" ?>"></a>
+            </article><?php
             foreach (glob(__DIR__ . '/htignore/universe-images/*/') as $item) {
                 if (preg_match('/\\/([a-zA-Z0-9\\-]+)\\/?$/D', $item, $matches)) {
-                    $matchUniverse = matchUniverses($matches[1]);
-                    echo "<li><a href=/gallery/universe/$matches[1]/>$matchUniverse</a>";
+                    createUniverseIcon($matches[1]);
                 }
             }
-            echo "</ul>" ?></div>
+            ob_end_flush() ?></div>
     </details>
     <div style=margin-left:0;padding-bottom:1em class=border id=the-store><?= '<!-- XHTTP -->';
         if ($selectedBorder) {
@@ -276,11 +294,3 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
         </div>
     </dl>
 </div>
-<div class=divs><?= '<h2 id=hrefs>Links</h2><ul class=margin-tb>';
-    // base = /gallery/
-    foreach (['/layerzip/' => 'LayerZip: a program independent way to store 2d image' .
-            ' layers using zip deflate, png, and a json file.', 'admin.php' => 'Admin',
-                     'comics' => 'Comics'] as $href => $name) {
-        echo "<li><a href=$href>$name</a>";
-    }
-    echo "</ul>" ?></div>

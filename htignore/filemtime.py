@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
 import os, re
 
+# browser: (new Date).toISOString().replace(/\.\d\d\d/,'');
+
 timestamp = re.sub('^"', '', re.sub('"$', '', input('filemtime:')))
 mdt = datetime.fromtimestamp(os.path.getmtime(timestamp), tz=timezone.utc)
 cdt = datetime.fromtimestamp(os.path.getctime(timestamp), tz=timezone.utc)

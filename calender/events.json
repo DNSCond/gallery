@@ -1,0 +1,10 @@
+{
+  "events": [
+    {
+      "title": "My Event",
+      "eventHref": "/",
+      "when": "2027-01-01T00:00:00Z",
+      "desc": "My Event Description"
+    }
+  ]
+}

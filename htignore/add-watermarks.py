@@ -8,6 +8,8 @@ paths = [
     *pathlib.Path('images').glob('*/*.*'),
     # *pathlib.Path('comic-images').glob('*/*/*.*'),
     *pathlib.Path('universe-images').glob('*/*/*.*'),
+    *pathlib.Path('universe-images').glob('*/*.*'),
+    'images/universe-img.png',
 ]
 
 
