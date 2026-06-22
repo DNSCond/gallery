@@ -30,11 +30,11 @@ if (preg_match('/\\.store-img\\{width:(\\d+)em;?}/', $width, $matches)) {
     $overflox = $matches[1];
 } else $width = "$width.store-img{width:20em;}";
 $inverted = isset($GLOBALS['inverted']);
-$overflox = ".overflox>div,.charname{width:calc({$overflox}em - 2ch);overflow-x:hidden;" .
-        "white-space:nowrap;text-overflow:ellipsis;}";
-$canonicalPath = '/';
+$overflox = ".overflox>div,.charname{width:calc({$overflox}em - 2ch);" .
+        "overflow-x:hidden;white-space:nowrap;text-overflow:ellipsis;}";
 $baseDirectory = 'images';
 $imageDirector = 'images';
+$canonicalPath = '/';
 $uniname = 'Main';
 if (array_key_exists('uni', $_GET)) {
     if (preg_match('/^[a-zA-Z0-9\\-]+$/D', "{$_GET['uni']}")) {
@@ -80,14 +80,15 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
     echo '<div style="height:3em;background-color:white;border-bottom:4px solid #e689bf;">';
     echo "<div style=width:88%;max-width:88%;margin:auto>ANT//$currentUsername</div></div>";
 } ?>
+<template id=MAMNode></template>
+<script type=module src=MAM.js></script>
 <template id=MAMTree>
     <slot></slot>
 </template>
-<template id=MAMNode>
-</template>
-<script type=module src=MAM.js></script>
 <script type=module src=JSONScript.js></script>
-<script type=application/json is=output-script><?= json_encode(["\$canonicalPath" => $canonicalPath]) ?></script>
+<script type=application/json is=output-script><?= json_encode(
+            gmdate('M d H:i:s Y \\G\\M\\T', +$_SERVER['REQUEST_TIME']),
+            JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
 <script type=module>
     class ShadowBoxedHover extends HTMLElement {
         connectedCallback() {
@@ -97,7 +98,7 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
 
     customElements.define('shadowboxed-hover', ShadowBoxedHover, {extends: 'article'});
 </script>
-<main class=divs><!-- is=initialization-main> -->
+<main class=divs>
     <h1><?= $title ?></h1>
     <p>Welcome to ANTRequest.nl. a hobby site of the Fictional Character Favi Favicond!
         there are a total of <span><?= "$characters_total\x20characters on the site";
@@ -163,7 +164,7 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
             </div>
         </details>
     </form>
-    <details style=padding:0.5em;border-bottom:none class=border open>
+    <details style=padding:0.5em;border-bottom:none class=border>
         <summary>Alternate Universes</summary>
         <div><?= "<h2 id=Other-Universes style=margin-bottom:0>Other Universes</h2>\n";
             echo '<ul class=margin-tb><li><a href=\'/\'>Main page Universe</a>';
@@ -191,16 +192,14 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
                 </article><?php
             }
 
-            /*
-            $Universe = $matchUniverse = 'Main page';
-            $universeSlug = 'Main';
-            $univHref = "/" ?>
+            /*$Universe = $matchUniverse = 'Main page';
+            $universeSlug = 'Main';$univHref = "/" ?>
             <article class=store-div style=--box-color:#00a8f3; is=shadowboxed-hover>
-                <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
-                <a href="<?= $univHref ?>"><img
-                            style=width:10em class=store-img width=800
-                            alt="<?= "Universe thumbnail for $Universe" ?>"
-                            height=1280 src="<?= "universe-img/$universeSlug.webp" ?>"></a>
+            <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
+            <a href="<?= $univHref ?>"><img
+            style=width:10em class=store-img width=800
+            alt="<?= "Universe thumbnail for $Universe" ?>"
+            height=1280 src="<?= "universe-img/$universeSlug.webp" ?>"></a>
             </article><?php */
             foreach (glob(__DIR__ . '/htignore/universe-images/*/') as $item) {
                 if (preg_match('/\\/([a-zA-Z0-9\\-]+)\\/?$/D', $item, $matches)) {
