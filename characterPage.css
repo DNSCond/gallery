@@ -19,4 +19,5 @@
 
 .altText {
     padding: 1ch;
+    min-height: 4em;
 }

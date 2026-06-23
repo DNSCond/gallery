@@ -82,7 +82,7 @@ function createViaImagick($file): array
     $content = '<svg width="800" height="1280" viewBox="0 0 800 1280" xmlns="http://www.w3.org/2000/svg">'
         . "$content</svg>";
     try {
-        $svg = new Imagick;
+        $svg = new Imagick;error_log($file);
         $png = new Imagick(realpath($file));
         $svg->setBackgroundColor(new ImagickPixel('transparent'));
         [$rect, $content] = explode('<!-- keepIntact -->', $content);
