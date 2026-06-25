@@ -128,7 +128,7 @@ ob_start() ?>
             $integer = count($characters);
             if ($characters_total !== ($integer = count($characters)))
                 echo ", and $integer of them are displayed below due to the filters." ?></span>
-    <div>
+    <div hidden>
         <mam-tree style="--width:50em;--height:50em;">
             <mam-node img-src=icon.png img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node>
         </mam-tree>
