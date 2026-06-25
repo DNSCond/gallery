@@ -82,9 +82,7 @@ class SourceClone extends HTMLSourceElement {
     attributeChangedCallback(name, oldValue, newValue) {
         const customEvent = new CustomEvent('attribute-changed-event', {
             detail: Object.freeze({name, oldValue, newValue}),
-            cancelable: false,
-            composed: true,
-            bubbles: true,
+            cancelable: false, composed: true, bubbles: true,
         });
         this.dispatchEvent(customEvent);
     }

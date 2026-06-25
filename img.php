@@ -118,21 +118,12 @@ if (is_string($chosen_file)) {
     header("FX-filemtime:" . date('D M Y-m-d \\TH:i:s \\U\\T\\CO (e)', $filemtime));
 }
 /*if (array_key_exists('HTTP_IF_NONE_MATCH', $_SERVER)) {
-    if (trim("{$_SERVER['HTTP_IF_NONE_MATCH']}") === '*') {
-        http_response_code(304);
-        exit;
-    }
-    if (preg_match_all('/"([^"]+)"/', "{$_SERVER['HTTP_IF_NONE_MATCH']}",
-        $matches, PREG_SET_ORDER)) {
-        foreach ($matches as $match) {
-            if (preg_match('/^sha256b64-(.+)$/D', $match[1], $matched)) {
-                if (hash_equals("$sha256", $matched[1])) {
-                    http_response_code(304);
-                    exit;
-                }
-            }
-        }
-    }
-}*/
+if (trim("{$_SERVER['HTTP_IF_NONE_MATCH']}") === '*') {
+http_response_code(304);exit;}
+if (preg_match_all('/"([^"]+)"/', "{$_SERVER['HTTP_IF_NONE_MATCH']}",
+$matches, PREG_SET_ORDER)) {foreach ($matches as $match) {
+if (preg_match('/^sha256b64-(.+)$/D', $match[1], $matched)) {
+if (hash_equals("$sha256", $matched[1])) {
+http_response_code(304);exit;}}}}}*/
 http_response_code($status);
 echo "$fileContent";

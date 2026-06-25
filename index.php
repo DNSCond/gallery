@@ -79,12 +79,35 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
     $currentUsername = htmlspecialchars12("{$token['username']}");
     echo '<div style="height:3em;background-color:white;border-bottom:4px solid #e689bf;">';
     echo "<div style=width:88%;max-width:88%;margin:auto>ANT//$currentUsername</div></div>";
-} ?>
-<template id=MAMNode></template>
-<script type=module src=MAM.js></script>
+}
+echo '<!--';
+ob_start() ?>
+<template id=MAMNode>
+    <!--suppress CssUnresolvedCustomProperty -->
+    <style>
+        :host {
+            display: block;
+            position: relative;
+            width: var(--width);
+            height: var(--height);
+        }
+    </style>
+</template>
 <template id=MAMTree>
+    <style>
+        :host, picture {
+            max-width: var(--width);
+            max-height: var(--height);
+        }
+
+        :host {
+            position: absolute;
+        }
+    </style>
     <slot></slot>
 </template>
+<!--<?= '-->' . preg_replace('/\\s+/', " ", ob_get_clean()) ?>-->
+<script type=module src=MAM.js></script>
 <script type=module src=JSONScript.js></script>
 <script type=application/json is=output-script><?= json_encode(
             gmdate('M d H:i:s Y \\G\\M\\T', +$_SERVER['REQUEST_TIME']),
@@ -105,7 +128,11 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
             $integer = count($characters);
             if ($characters_total !== ($integer = count($characters)))
                 echo ", and $integer of them are displayed below due to the filters." ?></span>
-        <!--<div><mam-tree><mam-node img-src=icon.png img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node></mam-tree></div>-->
+    <div>
+        <mam-tree style="--width:50em;--height:50em;">
+            <mam-node img-src=icon.png img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node>
+        </mam-tree>
+    </div>
     <form method=get style=padding:0.5em;border-bottom:none class=border>
         <details>
             <summary>Filter Options</summary>
