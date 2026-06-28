@@ -1,4 +1,6 @@
 RewriteEngine on
+RewriteBase /gallery/
+
 RewriteRule ^universe/([a-zA-Z0-9\-]+)(?:/char)?/([a-zA-Z0-9\-]+)/?$ characterPage.php?char=$2&uni=$1 [L,QSA]
 RewriteRule ^universe/([a-zA-Z0-9\-]+)/?$ index.php?uni=$1 [L,QSA]
 
@@ -19,6 +21,8 @@ RewriteRule ^images/comics\.([a-zA-Z0-9\-]+)\.(\d+)\.(\d+)\.(png|jpe?g|webp|avif
 RewriteRule ^images/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ img.php?img=$1.$2.$3 [L,QSA]
 RewriteRule ^images/([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ img.php?img=$1.$2 [L,QSA]
 RewriteRule ^images/.+$ img.php?img=404 [L,QSA]
+
+RewriteRule ^char/?$ . [L,R=307]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^comics/([a-zA-Z0-9\-]+)/(\d+)$ comics/comicPage.php?titleURL=$1&episodeId=$2 [L,QSA]

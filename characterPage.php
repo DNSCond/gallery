@@ -13,9 +13,9 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
 $homeIconBase64 = htmlspecialchars(base64_encode(file_get_contents('home.svg')), ENT_HTML5 | ENT_QUOTES);
 if (!preg_match('/^[a-zA-Z0-9\\-]+$/D', $char = $_GET['char'])) on404();
 
-$canonicalPath = '/gallery/';
 $baseDirectory = 'images';
 $imageDirector = 'images';
+$canonicalPath = '/gallery/char/';
 if (array_key_exists('uni', $_GET)) {
     if (preg_match('/^[a-zA-Z0-9\\-]+$/D', "{$_GET['uni']}")) {
         if (file_exists(__DIR__ . '/htignore/universe-images/' . ($uni = $_GET['uni']))) {
@@ -31,7 +31,7 @@ if (!file_exists($path)) on404();
 require_once "readCharacterJSON.php";
 $characterData = json_decode(file_get_contents($path) ?? '{}', true);
 $title = "{$characterData['name']} (ANT's Character Gallery)";
-$navigator = ANTNavFavicond("{$canonicalPath}char/$char", $title, true);
+$navigator = ANTNavFavicond("$canonicalPath$char", $title, true);
 if (array_key_exists('primaryColor', $characterData) || array_key_exists('secondaryColor', $characterData)) {
     if (!array_key_exists('primaryColor', $characterData)) {
         $characterData['primaryColor'] = '#00a8f3';
@@ -42,7 +42,7 @@ if (array_key_exists('primaryColor', $characterData) || array_key_exists('second
     $primaryColor = matchColor($characterData['primaryColor']);
     $secondaryColor = matchColor($characterData['secondaryColor'], false);
     if (preg_match('/^#?([a-f0-9]{6});#?([a-f0-9]{6});$/iD', "$primaryColor;$secondaryColor;", $matches)) {
-        $navigator = new ANTNavOption("{$canonicalPath}char/$char",
+        $navigator = new ANTNavOption("$canonicalPath$char",
                 "/dollmaker2/icon/endpoint.php?bgcolor=%23$matches[1]&fgcolor=%238cfffa&L=%23fff200&W=%23000000&LC=%23ff0000&RC=%230000ff&v=1",
                 htmlspecialchars12($title), new Color("#$matches[2]"),
                 new Color("#$matches[1]"), true);
@@ -115,13 +115,6 @@ create_head2($title, [
         new ANTNavIStyle(".store-img,.store-div{width:20em;}.overflox>div,.charname{width:calc(20em - 2ch);" .
                 "overflow-x:hidden;white-space:nowrap;text-overflow:ellipsis;}"),
         new ANTNavLinkTag('canonical', "https://antrequest.nl$canonicalPath$char"),
-    //new ANTNavArbitraryHTML('open-graph',
-    //"<meta property=og:description content=\"$htmlDescription\">" .
-    //"<meta property=og:title content=\"" . htmlspecialchars12($title) . '">' .
-    //"<meta property=og:url content=https://antrequest.nl/gallery/char/$char>" .
-    //"<meta property=og:image content=https://antrequest.nl/gallery/images/$char.main.png>" .
-    //"<meta property=og:image:width content=800><meta property=og:image:height content=1280>" .
-    //"<meta property=og:image:type content=image/png>"),
 ], [ANTNavFavicond('/', 'Home'),
         ANTNavReddcond("$canonicalPath", 'Universe Home'),
         $navigator
