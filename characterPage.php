@@ -105,7 +105,7 @@ create_head2($title, [
             '19-G' => 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status',
             'moon' => '/dollmaker3/v1u._3AZGf_tzan_0eD9__j9jP_9wIX_JSgs_wDx_QQC0AcB0QcB',
             'sun' => '/dollmaker3/v1u._1WU_f9VvP3_ZZW9_1W8_f80JNH_JSgs_wAAgAQC0AcB0QcB',
-            default => array_key_exists('ventHref',$characterData)?$characterData['ventHref']:null,
+            default => array_key_exists('ventHref', $characterData) ? $characterData['ventHref'] : null,
         },
 ], [
         new ANTNavLinkTag('stylesheet', [
@@ -117,7 +117,7 @@ create_head2($title, [
         new ANTNavLinkTag('canonical', "https://antrequest.nl$canonicalPath$char"),
 ], [ANTNavFavicond('/', 'Home'),
         ANTNavReddcond("$canonicalPath", 'Universe Home'),
-        $navigator
+        $navigator,
 ]);
 require_once "dataDescriptionList.php";
 require_once "loginService.php";
@@ -147,8 +147,7 @@ function array__get_key_as_boolean(string $key, array $array): bool
         return (bool)$array[$key];
     } else return false;
 } ?>
-<script type=application/json is=output-script>"<-?= json_encode() ?>"</script>
-<script type=module src=JSONScript.js></script>
+<script type=application/json is=output-script>false</script>
 <main>
     <div class=divs>
         <h1 style=text-align:center><?= "Character &quot;$name&quot;" ?></h1>

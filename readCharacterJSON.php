@@ -75,16 +75,14 @@ function toHTMLDatetime(int $time, bool $longDate): HTMLSafeEscaped
     if ($time === 0) return new HTMLSafeEscaped("<span>Unknown</span>");
     $date = date('D Y-M-d', $time);
     $datetime = gmdate('Y-m-d\\TH:i:s\\Z', $time);
-    if ($longDate) {
-        // return new HTMLSafeEscaped("<relative-time datetime=$datetime><time"
-        // . " datetime=$datetime>$date</time></relative-time> (<clock-time"
-        // . " datetime=$datetime format='D M Y-m-d \\TH:i:s \\U\\T\\CO (e)'"
-        // . " timezone=local><time datetime=$datetime>$date</time></clock-time>)");
-        return new HTMLSafeEscaped("<relative-time datetime=$datetime"
-            . "><time datetime=$datetime>$date</time></relative-time>");
-    }
-    return new HTMLSafeEscaped("<relative-time datetime=$datetime>" .
-        "<time datetime=$datetime>$date</time></relative-time>");
+    //if ($longDate) {
+    // return new HTMLSafeEscaped("<relative-time datetime=$datetime><time"
+    // . " datetime=$datetime>$date</time></relative-time> (<clock-time"
+    // . " datetime=$datetime format='D M Y-m-d \\TH:i:s \\U\\T\\CO (e)'"
+    // . " timezone=local><time datetime=$datetime>$date</time></clock-time>)");
+    //}
+    return new HTMLSafeEscaped("<time datetime=" .
+        "$datetime is=relative-time-builtin>$date</time>");
 }
 
 require_once "JWT.php";
