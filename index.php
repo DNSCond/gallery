@@ -181,7 +181,7 @@ ob_start() ?>
             </div>
         </details>
     </form>
-    <details style=padding:0.5em;border-bottom:none class=border open>
+    <details style=padding:0.5em;border-bottom:none class=border>
         <summary>Alternate Universes</summary>
         <div><?= "<h2 id=Other-Universes style=margin-bottom:0>Other Universes</h2>\n";
             echo '<ul class=margin-tb><li><a href=\'/\'>Main page Universe</a>';
