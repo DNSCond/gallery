@@ -184,14 +184,6 @@ ob_start() ?>
     <details style=padding:0.5em;border-bottom:none class=border>
         <summary>Alternate Universes</summary>
         <div><?= "<h2 id=Other-Universes style=margin-bottom:0>Other Universes</h2>\n";
-            echo '<ul class=margin-tb><li><a href=\'/\'>Main page Universe</a>';
-            foreach (glob(__DIR__ . '/htignore/universe-images/*/') as $item) {
-                if (preg_match('/\\/([a-zA-Z0-9\\-]+)\\/?$/D', $item, $matches)) {
-                    $matchUniverse = matchUniverses($matches[1]);
-                    echo "<li><a href=/gallery/universe/$matches[1]/>$matchUniverse</a>";
-                }
-            }
-            echo "</ul>";
             ob_start(fn(string $string): string => preg_replace('/>\\s+</', '><',
                     preg_replace('/\\s+/', "\x20", $string)));
             function createUniverseIcon(string $universeSlug): void
@@ -211,6 +203,7 @@ ob_start() ?>
             $Universe = $matchUniverse = 'Main page';
             $universeSlug = 'Main';
             $univHref = "/" ?>
+            <p>These other Universes contain more characters to meet!
             <article class=store-div style=--box-color:#00a8f3; is=shadowboxed-hover>
                 <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
                 <a href="<?= $univHref ?>"><img
