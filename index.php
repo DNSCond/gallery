@@ -94,6 +94,7 @@ ob_start() ?>
     </style>
 </template>
 <template id=MAMTree>
+    <!--suppress CssUnresolvedCustomProperty -->
     <style>
         :host, picture {
             max-width: var(--width);
@@ -107,32 +108,21 @@ ob_start() ?>
     <slot></slot>
 </template>
 <!--<?= '-->' . preg_replace('/\\s+/', " ", ob_get_clean()) ?>-->
-<script type=module src=MAM.js></script>
+<!--<script type=module src=MAM.js></script>-->
 <script type=module src=JSONScript.js></script>
 <script type=application/json is=output-script><?= json_encode(
-            gmdate('M d H:i:s Y \\G\\M\\T', +$_SERVER['REQUEST_TIME']),
+            new Stdclass, //gmdate('M d H:i:s Y \\G\\M\\T', +$_SERVER['REQUEST_TIME']),
             JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
-<script type=module>
-    class ShadowBoxedHover extends HTMLElement {
-        connectedCallback() {
-            this.classList.add('ShadowBoxedHover');
-        }
-    }
-
-    customElements.define('shadowboxed-hover', ShadowBoxedHover, {extends: 'article'});
-</script>
+<script type=module><?= "class ShadowBoxedHover extends HTMLElement {connectedCallback(){this.classList.add('Shadow" .
+    "BoxedHover');}} customElements.define('shadowboxed-hover',ShadowBoxedHover,{extends:'article'});" ?></script>
 <main class=divs>
     <h1><?= $title ?></h1>
     <p>Welcome to ANTRequest.nl. a hobby site of the Fictional Character Favi Favicond!
         there are a total of <span><?= "$characters_total\x20characters on the site";
             $integer = count($characters);
             if ($characters_total !== ($integer = count($characters)))
-                echo ", and $integer of them are displayed below due to the filters." ?></span>
-    <div hidden>
-        <mam-tree style="--width:50em;--height:50em;">
-            <mam-node img-src=icon.png img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node>
-        </mam-tree>
-    </div>
+                echo ", and $integer of them are displayed below due to the filters." ?></span></p>
+    <!--<div hidden><mam-tree style="--width:50em;--height:50em;"><mam-node img-src=icon.png img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node></mam-tree></div>-->
     <form method=get style=padding:0.5em;border-bottom:none class=border>
         <details>
             <summary>Filter Options</summary>
@@ -191,7 +181,7 @@ ob_start() ?>
             </div>
         </details>
     </form>
-    <details style=padding:0.5em;border-bottom:none class=border>
+    <details style=padding:0.5em;border-bottom:none class=border open>
         <summary>Alternate Universes</summary>
         <div><?= "<h2 id=Other-Universes style=margin-bottom:0>Other Universes</h2>\n";
             echo '<ul class=margin-tb><li><a href=\'/\'>Main page Universe</a>';
@@ -206,7 +196,6 @@ ob_start() ?>
                     preg_replace('/\\s+/', "\x20", $string)));
             function createUniverseIcon(string $universeSlug): void
             {
-                return;
                 $matchUniverse = matchUniverses($universeSlug);
                 $Universe = htmlspecialchars12($matchUniverse);
                 $univHref = "/gallery/universe/$universeSlug/" ?>
@@ -219,15 +208,16 @@ ob_start() ?>
                 </article><?php
             }
 
-            /*$Universe = $matchUniverse = 'Main page';
-            $universeSlug = 'Main';$univHref = "/" ?>
+            $Universe = $matchUniverse = 'Main page';
+            $universeSlug = 'Main';
+            $univHref = "/" ?>
             <article class=store-div style=--box-color:#00a8f3; is=shadowboxed-hover>
-            <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
-            <a href="<?= $univHref ?>"><img
-            style=width:10em class=store-img width=800
-            alt="<?= "Universe thumbnail for $Universe" ?>"
-            height=1280 src="<?= "universe-img/$universeSlug.webp" ?>"></a>
-            </article><?php */
+                <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
+                <a href="<?= $univHref ?>"><img
+                            style=width:10em class=store-img width=800
+                            alt="<?= "Universe thumbnail for $Universe" ?>"
+                            height=1280 src="<?= "universe-img/$universeSlug.webp" ?>"></a>
+            </article><?php
             foreach (glob(__DIR__ . '/htignore/universe-images/*/') as $item) {
                 if (preg_match('/\\/([a-zA-Z0-9\\-]+)\\/?$/D', $item, $matches)) {
                     createUniverseIcon($matches[1]);
