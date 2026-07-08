@@ -113,8 +113,8 @@ ob_start() ?>
 <script type=application/json is=output-script><?= json_encode(
             new Stdclass, //gmdate('M d H:i:s Y \\G\\M\\T', +$_SERVER['REQUEST_TIME']),
             JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
-<script type=module><?= "class ShadowBoxedHover extends HTMLElement {connectedCallback(){this.classList.add('Shadow" .
-    "BoxedHover');}} customElements.define('shadowboxed-hover',ShadowBoxedHover,{extends:'article'});" ?></script>
+<script type=module><?= "class ShadowBoxedHover extends HTMLElement {connectedCallback() {this.classList.add('Shadow"
+    . "BoxedHover');}} customElements.define('shadowboxed-hover', ShadowBoxedHover, {extends:'article'});" ?></script>
 <main class=divs>
     <h1><?= $title ?></h1>
     <p>Welcome to ANTRequest.nl. a hobby site of the Fictional Character Favi Favicond!
@@ -131,8 +131,6 @@ ob_start() ?>
                             'toosmall' => 'Too Small',
                             'smallest' => 'Smallest',
                             'smaller' => 'Smaller',
-                        //'normal' => 'Normal',
-                        //'expand' => 'Expanded',
                     ], function ($key) use ($width) {
                         return ((str_starts_with($width, '/*smallest*//*toosmall*/') && $key === 'toosmall') ||
                                 (str_starts_with($width, '/*smallest*/.') && $key === 'smallest') ||
@@ -181,9 +179,9 @@ ob_start() ?>
             </div>
         </details>
     </form>
-    <details style=padding:0.5em;border-bottom:none class=border>
-        <summary>Alternate Universes</summary>
-        <div><?= "<h2 id=Other-Universes style=margin-bottom:0>Other Universes</h2>\n";
+    <details style='padding: 0.5em 0.5em 0.5em 0; border-bottom:none' class=border>
+        <summary style=padding-left:0.5em>Alternate Universes</summary>
+        <div><?= "<h2 id=Other-Universes style=margin-bottom:0;padding-left:0.5em>Other Universes</h2>\n";
             ob_start(fn(string $string): string => preg_replace('/>\\s+</', '><',
                     preg_replace('/\\s+/', "\x20", $string)));
             function createUniverseIcon(string $universeSlug): void
@@ -197,20 +195,20 @@ ob_start() ?>
                             style=width:10em class=store-img width=800
                             alt="<?= "Universe thumbnail for $Universe" ?>"
                             height=1280 src="<?= "universe-img/$universeSlug.webp" ?>"></a>
-                </article><?php
+                </article><?= "<!-- $Universe -->";
             }
 
             $Universe = $matchUniverse = 'Main page';
             $universeSlug = 'Main';
             $univHref = "/" ?>
-            <p>These other Universes contain more characters to meet!
+            <p style=padding-left:0.5em>These other Universes contain more characters to meet!
             <article class=store-div style=--box-color:#00a8f3; is=shadowboxed-hover>
                 <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
                 <a href="<?= $univHref ?>"><img
                             style=width:10em class=store-img width=800
                             alt="<?= "Universe thumbnail for $Universe" ?>"
                             height=1280 src="<?= "universe-img/$universeSlug.webp" ?>"></a>
-            </article><?php
+            </article><?= "<!-- $Universe -->";
             foreach (glob(__DIR__ . '/htignore/universe-images/*/') as $item) {
                 if (preg_match('/\\/([a-zA-Z0-9\\-]+)\\/?$/D', $item, $matches)) {
                     createUniverseIcon($matches[1]);
