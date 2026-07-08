@@ -7,15 +7,21 @@ function sha256(string $string): string
 
 $name = '404error';
 require_once 'matchUniverses.php';
-$original = $http = 'htignore/404placeholder.png';
+$watermarked = '.watermarked';
+header("vary: referer", false);
+header("cache-control: public, max-age=" . (3600 * 24 * 2));
+if (array_key_exists('HTTP_REFERER', $_SERVER))
+    if (str_starts_with("{$_SERVER['HTTP_REFERER']}", "https://antrequest.nl"))
+        $watermarked = '';
+$original = $http = "htignore/404placeholder$watermarked.png";
 if (array_key_exists("univ", $_GET) &&
     array_key_exists("format", $_GET)) {
     $univ = "{$_GET['univ']}";
     $name = matchUniverses($univ);
-    if (!preg_match('/^[a-z \\-\']+$/iD', $name))
-        $name = 'Universe Representation';
-    if ($univ === 'Main') $http = "htignore/images/universe-img.{$_GET['format']}";
-    else $http = "htignore/universe-images/$univ/universe-img.{$_GET['format']}";
+    if (!preg_match('/^[a-z \\-\']+$/iD',
+        $name)) $name = 'Universe Representation';
+    if ($univ === 'Main') $http = "htignore/images/universe-img$watermarked.{$_GET['format']}";
+    else $http = "htignore/universe-images/$univ/universe-img$watermarked.{$_GET['format']}";
     if (!file_exists($http)) $http = $original;
 } elseif (array_key_exists("uni", $_GET) &&
     array_key_exists("var", $_GET) &&
@@ -30,7 +36,8 @@ if (array_key_exists("univ", $_GET) &&
         preg_match('/^([a-zA-Z0-9\\-]+)$/iD', "{$_GET['uni']}") ||
         preg_match('/^([a-zA-Z0-9\\-]+)$/iD', "{$_GET['char']}") ||
         preg_match('/^(png|jpe?g|webp|avif)$/iD', "{$_GET['format']}")) {
-        $http = "htignore/universe-images/{$_GET['uni']}/{$_GET['char']}/$withai$prefix{$_GET['var']}.{$_GET['format']}";
+        $http = "htignore/universe-images/{$_GET['uni']}/{$_GET['char']}" .
+            "/$withai$prefix{$_GET['var']}$watermarked.{$_GET['format']}";
         if (!file_exists($http)) $http = $original; else {
             $json = readJSONFile("htignore/universe-images/{$_GET['uni']}/{$_GET['char']}/main.json") ?? array();
             $name = $json['name'] ?? "{$_GET['char']}";

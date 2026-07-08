@@ -10,8 +10,10 @@ paths = [
     *pathlib.Path('universe-images').glob('*/*/*.*'),
     *pathlib.Path('universe-images').glob('*/*.*'),
 ]
-if pathlib.Path('images/universe-img.png').exists():
-    paths.append('images/universe-img.png')
+if pathlib.Path('images/universe-img.webp').exists():
+    paths.append('images/universe-img.webp')
+if pathlib.Path('images/universe-img.avif').exists():
+    paths.append('images/universe-img.avif')
 
 
 async def fetch(path: str, session: aiohttp.ClientSession):
