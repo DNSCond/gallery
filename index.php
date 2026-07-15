@@ -80,7 +80,7 @@ if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
     echo '<div style="height:3em;background-color:white;border-bottom:4px solid #e689bf;">';
     echo "<div style=width:88%;max-width:88%;margin:auto>ANT//$currentUsername</div></div>";
 }
-echo '<!--';
+echo '<!-- TEMPLATE ';
 ob_start() ?>
 <template id=MAMNode>
     <!--suppress CssUnresolvedCustomProperty -->
@@ -107,19 +107,17 @@ ob_start() ?>
     </style>
     <slot></slot>
 </template>
-<!--<?= '-->' . preg_replace('/\\s+/', " ", ob_get_clean()) ?>-->
+<!--<?= '-->' . preg_replace('/\\s+/', " ", ob_get_clean()) . ' /TEMPLATE ';
+global $Favi_verse ?>-->
 <!--<script type=module src=MAM.js></script>-->
-<script type=module src=JSONScript.js></script>
-<script type=application/json is=output-script><?= json_encode(
-            new Stdclass, //gmdate('M d H:i:s Y \\G\\M\\T', +$_SERVER['REQUEST_TIME']),
-            JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
+<script type=module src=JSONScript.js>//gmdate('M d H:i:s Y \\G\\M\\T', +$_SERVER['REQUEST_TIME']),</script>
+<script type=application/json is=output-script><?= json_encode($Favi_verse, JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
 <script type=module><?= "class ShadowBoxedHover extends HTMLElement {connectedCallback() {this.classList.add('Shadow"
     . "BoxedHover');}} customElements.define('shadowboxed-hover', ShadowBoxedHover, {extends:'article'});" ?></script>
 <main class=divs>
     <h1><?= $title ?></h1>
     <p>Welcome to ANTRequest.nl. a hobby site of the Fictional Character Favi Favicond!
         there are a total of <span><?= "$characters_total\x20characters on the site";
-            $integer = count($characters);
             if ($characters_total !== ($integer = count($characters)))
                 echo ", and $integer of them are displayed below due to the filters." ?></span></p>
     <!--<div hidden><mam-tree style="--width:50em;--height:50em;"><mam-node img-src=icon.png img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node></mam-tree></div>-->
@@ -128,9 +126,7 @@ ob_start() ?>
             <summary>Filter Options</summary>
             <div class=grid-3x>
                 <label><?= 'Icon Size: ' . createSelectElement("iconSize", [
-                            'toosmall' => 'Too Small',
-                            'smallest' => 'Smallest',
-                            'smaller' => 'Smaller',
+                            'toosmall' => 'Too Small', 'smallest' => 'Smallest', 'smaller' => 'Smaller',
                     ], function ($key) use ($width) {
                         return ((str_starts_with($width, '/*smallest*//*toosmall*/') && $key === 'toosmall') ||
                                 (str_starts_with($width, '/*smallest*/.') && $key === 'smallest') ||
@@ -285,9 +281,9 @@ ob_start() ?>
     <dl class=descLi>
         <div>
             <dt id=what-is-registerDate><dfn>registerDate</dfn></dt>
-            <dd>The date when the <a href=#what-is-FavicondId>FavicondId</a> is assigned to the character. If a
-                character is repurposed, then <a href=#what-is-creationDate>creationDate</a> and
-                <a href=#what-is-LastModified>LastModified</a> will reflect the new
+            <dd>The date when the <a href=#what-is-FavicondId>FavicondId</a> is assigned to the character.
+                If a character is repurposed, then <a href=#what-is-creationDate>creationDate</a>
+                and <a href=#what-is-LastModified>LastModified</a> will reflect the new
                 character, but the registerDate will not update.
             </dd>
         </div>
