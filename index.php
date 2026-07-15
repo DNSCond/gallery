@@ -114,6 +114,21 @@ global $Favi_verse ?>-->
 <script type=application/json is=output-script><?= json_encode($Favi_verse, JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
 <script type=module><?= "class ShadowBoxedHover extends HTMLElement {connectedCallback() {this.classList.add('Shadow"
     . "BoxedHover');}} customElements.define('shadowboxed-hover', ShadowBoxedHover, {extends:'article'});" ?></script>
+<script type=module>
+    class ShowOnload extends HTMLTemplateElement {
+        #emptied = false;
+
+        connectedCallback() {
+            if (this.#emptied) return;
+            this.#emptied = true;
+            while (this.content.firstElementChild) {
+                this.before(this.content.firstElementChild);
+            }
+        }
+    }
+
+    customElements.define('show-onload', ShowOnload, {extends: 'template'});
+</script>
 <main class=divs>
     <h1><?= $title ?></h1>
     <p>Welcome to ANTRequest.nl. a hobby site of the Fictional Character Favi Favicond!
@@ -180,8 +195,9 @@ global $Favi_verse ?>-->
         <div><?= "<h2 id=Other-Universes style=margin-bottom:0;padding-left:0.5em>Other Universes</h2>\n";
             ob_start(fn(string $string): string => preg_replace('/>\\s+</', '><',
                     preg_replace('/\\s+/', "\x20", $string)));
-            function createUniverseIcon(string $universeSlug): void
+            function createUniverseIcon(string $universeSlug, $return = false): string
             {
+                if ($return) ob_start();
                 $matchUniverse = matchUniverses($universeSlug);
                 $Universe = htmlspecialchars12($matchUniverse);
                 $univHref = "/gallery/universe/$universeSlug/" ?>
@@ -192,6 +208,8 @@ global $Favi_verse ?>-->
                             alt="<?= "Universe thumbnail for $Universe" ?>"
                             height=1280 src="<?= "universe-img/$universeSlug.webp" ?>"></a>
                 </article><?= "<!-- $Universe -->";
+                if ($return) return ob_get_clean();
+                return '';
             }
 
             $Universe = $matchUniverse = 'Main page';
@@ -205,12 +223,16 @@ global $Favi_verse ?>-->
                             alt="<?= "Universe thumbnail for $Universe" ?>"
                             height=1280 src="<?= "universe-img/$universeSlug.webp" ?>"></a>
             </article><?= "<!-- $Universe -->";
+            $versesArray = array();
             foreach (glob(__DIR__ . '/htignore/universe-images/*/') as $item) {
                 if (preg_match('/\\/([a-zA-Z0-9\\-]+)\\/?$/D', $item, $matches)) {
-                    createUniverseIcon($matches[1]);
+                    $versesArray[] = createUniverseIcon($matches[1], $matches[1] === 'Favicond-Unknown');
                 }
             }
-            ob_end_flush() ?></div>
+            ob_end_flush();
+            echo '<TEMPLATE is=show-onload>' .
+                    implode("\n", $versesArray);
+            echo '</TEMPLATE>'; ?></div>
     </details>
     <div style=margin-left:0;padding-bottom:1em class=border id=the-store><?= '<!-- XHTTP -->';
         if ($selectedBorder) {
