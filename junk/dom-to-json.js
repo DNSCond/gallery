@@ -1,12 +1,11 @@
 // Element.prototype.toJSON;
 Element.prototype.toJSON = function () {
-    // noinspection EqualityComparisonWithCoercionJS
     return {
         tagName: this.tagName ?? null,
         jsName: Object.prototype.toString.call(this).slice(8, -1),
         attributes: Object.fromEntries(Array.from(this.attributes ?? Array(), attr => [attr.name, attr.value])),
-        children: Array.from(this.childNodes ?? Array()),
-        shadowRoot: this.shadowRoot == undefined ? undefined : Array.from(this.shadowRoot?.childNodes ?? Array()),
+        /*xmlnsUrl: this.namespaceURI, xmlnsPrefix: this.prefix,*/ children: Array.from(this.childNodes ?? Array()),
+        shadowRoot: this.shadowRoot == null ? undefined : Array.from(this.shadowRoot?.childNodes ?? Array()),
     };
 };
 
@@ -18,6 +17,17 @@ HTMLTemplateElement.prototype.toJSON = function () {
         attributes: Object.fromEntries(Array.from(this.attributes ?? Array(), attr => [attr.name, attr.value])),
         content: this.content,
     };
+};
+
+HTMLScriptElement.prototype.toJSON = function () {
+    const result = Element.prototype.toJSON.call(this);
+    if (/^application\/(.+?\+)?json$|^importmap$/i.test(this.type)) {
+        try {
+            result.json = JSON.parse(this.textContent);
+        } catch (error) {
+        }
+    }
+    return result;
 };
 
 // Text.prototype.toJSON = function () {return this.data;};

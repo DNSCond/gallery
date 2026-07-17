@@ -107,11 +107,13 @@ ob_start() ?>
     </style>
     <slot></slot>
 </template>
-<!--<?= '-->' . preg_replace('/\\s+/', " ", ob_get_clean()) . ' /TEMPLATE ';
+<!--<?= '-->' . preg_replace('/\\s+/', " ",
+        ob_get_clean()) . ' /TEMPLATE ';
 global $Favi_verse ?>-->
 <!--<script type=module src=MAM.js></script>-->
 <script type=module src=JSONScript.js>//gmdate('M d H:i:s Y \\G\\M\\T', +$_SERVER['REQUEST_TIME']),</script>
-<script type=application/json is=output-script><?= json_encode($Favi_verse, JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
+<script type=application/json is=output-script><?= json_encode(
+            $Favi_verse, JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
 <script type=module><?= "class ShadowBoxedHover extends HTMLElement {connectedCallback() {this.classList.add('Shadow"
     . "BoxedHover');}} customElements.define('shadowboxed-hover', ShadowBoxedHover, {extends:'article'});" ?></script>
 <script type=module>
@@ -135,8 +137,9 @@ global $Favi_verse ?>-->
         there are a total of <span><?= "$characters_total\x20characters on the site";
             if ($characters_total !== ($integer = count($characters)))
                 echo ", and $integer of them are displayed below due to the filters." ?></span></p>
-    <!--<div hidden><mam-tree style="--width:50em;--height:50em;"><mam-node img-src=icon.png img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node></mam-tree></div>-->
-    <form method=get style=padding:0.5em;border-bottom:none class=border>
+    <!--<div hidden><mam-tree style="--width:50em;--height:50em;"><mam-node img-src=icon.png
+    img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node></mam-tree></div>-->
+    <form method=get class=border style=padding:0.5em;border-bottom:none>
         <details>
             <summary>Filter Options</summary>
             <div class=grid-3x>
@@ -179,10 +182,7 @@ global $Favi_verse ?>-->
                             })(), $universe) ?></label>
                 <label><?= 'Sort Order: ' . createSelectElement("reversed", [
                             '0' => 'Normal (A-z, Oldest First)', '1' => 'Reversed (z-A, Newest First)',
-                    ], ($reversed = !!(match ($_GET['reversed']) {
-                        '1', 'true' => '1',
-                        default => '0',
-                    })) ? '1' : '0') ?></label>
+                    ], ($reversed ? '1' : '0')) ?></label>
                 <label><?= 'Include alternate Depictions: ' . createSelectElement("gallery", [
                             '0' => 'No', '1' => 'Yes',
                     ], (int)$gallery) ?></label>

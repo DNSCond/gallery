@@ -3,29 +3,27 @@
 use function readCharacterJSON\matchColor;
 use function readCharacterJSON\readCharacterJSON;
 
-$baseURL = __DIR__ . '/';
-/** @noinspection PhpIncludeInspection */
-require_once "{$baseURL}readCharacterJSON.php";
-/** @noinspection PhpIncludeInspection */
-require_once "{$baseURL}dataDescriptionList.php";
-/** @noinspection PhpIncludeInspection */
-require_once "{$baseURL}imageTag.php";
-/** @noinspection PhpIncludeInspection */
-require_once "{$baseURL}sorters.php";
+require_once __DIR__ . "/readCharacterJSON.php";
+require_once __DIR__ . "/dataDescriptionList.php";
+require_once __DIR__ . "/imageTag.php";
+require_once __DIR__ . "/sorters.php";
 
+$reversed = !!(match ($_GET['reversed']) {
+    '1', 'true' => '1',
+    default => '0',
+});
 $unisort = array();
 $universes = array();
 $characters = array();
 $characters_total = 0;
-global $reversed, $baseDirectory, $imageDirector;
+global $baseDirectory, $imageDirector;
 global $width, $selectedFilter, $selectedBorder;
 global $gallery, $universe, $AiArt, $sorted;
-/** @noinspection PhpIncludeInspection */
-require_once "{$baseURL}settings.php";
+require_once __DIR__ . "/settings.php";
 if (!isset($width)) $width = '/*smaller*/.store-img{width:10em}.store-div{margin:0.5em 0 0 0.5em;}';
 $base = $imageDirector !== 'images' ? "universe/$imageDirector/" : 'char/';
 
-foreach (glob("{$baseURL}htignore/$baseDirectory/*/main.json") as $item) {
+foreach (glob(__DIR__ . "/htignore/$baseDirectory/*/main.json") as $item) {
     if ($char = readCharacterJSON($item)) {
         if (array_key_exists('private', $char['json']))
             if ($char['json']['private']) continue;
@@ -38,7 +36,7 @@ foreach (glob("{$baseURL}htignore/$baseDirectory/*/main.json") as $item) {
         $json = $char['json'];
         $char = $char['data'];
         if ($selectedFilter === 'with' || $selectedFilter === 'no') {
-            $file_exists = file_exists("{$baseURL}htignore/$baseDirectory/{$char['charId']}/main.php");
+            $file_exists = file_exists(__DIR__ . "/htignore/$baseDirectory/{$char['charId']}/main.php");
             if (array_key_exists('noOpener', $json)) $file_exists = !$json['noOpener'];
             if (($selectedFilter === 'with' && !$file_exists) || ($selectedFilter === 'no' && $file_exists))
                 continue;
@@ -146,8 +144,8 @@ if ($reversed) $characters = array_reverse($characters);
 function createAlternates(string $charId, array &$char, string $name, int $AiArt,
                           string $type, string $_boxcolor = '#00a8f3'): void
 {
-    global $baseURL, $baseDirectory, $imageDirector, $base;
-    foreach (glob("{$baseURL}htignore/$baseDirectory/$charId/*gallery.*.png") as $alternate) {
+    global $baseDirectory, $base;
+    foreach (glob(__DIR__ . "/htignore/$baseDirectory/$charId/*gallery.*.png") as $alternate) {
         if (str_contains($alternate, 'watermarked')) continue;
         if (preg_match('/(ai\\.)?gallery\\.([^.]+)\\.png$/D', $alternate, $variant)) {
             if ($variant[1] && !$AiArt) continue;
