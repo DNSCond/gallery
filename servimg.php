@@ -10,9 +10,9 @@ require_once 'matchUniverses.php';
 $watermarked = '.watermarked';
 header("vary: referer", false);
 header("cache-control: public, max-age=" . (3600 * 24 * 2));
-if (array_key_exists('HTTP_REFERER', $_SERVER))
-    if (str_starts_with("{$_SERVER['HTTP_REFERER']}", "https://antrequest.nl"))
-        $watermarked = '';
+if ((array_key_exists('HTTP_REFERER', $_SERVER) && str_starts_with(
+            "{$_SERVER['HTTP_REFERER']}", "https://antrequest.nl"))
+    || file_exists('../../devhost.txt')) $watermarked = '';
 $original = $http = "htignore/404placeholder$watermarked.png";
 if (array_key_exists("univ", $_GET) &&
     array_key_exists("format", $_GET)) {
