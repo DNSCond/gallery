@@ -17,9 +17,9 @@
 <script type=module>
     document.querySelectorAll("button.download").forEach(button => {
         button.addEventListener('click', () => {
-            convertSvgToPng(
-                button.previousElementSibling.outerHTML, 300, 187,
-                button.previousElementSibling.dataset.country);
+            const svg = button.previousElementSibling,
+                [width, height] = [svg.getAttribute('width'), svg.getAttribute('height')];
+            convertSvgToPng(svg.outerHTML, Math.floor(width), Math.floor(height), svg.dataset.country);
         });
     });
 
