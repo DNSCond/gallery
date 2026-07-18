@@ -1,9 +1,12 @@
-<?php header('content-type: image/svg+xml');
-$country = null;
-if (array_key_exists('country', $_GET)) if (in_array("{$_GET['country']}",
+<?php $country = null;
+if (!isset($GLOBALS['no-ctype'])) header('content-type: image/svg+xml');
+if (array_key_exists('country', $GLOBALS)) $country = "{$GLOBALS['country']}";
+elseif (array_key_exists('country', $_GET)) if (in_array("{$_GET['country']}",
         explode(',', 'us,nl,fr,ng'))) $country = "{$_GET['country']}";
 ob_start(fn(string $string): string => preg_replace('/\\s+/', " ", $string)) ?>
-<svg width="350" height="218.75" viewBox="0 0 2048 1280" xmlns="http://www.w3.org/2000/svg">
+<svg width="300" height="187" viewBox="0 0 2048 1280"
+     xmlns="http://www.w3.org/2000/svg"
+     data-country="<?= $country ?>">
     <rect width='2048' height='1280' fill='#ffffff'/>
     <!--<?= 'START-IF';
     if ($country === 'nl'): ?>-->
