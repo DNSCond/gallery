@@ -1,13 +1,9 @@
 <?php header('content-type: image/svg+xml');
-$country = 'nl';
-if (array_key_exists('country-of', $_GET)) {
-    if (in_array("{$_GET['country-of']}", explode(',', 'us,nl,fr'))) {
-        $country = "{$_GET['country-of']}";
-    }
-}
-
+$country = null;
+if (array_key_exists('country', $_GET)) if (in_array("{$_GET['country']}",
+        explode(',', 'us,nl,fr,ng'))) $country = "{$_GET['country']}";
 ob_start(fn(string $string): string => preg_replace('/\\s+/', " ", $string)) ?>
-<svg width="2048" height="1280" viewBox="0 0 2048 1280" xmlns="http://www.w3.org/2000/svg">
+<svg width="350" height="218.75" viewBox="0 0 2048 1280" xmlns="http://www.w3.org/2000/svg">
     <rect width='2048' height='1280' fill='#ffffff'/>
     <!--<?= 'START-IF';
     if ($country === 'nl'): ?>-->
@@ -16,13 +12,13 @@ ob_start(fn(string $string): string => preg_replace('/\\s+/', " ", $string)) ?>
         <rect width='2048' height="853" y='853' fill='#003da5'/>
     </g>
     <!--<?= 'ELSE-IF';
-    elseif ($country === 'fr'): ?>-->
+    elseif ($country === 'fr' || $country === 'ng'): ?>-->
     <g>
-        <rect width='683' x="1365" height='1280' fill='#c8102e'/>
-        <rect width='682' height="1280" fill='#003da5'/>
+        <rect width='683' x="1365" height='1280' fill='<?= $country === 'ng' ? '#008751' : '#c8102e' ?>'/>
+        <rect width='682' height="1280" fill='<?= $country === 'ng' ? '#008751' : '#003da5' ?>'/>
     </g>
     <!--<?= 'ELSE-IF';
-    else: ?>-->
+    elseif ($country === 'us'): ?>-->
     <g><?= "<!-- stripes -->\n";
         $indent = '            ';
         $y_offset = 0;
@@ -65,6 +61,9 @@ ob_start(fn(string $string): string => preg_replace('/\\s+/', " ", $string)) ?>
                 echo "<use href='#star' x='$x' y='$y' />\n";
             }
         } ?></g>
+    <!--<?= 'ELSE';
+    else: ?>-->
+    <rect width='2048' height='1280' fill='#9ad9e8'/>
     <!--<?= 'endif';
     endif ?>-->
     <g fill="#000000">
