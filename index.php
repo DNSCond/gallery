@@ -10,9 +10,7 @@ use function Helpers\htmlspecialchars12;
 
 date_default_timezone_set('UTC');
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
-$baseURL = __DIR__ . '/';
-/** @noinspection PhpIncludeInspection */
-require_once "{$baseURL}JWT.php";
+require_once __DIR__ . "/JWT.php";
 $width = '/*normal*/';
 $smaller = '/*smaller*/.store-img{width:10em}.store-div{margin:0.5em 0 0 0.5em;}';
 if (array_key_exists('iconSize', $_GET)) {
@@ -45,7 +43,7 @@ if (array_key_exists('uni', $_GET)) {
         }
     }
 }
-
+$selectedMe = $canonicalPath === '/';
 require_once "{$_SERVER['DOCUMENT_ROOT']}/gallery/matchUniverses.php";
 create_head2($title = 'ANT\'s Character Gallery', ['base' => '/gallery/',
         'desc' => 'Explore the official character gallery of Favi Favicond at ANTRequest.nl!',
@@ -55,9 +53,9 @@ create_head2($title = 'ANT\'s Character Gallery', ['base' => '/gallery/',
         new ANTNavIStyle('.ShadowBoxedHover{transition:transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;}' .
                 '.ShadowBoxedHover:hover{box-shadow: 5px 5px 4px var(--box-color);transform: translate(-4px, -4px);}'),
         new ANTNavIStyle("$width$overflox/**/.store-div{vertical-align: bottom;}"),
-], array_merge([ANTNavFavicond('https://ANTRequest.nl', $title, $canonicalPath === '/')],
-        $canonicalPath !== '/' ? [ANTNavReddcond($canonicalPath, matchUniverses($uniname), true)] : array(),
-        [ANTNavBinary('/gallery/ascii-table.php', 'Ascii Table'), new ANTNavOption(
+], array_merge([ANTNavFavicond('https://ANTRequest.nl', $title, $selectedMe)],
+        $canonicalPath !== '/' ? [ANTNavReddcond($canonicalPath, matchUniverses($uniname), true)] :
+                array(), [ANTNavBinary('/gallery/ascii-table.php', 'Ascii Table'), new ANTNavOption(
                 '/dollmaker3/', '/dollmaker2/icon/endpoint.php?preset=Bee',
                 'dollmakerV5 ANT', new Color('a68300'),
                 new Color('fff100')),]));
@@ -65,12 +63,9 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/gallery/createSelectElement.php";
 global $characters_total, $reversed, $characters;
 global $width, $selectedFilter, $selectedBorder;
 global $gallery, $universe, $AiArt, $sorted;
-/** @noinspection PhpIncludeInspection */
-require_once "{$baseURL}characters.php";
-
+require_once __DIR__ . "/characters.php";
 $unisort = array();
 $universes = array();
-
 $unisort['Favicond-All'] = $characters_total;
 array_unshift($universes, 'Favicond-All');
 require_once "loginService.php";
@@ -298,6 +293,8 @@ global $Favi_verse ?>-->
             } else return false;
         } ?></div>
 </main>
+<!--<?= 'Definitions-START';
+if ($selectedMe): ?>-->
 <div class=divs>
     <h2>Definitions</h2>
     <dl class=descLi>
@@ -328,4 +325,5 @@ global $Favi_verse ?>-->
             <dd>The Universe the character belongs to.</dd>
         </div>
     </dl>
-</div>
+</div><!--<?= 'Definitions-END';
+endif ?>-->
