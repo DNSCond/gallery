@@ -67,10 +67,18 @@ function new_style_shades(string $name, Color $color): array
 $array = readCharacterJSON($path, true);
 if (empty($array)) {
     on404();
-} else {
-    $json = $array['json'];
-    $array = $array['data'];
+} elseif (array_key_exists('location', $array)) {
+    http_response_code(308);
+    if (preg_match("/^([a-zA-Z0-9\\-]+)\\/([a-zA-Z0-9\\-]+)$/D",
+            "{$array['location']}", $matches)) {
+        $linkto = null;
+        if ($matches[1] === 'main') $linkto = 'char';
+        else $linkto = "universe/$matches[1]";
+        header("Location: /gallery/$linkto/$matches[2]");
+    } else on404();
 }
+$json = $array['json'];
+$array = $array['data'];
 function on404(): never
 {
     http_response_code(404);

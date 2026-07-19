@@ -12,13 +12,15 @@ require_once "{$baseURL}dataDescriptionList.php";
 
 function readCharacterJSON(string $jsonFile, bool $longDate = false): null|array
 {
-    // , null|string|callable $_replacer = null
-    //$replacer = $replacer ?? fn(string $_key, mixed $val) => htmlspecialchars12($val);
     if (preg_match(
         '/htignore\\/(?:universe-images\\/[a-zA-Z0-9\\-]+|images)\\/([a-zA-Z0-9\\-]+)\\/main\\.json$/D',
         $jsonFile, $matches)) {
-        $json = json_decode(file_get_contents($jsonFile) ?? '{}', true);
+        $cont = file_get_contents($jsonFile);
+        if ($cont === false) return null;
+        $json = json_decode(file_get_contents($jsonFile), true);
         if ($json === null) return null;
+        if (array_key_exists('location', $json))
+            return array('location' => $json['location']);
         $name = htmlspecialchars12($json['name'] ?? $matches[1]);
         $charId = $matches[1];
         $array = array(

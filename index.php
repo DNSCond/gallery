@@ -133,7 +133,7 @@ global $Favi_verse ?>-->
     <!--<div hidden><mam-tree style="--width:50em;--height:50em;"><mam-node img-src=icon.png
     img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node></mam-tree></div>-->
     <form method=get class=border style=padding:0.5em;border-bottom:none>
-        <details open>
+        <details>
             <summary>Filter Options</summary>
             <div class=grid-3x>
                 <label><?= 'Icon Size: ' . createSelectElement("iconSize", [
@@ -255,7 +255,10 @@ global $Favi_verse ?>-->
             }
         }
         $universe = null;
-        $queryString = htmlspecialchars12("?{$_SERVER['QUERY_STRING']}");
+        $queryString = "?{$_SERVER['QUERY_STRING']}";
+        $queryString = preg_replace('/([?&])uni=[^&]*(&|$)/', '$1', $queryString);
+        $queryString = htmlspecialchars12(rtrim($queryString, '?&'));
+        $queryString = $canonicalPath . $queryString;
         if (!($selectedBorder === 'n' || $selectedBorder === 's')) {
             echo "<h2 class=h2-border id=Characters>Characters</h2>";
         }

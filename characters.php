@@ -25,6 +25,10 @@ $base = $imageDirector !== 'images' ? "universe/$imageDirector/" : 'char/';
 
 foreach (glob(__DIR__ . "/htignore/$baseDirectory/*/main.json") as $item) {
     if ($char = readCharacterJSON($item)) {
+        if (array_key_exists('location', $char)) {
+            continue;
+        }
+        if (!is_array($char['json'])) continue;
         if (array_key_exists('private', $char['json']))
             if ($char['json']['private']) continue;
         $characters_total++;
