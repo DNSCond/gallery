@@ -64,8 +64,7 @@ global $characters_total, $reversed, $characters;
 global $width, $selectedFilter, $selectedBorder;
 global $gallery, $universe, $AiArt, $sorted;
 require_once __DIR__ . "/characters.php";
-$unisort = array();
-$universes = array();
+global $unisort, $universes;
 $unisort['Favicond-All'] = $characters_total;
 array_unshift($universes, 'Favicond-All');
 require_once "loginService.php";
@@ -102,13 +101,12 @@ ob_start() ?>
     </style>
     <slot></slot>
 </template>
-<!--<?= '-->' . preg_replace('/\\s+/', " ",
-        ob_get_clean()) . ' /TEMPLATE ';
+<!--<?= '-->' . preg_replace('/\\s+/', " ", ob_get_clean()) . ' /TEMPLATE ';
 global $Favi_verse ?>-->
 <!--<script type=module src=MAM.js></script>-->
 <script type=module src=JSONScript.js>//gmdate('M d H:i:s Y \\G\\M\\T', +$_SERVER['REQUEST_TIME']),</script>
-<script type=application/json is=output-script><?= json_encode(
-            $Favi_verse, JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
+<script type=application/json is=output-script><?= json_encode([
+            'FaviVerse' => $Favi_verse], JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
 <script type=module><?= "class ShadowBoxedHover extends HTMLElement {connectedCallback() {this.classList.add('Shadow"
     . "BoxedHover');}} customElements.define('shadowboxed-hover', ShadowBoxedHover, {extends:'article'});" ?></script>
 <script type=module>
@@ -135,13 +133,14 @@ global $Favi_verse ?>-->
     <!--<div hidden><mam-tree style="--width:50em;--height:50em;"><mam-node img-src=icon.png
     img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node></mam-tree></div>-->
     <form method=get class=border style=padding:0.5em;border-bottom:none>
-        <details>
+        <details open>
             <summary>Filter Options</summary>
             <div class=grid-3x>
                 <label><?= 'Icon Size: ' . createSelectElement("iconSize", [
                             'toosmall' => 'Too Small', 'smallest' => 'Smallest', 'smaller' => 'Smaller',
                     ], function ($key) use ($width) {
-                        return ((str_starts_with($width, '/*smallest*//*toosmall*/') && $key === 'toosmall') ||
+                        $ts = $key === 'toosmall';
+                        return ((str_starts_with($width, '/*smallest*//*toosmall*/') && $ts) ||
                                 (str_starts_with($width, '/*smallest*/.') && $key === 'smallest') ||
                                 (str_starts_with($width, '/*smaller*/') && $key === 'smaller') ||
                                 (str_starts_with($width, '/*normal*//*expanded*/') && $key === 'expand')
