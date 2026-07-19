@@ -10,9 +10,13 @@ require_once 'matchUniverses.php';
 $watermarked = '.watermarked';
 header("vary: referer", false);
 header("cache-control: public, max-age=" . (3600 * 24 * 2));
-if ((array_key_exists('HTTP_REFERER', $_SERVER) && str_starts_with(
-            "{$_SERVER['HTTP_REFERER']}", "https://antrequest.nl"))
-    || file_exists('../../devhost.txt')) $watermarked = '';
+
+$devHostFile = '../../devhost.txt';
+$referer = array_key_exists('HTTP_REFERER', $_SERVER) ? ($_SERVER['HTTP_REFERER'] ?? '') : '';
+$isDevHost = file_exists($devHostFile) && file_get_contents($devHostFile) === 'DevHost' &&
+    (str_starts_with($referer, 'https://localhost') || str_starts_with($referer, 'http://localhost'));
+if (str_starts_with($referer, 'https://antrequest.nl') || $isDevHost) $watermarked = '';
+
 $original = $http = "htignore/404placeholder$watermarked.png";
 if (array_key_exists("univ", $_GET) &&
     array_key_exists("format", $_GET)) {
@@ -36,10 +40,10 @@ if (array_key_exists("univ", $_GET) &&
         preg_match('/^([a-zA-Z0-9\\-]+)$/iD', "{$_GET['uni']}") ||
         preg_match('/^([a-zA-Z0-9\\-]+)$/iD', "{$_GET['char']}") ||
         preg_match('/^(png|jpe?g|webp|avif)$/iD', "{$_GET['format']}")) {
-        $http = "htignore/universe-images/{$_GET['uni']}/{$_GET['char']}" .
-            "/$withai$prefix{$_GET['var']}$watermarked.{$_GET['format']}";
+        $univ = $_GET['uni'] === 'main' ? 'images' : "universe-images/{$_GET['uni']}";
+        $http = "htignore/$univ/{$_GET['char']}/$withai$prefix{$_GET['var']}$watermarked.{$_GET['format']}";
         if (!file_exists($http)) $http = $original; else {
-            $json = readJSONFile("htignore/universe-images/{$_GET['uni']}/{$_GET['char']}/main.json") ?? array();
+            $json = readJSONFile("htignore/$univ/{$_GET['char']}/main.json") ?? array();
             $name = $json['name'] ?? "{$_GET['char']}";
         }
     }

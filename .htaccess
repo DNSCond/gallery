@@ -6,7 +6,7 @@ RewriteRule ^universe/([a-zA-Z0-9\-]+)/?$ index.php?uni=$1 [L,QSA]
 
 RewriteRule ^char/([a-zA-Z0-9\-]+)/?$ characterPage.php?char=$1 [L,QSA]
 RewriteRule ^universe-img/([a-zA-Z0-9\-]+)\.webp$ servimg.php?univ=$1&format=webp [L,QSA]
-RewriteRule ^images/ai/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ img.php?img=ai.$1.$2.$3 [L,QSA]
+RewriteRule ^images/ai/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ servimg.php?img=ai.$1.$2.$3 [L,QSA]
 
 
 RewriteRule ^universe-images/([a-zA-Z0-9\-]+)/ai/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|jpe?g|webp|avif)$ servimg.php?uni=$1&prefix=gallery&char=$2&var=$3&format=$4&withai=1 [L,QSA]
@@ -14,13 +14,13 @@ RewriteRule ^universe-images/([a-zA-Z0-9\-]+)/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-
 RewriteRule ^universe-images/([a-zA-Z0-9\-]+)/ai/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ servimg.php?uni=$1&char=$2&var=$3&format=$4&withai=1 [L,QSA]
 
 RewriteRule ^universe-images/([a-zA-Z0-9\-]+)/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ servimg.php?uni=$1&char=$2&var=$3&format=$4&withai=0 [L,QSA]
-RewriteRule ^images/ai/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|jpe?g|webp|avif)$ img.php?img=ai.gallery.$1.$2.$3 [L,QSA]
-RewriteRule ^images/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|jpe?g|webp|avif)$ img.php?img=gallery.$1.$2.$3 [L,QSA]
+RewriteRule ^(images)/ai/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|jpe?g|webp|avif)$ servimg.php?uni=main&prefix=gallery&char=$2&var=$3&format=$4&withai=1 [L,QSA]
+RewriteRule ^(images)/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|jpe?g|webp|avif)$ servimg.php?uni=main&prefix=gallery&char=$2&var=$3&format=$4&withai=0 [L,QSA]
 
-RewriteRule ^images/comics\.([a-zA-Z0-9\-]+)\.(\d+)\.(\d+)\.(png|jpe?g|webp|avif)$ img.php?img=comics.$1.$2.$3.$4 [L,QSA]
-RewriteRule ^images/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ img.php?img=$1.$2.$3 [L,QSA]
-RewriteRule ^images/([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ img.php?img=$1.$2 [L,QSA]
-RewriteRule ^images/.+$ img.php?img=404 [L,QSA]
+#RewriteRule ^images/comics\.([a-zA-Z0-9\-]+)\.(\d+)\.(\d+)\.(png|jpe?g|webp|avif)$ servimg.php?img=comics.$1.$2.$3.$4 [L,QSA]
+RewriteRule ^(images)/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ servimg.php?uni=main&char=$2&var=$3&format=$4&withai=0  [L,QSA]
+RewriteRule ^(images)/([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ servimg.php?uni=main&char=$2&var=main&format=$4&withai=0 [L,QSA]
+RewriteRule ^(images)/.+$ servimg.php [L,QSA]
 
 RewriteRule ^char/?$ . [L,R=307]
 

@@ -2,9 +2,10 @@ import asyncio, aiohttp, aiofiles
 from urllib.parse import quote
 import pathlib
 
+skip_marked = False
 sem = asyncio.Semaphore(30)
 paths = [
-    # '404placeholder.png',
+    '404placeholder.png',
     *pathlib.Path('images').glob('*/*.*'),
     # *pathlib.Path('comic-images').glob('*/*/*.*'),
     *pathlib.Path('universe-images').glob('*/*/*.*'),
@@ -18,17 +19,15 @@ if pathlib.Path('images/universe-img.avif').exists():
 
 async def fetch(path: str, session: aiohttp.ClientSession):
     p = pathlib.Path(path)
-
-    if path.count('watermarked'):
-        return
+    if path.count('watermarked'): return
     path = p
     if path.suffix not in ['.jpg', '.jpeg', '.png', '.webp', '.avif']: return
     new_path = p.with_name(f"{path.stem}.watermarked{path.suffix}")
-    if new_path.exists(): return
+    if new_path.exists() and skip_marked: return
     async with sem:
         urlpath = ('https://localhost/gallery/img-convert.' +
-                     f'php?img-path={quote(str(p.resolve()))}'
-                     + f'&format=res{path.suffix}')
+                   f'php?img-path={quote(str(p.resolve()))}'
+                   + f'&format=res{path.suffix}')
         async with session.get(urlpath) as resp:
             resp.raise_for_status()
             async with aiofiles.open(new_path, 'wb') as file:
