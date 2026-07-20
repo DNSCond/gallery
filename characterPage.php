@@ -13,6 +13,7 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
 $homeIconBase64 = htmlspecialchars(base64_encode(file_get_contents('home.svg')), ENT_HTML5 | ENT_QUOTES);
 if (!preg_match('/^[a-zA-Z0-9\\-]+$/D', $char = $_GET['char'])) on404();
 
+$uniPName = 'main';
 $baseDirectory = 'images';
 $imageDirector = 'images';
 $canonicalPath = '/gallery/char/';
@@ -21,7 +22,7 @@ if (array_key_exists('uni', $_GET)) {
         if (file_exists(__DIR__ . '/htignore/universe-images/' . ($uni = $_GET['uni']))) {
             $canonicalPath = "/gallery/universe/$uni/";
             $baseDirectory = "universe-images/$uni";
-            $imageDirector = "$uni";
+            $imageDirector = $uniPName = "$uni";
         }
     }
 }
@@ -93,7 +94,7 @@ function on404(): never
     exit();
 }
 
-$uniName = $array['UniverseId'] = matchUniverses($array['UniverseId']);
+$uniName = $array['UniverseId'] = matchUniverses($uniname = $array['UniverseId']);
 $name = htmlspecialchars12($characterData['name'] ?? $char);
 
 $desc = $GLOBALS['defaultDesc'] = "$name\x20is a character of the $uniName Universe on ANTRequest.nl.";
@@ -165,7 +166,9 @@ function array__get_key_as_boolean(string $key, array $array): bool
             foreach (['creationDate-epoch', 'LastModified-epoch', 'registerDate-epoch'] as $rm) {
                 unset($array[$rm]);
             }
-            /*$array['Section'] = new HTMLSafeEscaped("<a href=#sec-$char>$name</a>")*/ ?></div>
+            $array['charId'] = "$uniPName/{$array['charId']}";
+            $array['UniverseId'] = new HTMLSafeEscaped(
+                    "<data value=$uniname>{$array['UniverseId']}</data>") ?></div>
     </div>
     <div class=divs>
         <div style="border-left:2px solid gray;border-right:2px solid gray;border-bottom:2px solid gray"
@@ -206,7 +209,8 @@ function array__get_key_as_boolean(string $key, array $array): bool
             })();
             $array = array();
             foreach (glob("htignore/$baseDirectory/$char/*") as $item) {
-                if (preg_match('/\\/(ai\\.)?gallery\\.([a-zA-Z0-9\\-]+)\\.(?:png|jpe?g|webp|avif)$/D', $item, $matches)) {
+                if (preg_match('/\\/(ai\\.)?gallery\\.([a-zA-Z0-9\\-]+)\\.(?:png|jpe?g|webp|avif)$/D',
+                        $item, $matches)) {
                     $needle = "$matches[1]$matches[2]";
                     if (in_array($needle, $array)) continue; else $array[] = $needle;
                     $altText = array_key_exists("$matches[1]gallery.$matches[2]", $altTexts)

@@ -4,6 +4,7 @@
     border: 3px solid gray;
     display: inline-block;
     margin: 1em 0 0 1em;
+    vertical-align: bottom;
 }
 
 .store-img {

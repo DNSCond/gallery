@@ -17,6 +17,8 @@ $isDevHost = file_exists($devHostFile) && file_get_contents($devHostFile) === 'D
     (str_starts_with($referer, 'https://localhost') || str_starts_with($referer, 'http://localhost'));
 if (str_starts_with($referer, 'https://antrequest.nl') || $isDevHost) $watermarked = '';
 
+//if(array_key_exists('asjson',$_GET)){header('content-type:application/json');echo json_encode($_GET);exit;}
+
 $original = $http = "htignore/404placeholder$watermarked.png";
 if (array_key_exists("univ", $_GET) &&
     array_key_exists("format", $_GET)) {
