@@ -74,6 +74,7 @@ if (empty($array)) {
             "{$array['location']}", $matches)) {
         $linkto = null;
         if ($matches[1] === 'main') $linkto = 'char';
+        elseif ($matches[1] === 'images') $linkto = 'char';
         else $linkto = "universe/$matches[1]";
         header("Location: /gallery/$linkto/$matches[2]");
     } else on404();

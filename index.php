@@ -44,8 +44,9 @@ if (array_key_exists('uni', $_GET)) {
     }
 }
 $selectedMe = $canonicalPath === '/';
+$title = (!$selectedMe ? "$uniname (" : '') . 'ANT\'s Character Gallery' . (!$selectedMe ? ")" : '');
 require_once "{$_SERVER['DOCUMENT_ROOT']}/gallery/matchUniverses.php";
-create_head2($title = 'ANT\'s Character Gallery', ['base' => '/gallery/',
+create_head2($title, ['base' => '/gallery/',
         'desc' => 'Explore the official character gallery of Favi Favicond at ANTRequest.nl!',
 ], [new ANTNavLinkTag('stylesheet', ["cssx.css", 'ddDL-table.css']),
         new ANTNavLinkTag('canonical', "https://antrequest.nl$canonicalPath"),
@@ -127,7 +128,7 @@ global $Favi_verse ?>-->
 <main class=divs>
     <h1><?= $title ?></h1>
     <p>Welcome to ANTRequest.nl. a hobby site of the Fictional Character Favi Favicond!
-        there are a total of <span><?= "$characters_total\x20characters on the site";
+        there are a total of <span><?= "$characters_total\x20characters in this folder";
             if ($characters_total !== ($integer = count($characters)))
                 echo ", and $integer of them are displayed below due to the filters." ?></span></p>
     <!--<div hidden><mam-tree style="--width:50em;--height:50em;"><mam-node img-src=icon.png
