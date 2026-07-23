@@ -10,7 +10,8 @@
     'Favicond-2' => 'Dresscond',
     'Favicond-All' => 'All',
     'CountryHumans' => 'Country Humans',
-    'AttachedEdu' => 'Attached Education'
+    'AttachedEdu' => 'Attached Education',
+    'AttachedAdu' => 'Teachers'
 ];
 function matchUniverses(string $universe): string
 {

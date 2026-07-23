@@ -2,7 +2,7 @@ import asyncio, aiohttp, aiofiles
 from urllib.parse import quote
 import pathlib
 
-skip_marked = False
+skip_marked = True
 sem = asyncio.Semaphore(30)
 paths = [
     '404placeholder.png',
@@ -41,6 +41,7 @@ async def main():
     async with aiohttp.ClientSession() as session:
         async with asyncio.TaskGroup() as taskgrp:
             for path in paths:
+                if path.name.starts_with('ai.'): continue
                 taskgrp.create_task(fetch(str(path).replace('\\', '/'), session))
             pass
     pass

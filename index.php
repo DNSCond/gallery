@@ -44,8 +44,9 @@ if (array_key_exists('uni', $_GET)) {
     }
 }
 $selectedMe = $canonicalPath === '/';
-$title = (!$selectedMe ? "$uniname (" : '') . 'ANT\'s Character Gallery' . (!$selectedMe ? ")" : '');
 require_once "{$_SERVER['DOCUMENT_ROOT']}/gallery/matchUniverses.php";
+$title = (!$selectedMe ? matchUniverses($uniname) . " (" : '') .
+    'ANT\'s Character Gallery' . (!$selectedMe ? ")" : '');
 create_head2($title, ['base' => '/gallery/',
         'desc' => 'Explore the official character gallery of Favi Favicond at ANTRequest.nl!',
 ], [new ANTNavLinkTag('stylesheet', ["cssx.css", 'ddDL-table.css']),
