@@ -1,12 +1,13 @@
-<?php use function ANTHeader\ANTNavBuzz;
-use function ANTHeader\ANTNavFavicond;
+<?php use ANTHeader\ANTNavLinkTag;
+use function ANTHeader\ANTNavBuzz;
 use function ANTHeader\create_head2;
+use function ANTHeader\ANTNavFavicond;
 use function Helpers\htmlspecialchars12;
 
 date_default_timezone_set('UTC');
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
-create_head2($title = 'ANT\'s Comics', ['base' => '/gallery/comics/',
-], [], [
+create_head2($title = 'ANT\'s Comics', ['base' => '/comics/',
+], [new ANTNavLinkTag('canonical', 'https://antrequest.nl/comics/')], [
         ANTNavFavicond('/', 'Home'),
         ANTNavBuzz('/gallery/comics/', $title, true)
 ]) ?>

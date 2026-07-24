@@ -5,7 +5,7 @@ function sha256(string $string): string
     return base64_encode(hash('sha256', $string, true));
 }
 
-$name = '404error';
+$name = '404 error';
 require_once 'matchUniverses.php';
 $watermarked = '.watermarked';
 header("vary: referer", false);
@@ -18,6 +18,11 @@ $isDevHost = file_exists($devHostFile) && file_get_contents($devHostFile) === 'D
 if (str_starts_with($referer, 'https://antrequest.nl') || $isDevHost) $watermarked = '';
 
 //if(array_key_exists('asjson',$_GET)){header('content-type:application/json');echo json_encode($_GET);exit;}
+if (array_key_exists('asjson', $_GET)) {
+    header('content-type:application/json');
+    echo json_encode($_GET);
+    exit;
+}
 
 $original = $http = "htignore/404placeholder$watermarked.png";
 if (array_key_exists("univ", $_GET) &&
@@ -49,7 +54,29 @@ if (array_key_exists("univ", $_GET) &&
             $name = $json['name'] ?? "{$_GET['char']}";
         }
     }
+} elseif (array_key_exists('type', $_GET)) /** @noinspection PhpSwitchStatementWitSingleBranchInspection */
+    switch ("{$_GET['type']}") {
+        case "comic":
+            if (($titleURL = getArrayValue($_GET, 'titleURL', '/^[a-zA-Z0-9\\-]+$/D'))
+                && ($episodeId = getArrayValue($_GET, 'episodeId', '/^\\d+$/D'))
+                && ($imageN = getArrayValue($_GET, 'imageN', '/^\\d\\d\\d$/D'))
+                && ($format = getArrayValue($_GET, 'format', '/^(?:webp|avif)$/D'))) {
+                $http = "htignore/comic-images/$titleURL/$episodeId/img$imageN.$format";
+                if (!file_exists($http)) $http = $original;
+            }
+    }
+function getArrayValue(array $array, string $key, ?string $validateRegex = null): mixed
+{
+    if (array_key_exists($key, $array)) {
+        if (is_string($validateRegex)) {
+            if (preg_match($validateRegex, $array[$key])) {
+                return $array[$key];
+            }
+        } else return $array[$key];
+    }
+    return null;
 }
+
 if ($http === $original) http_response_code(404);
 $sha256 = sha256($fileContent = file_get_contents("$http"));
 $ext = getimagesizefromstring("$fileContent");

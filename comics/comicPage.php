@@ -25,6 +25,11 @@ class Counter
         return ++$this->index;
     }
 
+    public function currentUp(): int
+    {
+        return $this->index++;
+    }
+
     public function current(): int
     {
         return $this->index;
@@ -34,12 +39,17 @@ class Counter
     {
         return str_pad("{$this->countUp()}", 3, '0', STR_PAD_LEFT);
     }
+
+    public function currentUpFormatted(): string
+    {
+        return str_pad("{$this->currentUp()}", 3, '0', STR_PAD_LEFT);
+    }
 }
 
 $images = array();
 $comicData = null;
-$title = "ANT's Comics";
 $name = 'Unknown';
+$title = "ANT's Comics";
 $item = "/{$_GET['titleURL']}/{$_GET['episodeId']}/edata.json";
 if (preg_match('/\\/([a-zA-Z0-9\\-]+)\\/(\\d+)\\/edata\\.json$/D', $item, $matches)) {
     if (is_string($content = file_get_contents("{$_SERVER['DOCUMENT_ROOT']}/gallery/htignore/comic-images/$item"))) {
@@ -49,19 +59,11 @@ if (preg_match('/\\/([a-zA-Z0-9\\-]+)\\/(\\d+)\\/edata\\.json$/D', $item, $match
             $comicData = $json_content;
             $index = new Counter;
             while (file_exists($file = "{$_SERVER['DOCUMENT_ROOT']}/gallery/htignore/"
-                    . "comic-images/$matches[1]/$matches[2]/img{$index->countUpFormatted()}.png")) {
-                if (preg_match('/\\/([a-zA-Z0-9\\-]+)\\/(\\d+)\\/img(\\d+)\\.png$/D', $file, $matchedFile)) {
-                    $array = array('png' => "comics.$matchedFile[1].$matchedFile[2].$matchedFile[3].png");
-                    if (file_exists(preg_replace('/\\.png$/D', '.webp', $file))) {
-                        $array['webp'] = "comics.$matchedFile[1].$matchedFile[2].$matchedFile[3].webp";
-                    }
-                    /*if (file_exists(preg_replace('/\\.png$/D', '.jpg', $file))) {
-                        $array['jpeg'] = "comics.$matchedFile[1].$matchedFile[2].$matchedFile[3].jpeg";
-                    } elseif (file_exists(preg_replace('/\\.png$/D', '.jpeg', $file))) {
-                        $array['jpeg'] = "comics.$matchedFile[1].$matchedFile[2].$matchedFile[3].jpeg";
-                    }*/
-                    if (file_exists(preg_replace('/\\.png$/D', '.avif', $file))) {
-                        $array['avif'] = "comics.$matchedFile[1].$matchedFile[2].$matchedFile[3].avif";
+                    . "comic-images/$matches[1]/$matches[2]/img{$index->currentUpFormatted()}.webp")) {
+                if (preg_match('/\\/([a-zA-Z0-9\\-]+)\\/(\\d+)\\/img(\\d+)\\.webp$/D', $file, $matchedFile)) {
+                    $array = array('webp' => "$matchedFile[1]/$matchedFile[2]/$matchedFile[3].webp");
+                    if (file_exists(preg_replace('/\\.webp$/D', '.avif', $file))) {
+                        $array['avif'] = "$matchedFile[1]/$matchedFile[2]/$matchedFile[3].avif";
                     }
                     $images[] = $array;
                 }
@@ -76,30 +78,27 @@ $navigator = new ANTNavOption($_SERVER['REQUEST_URI'],
         "/dollmaker2/icon/endpoint.php?bgcolor=%23$primaryColor&fgcolor=%238cfffa&L=%23fff200&W=%23000000&LC=%23ff0000&RC=%230000ff&v=1",
         htmlspecialchars12($title), new Color("#$secondaryColor"),
         new Color("#$primaryColor"), true);
-create_head2($title, ['base' => '/gallery/comics/',
-], [new ANTNavLinkTag('stylesheet', 'index.css')], [
+create_head2($title, ['base' => '/comics/',
+], [new ANTNavLinkTag('stylesheet', '/gallery/comics/index.css'),
+    //new ANTNavLinkTag('canonical', "https://localhost/comics/{$_GET['titleURL']}/{$_GET['episodeId']}")
+], [
         ANTNavFavicond('/', 'Home'),
-        ANTNavBuzz('/gallery/comics/', $title),
+        ANTNavBuzz('/comics/', $title),
         $navigator,
 ]);
 global $JWT;
 $watermarkBypass = '';
 require_once "../loginService.php";
-if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
-    $watermarkBypass = '?token=' . generateToken(array('nowatermark' => true), 60);
-}
 $title = htmlspecialchars12($title) ?>
 <div class=divs style=text-align:center><?= "<h1> $title</h1>\n";
-    $baseURL = '/gallery/images/';
+    $baseURL = '/gallery/comic-images/';
     $index = new Counter;
     foreach ($images as $image) {
         echo "<picture>";
         if (array_key_exists('avif', $image)) {
             echo "<source srcset=\"$baseURL{$image['avif']}$watermarkBypass\" type=image/avif>";
         }
-        if (array_key_exists('webp', $image)) {
-            echo "<source srcset=\"$baseURL{$image['webp']}$watermarkBypass\" type=image/webp>";
-        }
-        echo "<img src=\"$baseURL{$image['png']}$watermarkBypass\" id=\"img-$name-{$index->countUpFormatted()}\"" .
-                " width=800 height=1280 alt=\"Comic Image\"></picture\n>";
+        echo "<img src=\"$baseURL{$image['webp']}$watermarkBypass\" id=\"img-$name-{$index->countUpFormatted()}"
+                . "\" width=800 height=1280 alt=\"Comic Image\"></picture\n>";
     } ?></div>
+<script type=application/json is=output-script><?= json_encode([$images]) ?></script>

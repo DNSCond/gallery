@@ -21,6 +21,8 @@ RewriteRule ^(images)/ai/([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ servimg.php?un
 RewriteRule ^(images)/([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif)$ servimg.php?uni=main&char=$2&var=main&format=$4&withai=0 [L,QSA]
 RewriteRule ^(?:universe-)?images/.+$ servimg.php [L,QSA]
 
+RewriteRule ^comic-images/([a-zA-Z0-9\-]+)/(\d+)/(\d\d\d)\.(webp|avif)$ servimg.php?type=comic&format=$4&titleURL=$1&episodeId=$2&imageN=$3 [L,QSA]
+
 RewriteRule ^char/?$ . [L,R=307]
 
 RewriteCond %{REQUEST_FILENAME} !-f
