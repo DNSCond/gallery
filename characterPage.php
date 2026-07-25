@@ -162,8 +162,8 @@ function array__get_key_as_boolean(string $key, array $array): bool
     <div class=divs>
         <h1 style=text-align:center><?= "Character &quot;$name&quot;" ?></h1>
         <div style=text-align:center;margin-bottom:1em><?= imageTag($char, 'main',
-                    "$name's Main appearance", null, $aichar = !!
-                    $json['aichar'], ['introImage border'], $baseDirectory);
+                    "$name's Main appearance", null, $aichar = !!$json
+                    ['aichar'], ['introImage border'], $baseDirectory, true);
             foreach (['creationDate-epoch', 'LastModified-epoch', 'registerDate-epoch'] as $rm) {
                 unset($array[$rm]);
             }
@@ -191,7 +191,7 @@ function array__get_key_as_boolean(string $key, array $array): bool
                 $classArray = ['store-img', 'listing'];
                 if ($mustsourced) $classArray[] = 'mustsourced';
                 $imageTag = imageTag($charId, $variant, $alt, $prefixed,
-                        $ai, $classArray, $baseDirectory);
+                        $ai, $classArray, $baseDirectory, true);
                 if ($imageTag === false) return '';
                 $alt = htmlspecialchars12($alt);
                 return "<div class=store-div>$imageTag<div class=altText>$alt</div></div>";

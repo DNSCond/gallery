@@ -31,9 +31,11 @@ if (array_key_exists("univ", $_GET) &&
     $name = matchUniverses($univ);
     if (!preg_match('/^[a-z \\-\']+$/iD',
         $name)) $name = 'Universe Representation';
-    if ($univ === 'Main') $http = "htignore/images/universe-img$watermarked.{$_GET['format']}";
-    else $http = "htignore/universe-images/$univ/universe-img$watermarked.{$_GET['format']}";
-    if (!file_exists($http)) $http = $original;
+    if (preg_match('/^(png|jpe?g|webp|avif)$/iD', "{$_GET['format']}")) {
+        if ($univ === 'Main') $http = "htignore/images/universe-img$watermarked.{$_GET['format']}";
+        else $http = "htignore/universe-images/$univ/universe-img$watermarked.{$_GET['format']}";
+        if (!file_exists($http)) $http = $original;
+    }
 } elseif (array_key_exists("uni", $_GET) &&
     array_key_exists("var", $_GET) &&
     array_key_exists("char", $_GET) &&
@@ -45,13 +47,26 @@ if (array_key_exists("univ", $_GET) &&
         '/^([a-zA-Z0-9\\-]+)$/iD', "{$_GET['prefix']}")) $prefix = "{$_GET['prefix']}.";
     if (preg_match('/^([a-zA-Z0-9\\-]+)$/iD', "{$_GET['var']}") ||
         preg_match('/^([a-zA-Z0-9\\-]+)$/iD', "{$_GET['uni']}") ||
-        preg_match('/^([a-zA-Z0-9\\-]+)$/iD', "{$_GET['char']}") ||
-        preg_match('/^(png|jpe?g|webp|avif)$/iD', "{$_GET['format']}")) {
+        preg_match('/^([a-zA-Z0-9\\-]+)$/iD', "{$_GET['char']}")) {
         $univ = $_GET['uni'] === 'main' ? 'images' : "universe-images/{$_GET['uni']}";
-        $http = "htignore/$univ/{$_GET['char']}/$withai$prefix{$_GET['var']}$watermarked.{$_GET['format']}";
-        if (!file_exists($http)) $http = $original; else {
-            $json = readJSONFile("htignore/$univ/{$_GET['char']}/main.json") ?? array();
-            $name = $json['name'] ?? "{$_GET['char']}";
+        if ("{$_GET['format']}" === 'lightbox') {
+            echo "<!DOCTYPE html><meta charset=UTF-8><style>body{margin:0;display:grid;place-items:center;height"
+                . ":100vh;background-color:black}img{max-width:100vw;max-height:100vh;display:block}</style>";
+            echo "<meta name=robots content=noindex,nofollow><picture>";
+            $baseURL = '/gallery/';
+            $withai_ = $_GET['withai'] ? 'ai/' : '';
+            $basePath = "htignore/$univ/{$_GET['char']}/$withai_$prefix{$_GET['var']}";
+            foreach (["avif", "webp", "png"] as $format)
+                if (file_exists("htignore/$univ/{$_GET['char']}/$withai$prefix{$_GET['var']}.$format"))
+                    echo "<source srcset=$baseURL$univ/$withai_$prefix{$_GET['char']}.{$_GET['var']}.$format>";
+            echo "<img alt='The Image in a lightbox' src=$baseURL$univ/$withai_$prefix{$_GET['char']}.{$_GET['var']}.$format>";
+            exit("</picture>");
+        } elseif (preg_match('/^(png|jpe?g|webp|avif)$/iD', "{$_GET['format']}")) {
+            $http = "htignore/$univ/{$_GET['char']}/$withai$prefix{$_GET['var']}$watermarked.{$_GET['format']}";
+            if (!file_exists($http)) $http = $original; else {
+                $json = readJSONFile("htignore/$univ/{$_GET['char']}/main.json") ?? array();
+                $name = $json['name'] ?? "{$_GET['char']}";
+            }
         }
     }
 } elseif (array_key_exists('type', $_GET)) /** @noinspection PhpSwitchStatementWitSingleBranchInspection */

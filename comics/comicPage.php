@@ -1,5 +1,6 @@
 <?php
 
+use ANTHeader\ANTNavIStyle;
 use ANTHeader\ANTNavLinkTag;
 use ANTHeader\ANTNavOption;
 use function ANTHeader\ANTNavBuzz;
@@ -12,39 +13,7 @@ use function JWT\generateToken;
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
 require_once "{$_SERVER['DOCUMENT_ROOT']}/gallery/JWT.php";
 
-class Counter
-{
-    private int $index = 0;
-
-    public function __construct()
-    {
-    }
-
-    public function countUp(): int
-    {
-        return ++$this->index;
-    }
-
-    public function currentUp(): int
-    {
-        return $this->index++;
-    }
-
-    public function current(): int
-    {
-        return $this->index;
-    }
-
-    public function countUpFormatted(): string
-    {
-        return str_pad("{$this->countUp()}", 3, '0', STR_PAD_LEFT);
-    }
-
-    public function currentUpFormatted(): string
-    {
-        return str_pad("{$this->currentUp()}", 3, '0', STR_PAD_LEFT);
-    }
-}
+class Counter { private int $index = 0; public function __construct() {} public function countUp(): int {return ++$this->index;} public function currentUp(): int {return $this->index++;} public function current(): int {return $this->index;} public function countUpFormatted(): string {return str_pad("{$this->countUp()}", 3, '0', STR_PAD_LEFT);} public function currentUpFormatted(): string { return str_pad("{$this->currentUp()}", 3, '0', STR_PAD_LEFT);}}
 
 $images = array();
 $comicData = null;
@@ -80,9 +49,9 @@ $navigator = new ANTNavOption($_SERVER['REQUEST_URI'],
         new Color("#$primaryColor"), true);
 create_head2($title, ['base' => '/comics/',
 ], [new ANTNavLinkTag('stylesheet', '/gallery/comics/index.css'),
+        new ANTNavIStyle(array_key_exists('smaller', $_GET) ? 'picture>img{width:450px}' : ''),
     //new ANTNavLinkTag('canonical', "https://localhost/comics/{$_GET['titleURL']}/{$_GET['episodeId']}")
-], [
-        ANTNavFavicond('/', 'Home'),
+], [    ANTNavFavicond('/', 'Home'),
         ANTNavBuzz('/comics/', $title),
         $navigator,
 ]);

@@ -1,20 +1,14 @@
 <?php use function Helpers\htmlspecialchars12;
 
-use function JWT\generateToken;
-
-$dir = __DIR__;
-require_once "$dir/loginService.php";
-//require_once "$dir/JWT.php";
 function imageTag(string  $charId, string $variant, string $alt,
                   ?string $prefixed, bool|int $ai, array $classes,
-                  string  $universe = 'images'): string|false
+                  string  $universe = 'images', bool $lnx = false): string|false
 {
     $prefixed = is_string($prefixed) ? "$prefixed." : "";
     $baseURLAi = "$universe/ai/$prefixed$charId.$variant";
     $baseURL = "$universe/$prefixed$charId.$variant";
     $basePathAi = __DIR__ . "/htignore/$universe/$charId/ai.$prefixed$variant";
     $basePath = __DIR__ . "/htignore/$universe/$charId/$prefixed$variant";
-    $result = "<picture>";
     $suffix = '';
     if ($ai) {
         $basePath = $basePathAi;
@@ -32,6 +26,7 @@ function imageTag(string  $charId, string $variant, string $alt,
             if (!$exists) return false;
         }
     }
+    $result = ($lnx ? "<a href=$baseURL.lightbox>" : '') . "<picture>";
     $alt = htmlspecialchars12($alt);
     //$url = "images/$charId.$variant.png$suffix";
     $classes = implode(' ', $classes);
@@ -47,6 +42,6 @@ function imageTag(string  $charId, string $variant, string $alt,
         $size = getimagesize($pathURL)[3];
         $result .= "<img src=\"$baseURL.png$suffix\" $size " . //width=800 height=1280
             "alt=\"$alt\" class=\"$classes\" fetchpriority=auto loading=lazy>";
-        return "$result</picture>";
+        return "$result</picture>" . ($lnx ? "</a>" : '');
     }
 }

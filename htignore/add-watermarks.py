@@ -5,16 +5,16 @@ import pathlib
 skip_marked = True
 sem = asyncio.Semaphore(30)
 paths = [
-    '404placeholder.png',
+    pathlib.Path('404placeholder.png'),
     *pathlib.Path('images').glob('*/*.*'),
     # *pathlib.Path('comic-images').glob('*/*/*.*'),
     *pathlib.Path('universe-images').glob('*/*/*.*'),
     *pathlib.Path('universe-images').glob('*/*.*'),
 ]
 if pathlib.Path('images/universe-img.webp').exists():
-    paths.append('images/universe-img.webp')
+    paths.append(pathlib.Path('images/universe-img.webp'))
 if pathlib.Path('images/universe-img.avif').exists():
-    paths.append('images/universe-img.avif')
+    paths.append(pathlib.Path('images/universe-img.avif'))
 
 
 async def fetch(path: str, session: aiohttp.ClientSession):
@@ -41,7 +41,7 @@ async def main():
     async with aiohttp.ClientSession() as session:
         async with asyncio.TaskGroup() as taskgrp:
             for path in paths:
-                if path.name.starts_with('ai.'): continue
+                if path.name.startswith('ai.'): continue
                 taskgrp.create_task(fetch(str(path).replace('\\', '/'), session))
             pass
     pass
