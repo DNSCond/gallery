@@ -20,4 +20,4 @@ $AiArt = match ($_GET['AiArt']) {
     '2' => '2', // only
     default => '0', // hide
 };
-header('file-ran: settings.php', false);
+//header('file-ran: settings.php', false);

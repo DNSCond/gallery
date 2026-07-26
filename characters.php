@@ -17,9 +17,9 @@ $universes = array();
 $characters = array();
 $characters_total = 0;
 global $baseDirectory, $imageDirector;
-global $width, $selectedFilter, $selectedBorder;
-global $gallery, $universe, $AiArt, $sorted;
 require_once __DIR__ . "/settings.php";
+global $gallery, $universe, $AiArt, $sorted;
+global $width, $selectedFilter, $selectedBorder;
 if (!isset($width)) $width = '/*smaller*/.store-img{width:10em}.store-div{margin:0.5em 0 0 0.5em;}';
 $base = $imageDirector !== 'images' ? "universe/$imageDirector/" : 'char/';
 

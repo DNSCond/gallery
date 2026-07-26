@@ -1,7 +1,9 @@
 <?php // date_default_timezone_set('UTC');
 use ANTHeader\ANTNavIStyle;
 use ANTHeader\ANTNavOption;
+use ANTHeader\ANTNavMetaTag;
 use ANTHeader\ANTNavLinkTag;
+use function ANTHeader\ANTNavBuzz;
 use function ANTHeader\create_head2;
 use function ANTHeader\ANTNavBinary;
 use function ANTHeader\ANTNavReddcond;
@@ -43,20 +45,28 @@ if (array_key_exists('uni', $_GET)) {
         }
     }
 }
-$selectedMe = $canonicalPath === '/';
+$customCharacters = null;
+global $customCharacters;
 require_once "{$_SERVER['DOCUMENT_ROOT']}/gallery/matchUniverses.php";
+$is_custom_folder = array_key_exists('chars', $_GET);
+if ($is_custom_folder) {
+    require_once __DIR__ . "/choose-characters.php";
+}
+$selectedMe = $canonicalPath === '/' && !$is_custom_folder;
 $title = (!$selectedMe ? matchUniverses($uniname) . " (" : '') .
-    'ANT\'s Character Gallery' . (!$selectedMe ? ")" : '');
-create_head2($title, ['base' => '/gallery/',
-        'desc' => 'Explore the official character gallery of Favi Favicond at ANTRequest.nl!',
-], [new ANTNavLinkTag('stylesheet', ["cssx.css", 'ddDL-table.css']),
+        'ANT\'s Character Gallery' . (!$selectedMe ? ")" : '');
+$links = [new ANTNavLinkTag('stylesheet', ["cssx.css", 'ddDL-table.css']),
         new ANTNavLinkTag('canonical', "https://antrequest.nl$canonicalPath"),
         new ANTNavIStyle($inverted ? 'main img {filter:invert(100%)}' : "/*\$inverted*/"),
         new ANTNavIStyle('.ShadowBoxedHover{transition:transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;}' .
                 '.ShadowBoxedHover:hover{box-shadow: 5px 5px 4px var(--box-color);transform: translate(-4px, -4px);}'),
-        new ANTNavIStyle("$width$overflox/**/.store-div{vertical-align: bottom;}"),
-], array_merge([ANTNavFavicond('https://ANTRequest.nl', $title, $selectedMe)],
-        $canonicalPath !== '/' ? [ANTNavReddcond($canonicalPath, matchUniverses($uniname), true)] :
+        new ANTNavIStyle("$width$overflox/**/.store-div{vertical-align: bottom;}")];
+if ($is_custom_folder) $links[] = new ANTNavMetaTag('robots', 'noindex,nofollow');
+create_head2($title, ['base' => '/gallery/',
+        'desc' => 'Explore the official character gallery of Favi Favicond at ANTRequest.nl!',
+], $links, array_merge([ANTNavFavicond('https://ANTRequest.nl', $title, $selectedMe)],
+        $canonicalPath !== '/' ? [ANTNavReddcond($canonicalPath, matchUniverses($uniname), true)] : array(),
+        $is_custom_folder ? [ANTNavBuzz("", matchUniverses($uniname), true)] :
                 array(), [ANTNavBinary('/gallery/ascii-table.php', 'Ascii Table'), new ANTNavOption(
                 '/dollmaker3/', '/dollmaker2/icon/endpoint.php?preset=Bee',
                 'dollmakerV5 ANT', new Color('a68300'),
@@ -65,7 +75,7 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/gallery/createSelectElement.php";
 global $characters_total, $reversed, $characters;
 global $width, $selectedFilter, $selectedBorder;
 global $gallery, $universe, $AiArt, $sorted;
-require_once __DIR__ . "/characters.php";
+if (!$is_custom_folder) require_once __DIR__ . "/characters.php";
 global $unisort, $universes;
 $unisort['Favicond-All'] = $characters_total;
 array_unshift($universes, 'Favicond-All');
@@ -108,7 +118,8 @@ global $Favi_verse ?>-->
 <!--<script type=module src=MAM.js></script>-->
 <script type=module src=JSONScript.js>//gmdate('M d H:i:s Y \\G\\M\\T', +$_SERVER['REQUEST_TIME']),</script>
 <script type=application/json is=output-script><?= json_encode([
-            'FaviVerse' => $Favi_verse], JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
+            'FaviVerse' => $Favi_verse, 'customCharacters' => $customCharacters,
+    ], JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
 <script type=module><?= "class ShadowBoxedHover extends HTMLElement {connectedCallback() {this.classList.add('Shadow"
     . "BoxedHover');}} customElements.define('shadowboxed-hover', ShadowBoxedHover, {extends:'article'});" ?></script>
 <script type=module>
@@ -129,15 +140,21 @@ global $Favi_verse ?>-->
 <main class=divs>
     <h1><?= $title ?></h1>
     <p>Welcome to ANTRequest.nl. a hobby site of the Fictional Character Favi Favicond!
-        there are a total of <span><?= "$characters_total\x20characters in this folder";
+        there are a total of <span><?= "$characters_total\x20characters in this folder.";
             if ($characters_total !== ($integer = count($characters)))
-                echo ", and $integer of them are displayed below due to the filters." ?></span></p>
+                echo ", and $integer of them are displayed below due to the filters.";
+            $customCharactersStr = '';
+            if ($customCharacters) {
+                $urlencoded = urlencode($customCharactersStr = implode(',', $customCharacters));
+                echo "\x20<a href='/?chars=$urlencoded'>Share this Custom Folder.</a>";
+            } ?></span></p>
     <!--<div hidden><mam-tree style="--width:50em;--height:50em;"><mam-node img-src=icon.png
     img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node></mam-tree></div>-->
-    <form method=get class=border style=padding:0.5em;border-bottom:none>
+    <!--suppress CssReplaceWithShorthandSafely -->
+    <form method=get class=border style=padding:0.5em;padding-left:0;border-bottom:none>
         <details>
-            <summary>Filter Options</summary>
-            <div class=grid-3x>
+            <summary style=padding-left:0.5em>Filter Options</summary>
+            <div class=grid-3x style=padding-left:0.5em;padding-top:0.5em>
                 <label><?= 'Icon Size: ' . createSelectElement("iconSize", [
                             'toosmall' => 'Too Small', 'smallest' => 'Smallest', 'smaller' => 'Smaller',
                     ], function ($key) use ($width) {
@@ -185,6 +202,7 @@ global $Favi_verse ?>-->
                 <button type=submit>apply filters</button>
             </div>
         </details>
+        <span><?= $customCharacters ? "<input value='$customCharactersStr' name=chars type=hidden>" : '' ?></span>
     </form>
     <details style='padding: 0.5em 0.5em 0.5em 0; border-bottom:none' class=border>
         <summary style=padding-left:0.5em>Alternate Universes</summary>

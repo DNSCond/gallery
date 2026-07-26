@@ -11,20 +11,20 @@ function imageTag(string  $charId, string $variant, string $alt,
     $basePath = __DIR__ . "/htignore/$universe/$charId/$prefixed$variant";
     $suffix = '';
     if ($ai) {
-        $basePath = $basePathAi;
-        $baseURL = $baseURLAi;
-        if ($ai === 2) {
-            // If none of the files exist, return false
-            $files = ["$basePath.webp", "$basePath.png", "$basePath.jpeg", "$basePath.avif", "$basePath.jpg"];
-            $exists = false;
-            foreach ($files as $file) {
-                if (file_exists($file)) {
-                    $exists = true;
-                    break; // stop as soon as we find one
-                }
+
+        // If none of the files exist, return false
+        $files = ["$basePathAi.webp", "$basePathAi.png", "$basePathAi.jpeg", "$basePathAi.avif", "$basePathAi.jpg"];
+        $exists = false;
+        foreach ($files as $file) {
+            if (file_exists($file)) {
+                $exists = true;
+                break; // stop as soon as we find one
             }
-            if (!$exists) return false;
         }
+        if ($exists) {
+            $basePath = $basePathAi;
+            $baseURL = $baseURLAi;
+        } elseif ($ai === 2) return false;
     }
     $result = ($lnx ? "<a href=$baseURL.lightbox>" : '') . "<picture>";
     $alt = htmlspecialchars12($alt);
