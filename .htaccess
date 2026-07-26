@@ -26,4 +26,4 @@ RewriteRule ^comic-images/([a-zA-Z0-9\-]+)/(\d+)/(\d\d\d)\.(webp|avif|lightbox)$
 RewriteRule ^char/?$ . [L,R=307]
 
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^comics/([a-zA-Z0-9\-]+)/(\d+)$ comics/comicPage.php?titleURL=$1&episodeId=$2 [L,QSA]
+RewriteRule ^comics/([a-zA-Z0-9\-]+)/(\d+)/?$ comics/comicPage.php?titleURL=$1&episodeId=$2 [L,QSA]
