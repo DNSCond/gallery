@@ -55,6 +55,7 @@ if ($is_custom_folder) {
 $selectedMe = $canonicalPath === '/' && !$is_custom_folder;
 $title = (!$selectedMe ? matchUniverses($uniname) . " (" : '') .
         'ANT\'s Character Gallery' . (!$selectedMe ? ")" : '');
+if ($is_custom_folder) $title = 'Custom Character Gallery';
 $links = [new ANTNavLinkTag('stylesheet', ["cssx.css", 'ddDL-table.css']),
         new ANTNavLinkTag('canonical', "https://antrequest.nl$canonicalPath"),
         new ANTNavIStyle($inverted ? 'main img {filter:invert(100%)}' : "/*\$inverted*/"),
@@ -151,9 +152,9 @@ global $Favi_verse ?>-->
     <!--<div hidden><mam-tree style="--width:50em;--height:50em;"><mam-node img-src=icon.png
     img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node></mam-tree></div>-->
     <!--suppress CssReplaceWithShorthandSafely -->
-    <form method=get class=border style=padding:0.5em;padding-left:0;border-bottom:none>
+    <form method=get class=border>
         <details>
-            <summary style=padding-left:0.5em>Filter Options</summary>
+            <summary style=>Filter Options</summary>
             <div class=grid-3x style=padding-left:0.5em;padding-top:0.5em>
                 <label><?= 'Icon Size: ' . createSelectElement("iconSize", [
                             'toosmall' => 'Too Small', 'smallest' => 'Smallest', 'smaller' => 'Smaller',
@@ -204,8 +205,8 @@ global $Favi_verse ?>-->
         </details>
         <span><?= $customCharacters ? "<input value='$customCharactersStr' name=chars type=hidden>" : '' ?></span>
     </form>
-    <details style='padding: 0.5em 0.5em 0.5em 0; border-bottom:none' class=border>
-        <summary style=padding-left:0.5em>Alternate Universes</summary>
+    <details class='border alt-uni'>
+        <summary>Alternate Universes</summary>
         <div><?= "<h2 id=Other-Universes style=margin-bottom:0;padding-left:0.5em>Other Universes</h2>\n";
             ob_start(fn(string $string): string => preg_replace('/>\\s+</', '><',
                     preg_replace('/\\s+/', "\x20", $string)));

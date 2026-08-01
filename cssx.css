@@ -1,10 +1,8 @@
-/* */
-
 .store-div {
     border: 3px solid gray;
+    vertical-align: bottom;
     display: inline-block;
     margin: 1em 0 0 1em;
-    vertical-align: bottom;
 }
 
 .store-img {
@@ -21,11 +19,31 @@
     gap: 3ch;
 }
 
-/*todo rename*/
-details[open]>summary{padding-bottom:0.5em;border-bottom:3px solid gray;}
-
 .border {
     border: 3px solid gray;
+}
+
+form.border {
+    padding: 0.5em 0.5em 0.5em 0;
+    border-bottom: none;
+
+    summary {
+        padding-left: 0.5em;
+    }
+}
+
+.alt-uni {
+    padding: 0.5em 0.5em 0.5em 0;
+    border-bottom: none;
+
+    summary {
+        padding-left: 0.5em;
+    }
+}
+
+details[open] > summary {
+    padding-bottom: 0.5em;
+    border-bottom: 3px solid gray;
 }
 
 .charname {
