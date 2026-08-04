@@ -10,10 +10,10 @@ use function ANTHeader\ANTNavReddcond;
 use function ANTHeader\ANTNavFavicond;
 use function Helpers\htmlspecialchars12;
 
+$width = '/*normal*/';
 date_default_timezone_set('UTC');
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
 require_once __DIR__ . "/JWT.php";
-$width = '/*normal*/';
 $smaller = '/*smaller*/.store-img{width:10em}.store-div{margin:0.5em 0 0 0.5em;}';
 if (array_key_exists('iconSize', $_GET)) {
     $width = match ("{$_GET['iconSize']}") {

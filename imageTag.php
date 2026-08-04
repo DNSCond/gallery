@@ -26,7 +26,7 @@ function imageTag(string  $charId, string $variant, string $alt,
             $baseURL = $baseURLAi;
         } elseif ($ai === 2) return false;
     }
-    $result = ($lnx ? "<a href=$baseURL.lightbox>" : '') . "<picture>";
+    $result = ($lnx ? "<a target='_blank' href=$baseURL.lightbox>" : '') . "<picture>";
     $alt = htmlspecialchars12($alt);
     //$url = "images/$charId.$variant.png$suffix";
     $classes = implode(' ', $classes);
