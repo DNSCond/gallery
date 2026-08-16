@@ -157,13 +157,13 @@ function array__get_key_as_boolean(string $key, array $array): bool
         return (bool)$array[$key];
     } else return false;
 } ?>
-<script type=application/json is=output-script>false</script>
+<script type=application/json is=output-script><?= json_encode($json) ?></script>
 <main>
     <div class=divs>
         <h1 style=text-align:center><?= "Character &quot;$name&quot;" ?></h1>
-        <div style=text-align:center;margin-bottom:1em><?= imageTag($char, 'main',
-                    "$name's Main appearance", null, $aichar = !!$json
-                    ['aichar'], ['introImage border'], $baseDirectory, true);
+        <div style=text-align:center;margin-bottom:1em><?= imageTag($char,
+                    'main', "$name's Main appearance", null, false,
+                    ['introImage border'], $baseDirectory, true);
             foreach (['creationDate-epoch', 'LastModified-epoch', 'registerDate-epoch'] as $rm) {
                 unset($array[$rm]);
             }
@@ -191,7 +191,7 @@ function array__get_key_as_boolean(string $key, array $array): bool
                 $classArray = ['store-img', 'listing'];
                 if ($mustsourced) $classArray[] = 'mustsourced';
                 $imageTag = imageTag($charId, $variant, $alt, $prefixed,
-                        $ai, $classArray, $baseDirectory, true);
+                        $ai * 2, $classArray, $baseDirectory, true);
                 if ($imageTag === false) return '';
                 $alt = htmlspecialchars12($alt);
                 return "<div class=store-div>$imageTag<div class=altText>$alt</div></div>";
@@ -200,13 +200,13 @@ function array__get_key_as_boolean(string $key, array $array): bool
     <div class=divs>
         <h2 id=gallery>Gallery</h2>
         <div style=margin-left:0;padding-bottom:1em
-             class=border><?= (function () use ($char, $name, $aichar, $altTexts) {
+             class=border><?= (function () use ($char, $name, $altTexts) {
                 $altText1 = array_key_exists("main", $altTexts) ?
                         $altTexts["main"] : "$name's Main appearance";
                 $altText2 = array_key_exists("ai.main", $altTexts) ?
                         $altTexts["ai.main"] : "Them as anime";
-                return (!$aichar ? galleryListing($char, 'main', $altText1, false) : '')
-                        . galleryListing($char, 'main', $altText2, true);
+                return galleryListing($char, 'main', $altText1, false) .
+                        galleryListing($char, 'main', $altText2, true);
             })();
             $array = array();
             foreach (glob("htignore/$baseDirectory/$char/*") as $item) {
