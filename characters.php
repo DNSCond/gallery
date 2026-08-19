@@ -47,7 +47,6 @@ foreach (glob(__DIR__ . "/htignore/$baseDirectory/*/main.json") as $item) {
         }
         $name = $char['name'];
         $charId = $char['charId'];
-        $dataDescriptionList = '';
         $altText = "$name's Main Appearance";
         $array = $char;
         $char['subchars'] = array();
@@ -61,39 +60,18 @@ foreach (glob(__DIR__ . "/htignore/$baseDirectory/*/main.json") as $item) {
         unset($array['charId']);
         $char['image'] = $img = imageTag($charId, 'main', $altText,
             null, $AiArt, ['store-img'], $baseDirectory);
-        if (!str_starts_with($width, '/*smaller*/')) if ($img === false) continue;
-        if (str_starts_with($width, '/*smallest*/')) {
-            $echo = "<div class=store-div id=sec-$charId style=border-top:none><a href=$base$charId>$img</a></div>";
+        if ($width !== 'smaller') if ($img === false) continue;
+        if ($width === 'smallest' || $width === 'toosmall') {
+            $echo = "<div class='store-div noborder-top' id=sec-$charId><a href=$base$charId>$img</a></div>";
             if ($gallery) createAlternates($charId, $char, $name,
                 $AiArt, 'smallest', $_boxcolor);
         } else {
-            if (str_starts_with($width, '/*smaller*/')) {
-                //$dataDescriptionList = "<div class=FId>F-ID: {$array['FavicondId']}</div>";
+            if ($width === 'smaller') {
                 if ($gallery) createAlternates($charId, $char, $name, $AiArt, 'smaller', $_boxcolor);
-            } else if (str_starts_with($width, '/*normal*/')) {
-                if (str_starts_with($width, '/*normal*//*dev*/')) {
-                    $array['internalName'] = $charId;
-                } elseif (!str_starts_with($width, '/*normal*//*expanded*/')) {
-                    unset($array['LastModified']);
-                    unset($array['registerDate']);
-                    unset($array['listing']);
-                    unset($array['join-Id']);
-                }
-                foreach (['creationDate-epoch', 'LastModified-epoch', 'registerDate-epoch'] as $rm) {
-                    unset($array[$rm]);
-                }
-                $dataDescriptionList = dataDescriptionList(
-                    $array, ['overflox'], [
-                    'registerDate' => '#what-is-registerDate',
-                    'creationDate' => '#what-is-creationDate',
-                    'LastModified' => '#what-is-LastModified',
-                    'FavicondId' => '#what-is-FavicondId',
-                    'UniverseId' => '#what-is-UniverseId',
-                ]);
             }
-            $echo = "<article class=store-div data-c=$_boxcolor is=shadowboxed-hover id=sec-" .
-                "$charId><h3 class=charname><a href=$base$charId>$name</a></h3><a href=" .
-                "$base$charId>$img</a><div>$dataDescriptionList</div></article>";
+            $echo = "<article class=store-div data-c=$_boxcolor is=shadowboxed" .
+                "-hover id=sec-$charId><h3 class=charname><a href=$base$charId" .
+                ">$name</a></h3><a href=$base$charId>$img</a></article>";
         }
         if ($img === false && count($char['subchars']) === 0) continue;
         elseif ($img === false && count($char['subchars']) !== 0) $char['subonly'] = true;
@@ -103,6 +81,7 @@ foreach (glob(__DIR__ . "/htignore/$baseDirectory/*/main.json") as $item) {
         $characters[] = $char;
     }
 }
+
 if ($type = match ($sorted) {
     'displayName' => 'displayName',
     'creationDate' => 'creationDate',
@@ -156,9 +135,9 @@ function createAlternates(string $charId, array &$char, string $name, int $AiArt
             if ($AiArt === 2 && !$variant[1]) continue;
             $newchar = imageTag($charId, $variant[2], "Alternate of $name",
                 'gallery', $variant[1], ['store-img'], $baseDirectory);
-            if ($type === 'smallest') {
-                $char['subchars'][] = "<div class=store-div id=sec-$charId style="
-                    . "border-top:none><a href=$base$charId>$newchar</a></div>";
+            if ($type === 'smallest' || $type === 'toosmall') {
+                $char['subchars'][] = "<div class='store-div noborder' id="
+                    . "sec-$charId><a href=$base$charId>$newchar</a></div>";
             } else {
                 $char['subchars'][] = "<article class=store-div style=--box-color:$_boxcolor; is"
                     . "=shadowboxed-hover><h3 class=charname><a href=$charId#gallery>"

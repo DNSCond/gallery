@@ -58,39 +58,18 @@ if (array_key_exists('chars', $_GET)) {
                 unset($array['charId']);
                 $char['image'] = $img = imageTag($charId, 'main', $altText,
                     null, $AiArt, ['store-img'], $baseDirectory);
-                if (!str_starts_with($width, '/*smaller*/')) if ($img === false) continue;
-                if (str_starts_with($width, '/*smallest*/')) {
-                    $echo = "<div class=store-div id=sec-$charId style=border-top:none><a href=$base$charId>$img</a></div>";
+                if ($width !== 'smaller') if ($img === false) continue;
+                if ($width === 'smallest'|| $width === 'toosmall') {
+                    $echo = "<div class='store-div noborder-top' id=sec-$charId><a href=$base$charId>$img</a></div>";
                     if ($gallery) createAlternates($charId, $char, $name,
                         $AiArt, 'smallest', $_boxcolor);
                 } else {
-                    if (str_starts_with($width, '/*smaller*/')) {
-                        if ($gallery) createAlternates($charId, $char, $name, $AiArt,
-                            'smaller', $_boxcolor);
-                    } else if (str_starts_with($width, '/*normal*/')) {
-                        if (str_starts_with($width, '/*normal*//*dev*/')) {
-                            $array['internalName'] = $charId;
-                        } elseif (!str_starts_with($width, '/*normal*//*expanded*/')) {
-                            unset($array['LastModified']);
-                            unset($array['registerDate']);
-                            unset($array['listing']);
-                            unset($array['join-Id']);
-                        }
-                        foreach (['creationDate-epoch', 'LastModified-epoch', 'registerDate-epoch'] as $rm) {
-                            unset($array[$rm]);
-                        }
-                        $dataDescriptionList = dataDescriptionList(
-                            $array, ['overflox'], [
-                            'registerDate' => '#what-is-registerDate',
-                            'creationDate' => '#what-is-creationDate',
-                            'LastModified' => '#what-is-LastModified',
-                            'FavicondId' => '#what-is-FavicondId',
-                            'UniverseId' => '#what-is-UniverseId',
-                        ]);
+                    if ($width === 'smaller') {
+                        if ($gallery) createAlternates($charId, $char, $name, $AiArt, 'smaller', $_boxcolor);
                     }
-                    $echo = "<article class=store-div style=--box-color:$_boxcolor; is=shadowboxed-hover id=sec-" .
-                        "$charId><h3 class=charname><a href=$base$charId>$name</a></h3><a href=" .
-                        "$base$charId>$img</a><div>$dataDescriptionList</div></article>";
+                    $echo = "<article class=store-div data-c=$_boxcolor is=shadowboxed" .
+                        "-hover id=sec-$charId><h3 class=charname><a href=$base$charId" .
+                        ">$name</a></h3><a href=$base$charId>$img</a></article>";
                 }
                 if ($img === false && count($char['subchars']) === 0) continue;
                 elseif ($img === false && count($char['subchars']) !== 0) $char['subonly'] = true;

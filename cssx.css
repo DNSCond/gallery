@@ -58,6 +58,10 @@ form.border {
     summary {
         padding-left: 0.5em;
     }
+
+    .div {
+        width: 10em;
+    }
 }
 
 details[open] > summary {
@@ -109,12 +113,11 @@ h3.charname {
 }
 
 body {
+    /*default: 20em;*/
+    --width: 10em;
+
     .store-div {
         margin: 0.5em 0 0 0.5em;
-    }
-
-    .store-img {
-        width: 10em;
     }
 
     .store-big {
@@ -122,31 +125,31 @@ body {
     }
 
     &.smallest {
-        /*smallest*/
+        --width: 7em;
 
-        .store-img {
-            width: 7em;
+        img {
+            border: none;
         }
     }
 
     &.toosmall {
-        /*toosmall*/
-
-        .store-img {
-            width: 5em;
-        }
+        --width: 5em;
     }
 
-    &.smaller {
-        /*smaller*/
+    .smaller {
+        --width: 10em;
+    }
 
-        .store-img {
-            width: 10em;
-        }
+    .store-img {
+        width: var(--width);
+    }
+
+    &.larger .store-img {
+        width: 20em;
     }
 
     .overflox > div, .charname {
-        /*width: calc(10em - 2ch);*/
+        width: calc(var(--width) - 2ch);
         overflow-x: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -163,10 +166,29 @@ body {
     }
 }
 
+.noborder {
+    border: none;
+}
+
+.noborder-top {
+    border-top: none;
+}
+
+.em10 {
+    width: 10em;
+}
+
 .ShadowBoxedHover {
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     /*noinspection CssInvalidFunction*/
     --box-color: attr(data-c type(<color>), #00a8f3);
+}
+
+/*noinspection CssInvalidPropertyValue, CssInvalidFunction*/
+@supports not (x: attr(x type(*))) {
+    .ShadowBoxedHover {
+        --box-color: #00a8f3;
+    }
 }
 
 .ShadowBoxedHover:hover {

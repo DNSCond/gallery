@@ -95,12 +95,11 @@ create_head3($title, [
             'moon' => '/dollmaker3/v1u._3AZGf_tzan_0eD9__j9jP_9wIX_JSgs_wDx_QQC0AcB0QcB',
             'sun' => '/dollmaker3/v1u._1WU_f9VvP3_ZZW9_1W8_f80JNH_JSgs_wAAgAQC0AcB0QcB',
             default => array_key_exists('ventHref', $characterData) ? $characterData['ventHref'] : null,
-        }, 'bread' => [
+        }, 'class' => ['larger'], 'bread' => [
                 array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
-                array('text' => $uniName, 'href' => $canonicalPath),
+                array('text' => $uniPName, 'href' => $canonicalPath),
                 array('text' => "{$characterData['name']}", 'href' => "$canonicalPath$char"),
-        ], 'borderColor' => $borderColor, 'backColor' => $backColor,
-        'stylelinks' => [
+        ], 'borderColor' => $borderColor, 'backColor' => $backColor, 'stylelinks' => [
                 "cssx.css", "characterPage.css", 'ddDL-table.css',
         ], 'canonical' => "https://antrequest.nl$canonicalPath$char"
 ]);
@@ -153,7 +152,7 @@ function array__get_key_as_boolean(string $key, array $array): bool
                                            $prefixed = null, bool $mustsourced = true): string
             {
                 global $baseDirectory;
-                $classArray = ['store-img','store-big', 'listing'];
+                $classArray = ['store-img', 'store-big', 'listing'];
                 if ($mustsourced) $classArray[] = 'mustsourced';
                 $imageTag = imageTag($charId, $variant, $alt, $prefixed,
                         $ai * 2, $classArray, $baseDirectory, true);

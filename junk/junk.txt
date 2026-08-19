@@ -157,3 +157,37 @@ function camelToKebab(camel) {
     return `${camel}`.replaceAll(/[A-Z]/g, substr => '-' + substr).toLowerCase().replace(/^-/, '');
 }
 ---
+echo '<!-- TEMPLATE ';
+ob_start() ?>
+<template id=MAMNode>
+    <!--suppress CssUnresolvedCustomProperty -->
+    <style>
+        :host {
+            display: block;
+            position: relative;
+            width: var(--width);
+            height: var(--height);
+        }
+    </style>
+</template>
+<template id=MAMTree>
+    <!--suppress CssUnresolvedCustomProperty -->
+    <style>
+        :host, picture {
+            max-width: var(--width);
+            max-height: var(--height);
+        }
+
+        :host {
+            position: absolute;
+        }
+    </style>
+    <slot></slot>
+</template>
+<!--<?= '-->' . preg_replace('/\\s+/', " ", ob_get_clean()) . ' /TEMPLATE ';
+global $Favi_verse ?>-->
+<!--<script type=module src=MAM.js></script>-->
+---
+    <!--<div hidden><mam-tree style="--width:50em;--height:50em;"><mam-node img-src=icon.png
+    img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node></mam-tree></div>-->
+---

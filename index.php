@@ -40,27 +40,15 @@ $title = (!$selectedMe ? matchUniverses($uniname) . " (" : '') .
         'Favicond\'s Character Gallery' . (!$selectedMe ? ")" : '');
 if ($is_custom_folder) $title = 'Custom Character Gallery';
 create_head3($title, ['base' => '/gallery/',
-        'desc' => 'Explore the official character gallery of Favi Favicond at ANTRequest.nl!',
+        'desc' => 'Explore the character gallery of Favi Favicond at ANTRequest.nl!',
         'canonical' => "https://antrequest.nl$canonicalPath", 'bread' => [
                 array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
                 $canonicalPath !== '/' ? ['text' => matchUniverses($uniname),
                         'href' => "https://antrequest.nl$canonicalPath"] : null,
         ], 'stylelinks' => ["cssx.css", 'ddDL-table.css'], 'metatags' => [
                 $is_custom_folder ? ['robots', 'noindex,nofollow'] : null,
-        ],
+        ], 'class' => [$width],
 ]);
-//create_head2($title, ['base' => '/gallery/',
-//        'desc' => 'Explore the official character gallery of Favi Favicond at ANTRequest.nl!',
-//        'defaultCSP' => 2, 'bread' => [
-//            array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
-//        ],
-//], $links, array_merge([ANTNavFavicond('https://ANTRequest.nl', $title, $selectedMe)],
-//        $canonicalPath !== '/' ? [ANTNavReddcond($canonicalPath, matchUniverses($uniname), true)] : array(),
-//        $is_custom_folder ? [ANTNavBuzz("", matchUniverses($uniname), true)] :
-//                array(), [ANTNavBinary('/gallery/ascii-table.php', 'Ascii Table'), new ANTNavOption(
-//                '/dollmaker3/', '/dollmaker2/icon/endpoint.php?preset=Bee',
-//                'dollmakerV5 ANT', new Color('a68300'),
-//                new Color('fff100')),]));
 require_once "{$_SERVER['DOCUMENT_ROOT']}/gallery/createSelectElement.php";
 global $characters_total, $reversed, $characters;
 global $width, $selectedFilter, $selectedBorder;
@@ -69,41 +57,12 @@ if (!$is_custom_folder) require_once __DIR__ . "/characters.php";
 global $unisort, $universes;
 $unisort['Favicond-All'] = $characters_total;
 array_unshift($universes, 'Favicond-All');
-echo '<!-- TEMPLATE ';
-ob_start() ?>
-<template id=MAMNode>
-    <!--suppress CssUnresolvedCustomProperty -->
-    <style>
-        :host {
-            display: block;
-            position: relative;
-            width: var(--width);
-            height: var(--height);
-        }
-    </style>
-</template>
-<template id=MAMTree>
-    <!--suppress CssUnresolvedCustomProperty -->
-    <style>
-        :host, picture {
-            max-width: var(--width);
-            max-height: var(--height);
-        }
-
-        :host {
-            position: absolute;
-        }
-    </style>
-    <slot></slot>
-</template>
-<!--<?= '-->' . preg_replace('/\\s+/', " ", ob_get_clean()) . ' /TEMPLATE ';
-global $Favi_verse ?>-->
-<!--<script type=module src=MAM.js></script>-->
+global $Favi_verse ?>
+<script type=module src=js/index.js></script>
 <script type=application/json is=output-script><?= json_encode([
             'FaviVerse' => $Favi_verse, 'customCharacters' => $customCharacters,
             'REQUEST_TIME' => gmdate('M d H:i:s Y \\G\\M\\T', +$_SERVER['REQUEST_TIME'])
     ], JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
-<script type=module src=js/index.js></script>
 <main class=divs>
     <h1><?= $title ?></h1>
     <p>Welcome to ANTRequest.nl. a hobby site of the Fictional Character Favi Favicond!
@@ -113,11 +72,8 @@ global $Favi_verse ?>-->
             $customCharactersStr = '';
             if ($customCharacters) {
                 $urlencoded = urlencode($customCharactersStr = implode(',', $customCharacters));
-                echo "\x20<a href=/?chars=$urlencoded>Share this Custom Folder.</a>";
+                echo "\x20<a href='/?chars=$urlencoded'>Share this Custom Folder.</a>";
             } ?></span></p>
-    <!--<div hidden><mam-tree style="--width:50em;--height:50em;"><mam-node img-src=icon.png
-    img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node></mam-tree></div>-->
-    <!--suppress CssReplaceWithShorthandSafely -->
     <form method=get class=border>
         <details>
             <summary>Filter Options</summary>
@@ -175,12 +131,12 @@ global $Favi_verse ?>-->
                 $matchUniverse = matchUniverses($universeSlug);
                 $Universe = htmlspecialchars12($matchUniverse);
                 $univHref = "/gallery/universe/$universeSlug/" ?>
-                <article class=store-div is=shadowboxed-hover>
+                <article class='store-div div' is=shadowboxed-hover>
                 <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
                 <a href="<?= $univHref ?>"><img
-                            style=width:10em class=store-img width=800
+                            class='store-img em10' width=800 height=1280
                             alt="<?= "Universe thumbnail for $Universe" ?>"
-                            height=1280 src="<?= "universe-img/$universeSlug.webp" ?>"></a>
+                            src="<?= "universe-img/$universeSlug.webp" ?>"></a>
                 </article><?= "<!-- $Universe -->";
                 if ($return) return ob_get_clean();
                 return '';
@@ -190,12 +146,12 @@ global $Favi_verse ?>-->
             $universeSlug = 'Main';
             $univHref = "/" ?>
             <p class=padleft>These other Universes contain more characters to meet!
-            <article class=store-div is=shadowboxed-hover>
+            <article class='store-div div' is=shadowboxed-hover>
                 <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
                 <a href="<?= $univHref ?>"><img
-                            style=width:10em class=store-img width=800
+                            class='store-img em10' width=800 height=1280
                             alt="<?= "Universe thumbnail for $Universe" ?>"
-                            height=1280 src="<?= "universe-img/$universeSlug.webp" ?>"></a>
+                            src="<?= "universe-img/$universeSlug.webp" ?>"></a>
             </article><?= "<!-- $Universe -->";
             $versesArray = array();
             foreach (glob(__DIR__ . '/htignore/universe-images/*/') as $item) {
