@@ -91,7 +91,7 @@ foreach (glob(__DIR__ . "/htignore/$baseDirectory/*/main.json") as $item) {
                     'UniverseId' => '#what-is-UniverseId',
                 ]);
             }
-            $echo = "<article class=store-div style=--box-color:$_boxcolor; is=shadowboxed-hover id=sec-" .
+            $echo = "<article class=store-div data-c=$_boxcolor is=shadowboxed-hover id=sec-" .
                 "$charId><h3 class=charname><a href=$base$charId>$name</a></h3><a href=" .
                 "$base$charId>$img</a><div>$dataDescriptionList</div></article>";
         }

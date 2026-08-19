@@ -14,10 +14,9 @@ function dataDescriptionList(array $data, array $classes = array(), array $keyTo
         }
         $values[] = "<div data-key=\"$dataKey\" data-value=\"$valueStr\"><dt>$key<dd>$value</div>";
     }
-    $classes[] = 'descLi';
+    $classes[] = 'descLi border';
     $classes = htmlspecialchars12(implode(' ', $classes));
-    return "\n<dl class=\"$classes\" style=border-bottom:none;border-left:none;border-right:none>\n"
-        . implode("\n", $values) . "\n</dl>\n";
+    return "\n<dl class=\"$classes\">\n" . implode("\n", $values) . "\n</dl>\n";
 }
 
 class HTMLSafeEscaped implements JsonSerializable

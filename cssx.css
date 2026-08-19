@@ -5,10 +5,15 @@
     margin: 1em 0 0 1em;
 }
 
+#the-store {
+    margin-left: 0;
+    padding-bottom: 1em;
+}
+
 .store-img {
     height: auto;
-    border-top: 3px solid grey;
     display: block;
+    border-top: 3px solid grey;
     aspect-ratio: 800 / 1280;
     object-fit: contain;
 }
@@ -30,6 +35,20 @@ form.border {
     summary {
         padding-left: 0.5em;
     }
+}
+
+.filterOpts {
+    padding-left: 0.5em;
+    padding-top: 0.5em;
+}
+
+.altUniStyle {
+    margin-bottom: 0;
+    padding-left: 0.5em
+}
+
+.padleft {
+    padding-left: 0.5em;
 }
 
 .alt-uni {
@@ -87,4 +106,70 @@ h3.charname {
 .grid-3x {
     display: inline-grid;
     grid-template-columns: auto;
+}
+
+body {
+    .store-div {
+        margin: 0.5em 0 0 0.5em;
+    }
+
+    .store-img {
+        width: 10em;
+    }
+
+    .store-big {
+        width: 20em;
+    }
+
+    &.smallest {
+        /*smallest*/
+
+        .store-img {
+            width: 7em;
+        }
+    }
+
+    &.toosmall {
+        /*toosmall*/
+
+        .store-img {
+            width: 5em;
+        }
+    }
+
+    &.smaller {
+        /*smaller*/
+
+        .store-img {
+            width: 10em;
+        }
+    }
+
+    .overflox > div, .charname {
+        /*width: calc(10em - 2ch);*/
+        overflow-x: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .store-div {
+        vertical-align: bottom;
+    }
+
+    &.inverted {
+        main img {
+            filter: invert(100%);
+        }
+    }
+}
+
+.ShadowBoxedHover {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    /*noinspection CssInvalidFunction*/
+    --box-color: attr(data-c type(<color>), #00a8f3);
+}
+
+.ShadowBoxedHover:hover {
+    box-shadow: 5px 5px 4px var(--box-color);
+    transform: translate(-4px, -4px);
 }

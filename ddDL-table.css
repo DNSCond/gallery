@@ -52,6 +52,12 @@ dl.descLi {
     dt:after {
         content: ": ";
     }
+
+    &.border {
+        border-bottom: none;
+        border-left: none;
+        border-right: none;
+    }
 }
 
 .boolean.false {

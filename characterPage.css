@@ -16,3 +16,49 @@
     padding: 1ch;
     min-height: 4em;
 }
+
+.divs > .character-profile {
+    & > :first-child {
+        margin-top: 0
+    }
+
+    & > :last-child {
+        margin-bottom: 0
+    }
+}
+
+h1 {
+    margin-bottom: 0.5em;
+    text-align: center;
+
+    & + div {
+        text-align: center;
+    }
+}
+
+.store-img {
+    border: none;
+    border-bottom: 3px solid gray
+}
+
+.store-img, .store-div {
+    width: 20em;
+}
+
+.overflox > div, .charname {
+    width: calc(20em - 2ch);
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#gallery + * {
+    margin-left: 0;
+    padding-bottom: 1em;
+}
+
+.border-set2 {
+    border-left: 2px solid gray;
+    border-right: 2px solid gray;
+    border-bottom: 2px solid gray
+}

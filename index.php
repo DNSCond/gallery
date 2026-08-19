@@ -1,37 +1,20 @@
 <?php // date_default_timezone_set('UTC');
-use ANTHeader\ANTNavIStyle;
-use ANTHeader\ANTNavOption;
-use ANTHeader\ANTNavMetaTag;
-use ANTHeader\ANTNavLinkTag;
-use function ANTHeader\ANTNavBuzz;
-use function ANTHeader\create_head2;
-use function ANTHeader\ANTNavBinary;
-use function ANTHeader\ANTNavReddcond;
-use function ANTHeader\ANTNavFavicond;
+
+use function ANTHeader\create_head3;
 use function Helpers\htmlspecialchars12;
 
-$width = '/*normal*/';
+$width = 'smaller';
 date_default_timezone_set('UTC');
-require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
+require_once "{$_SERVER['DOCUMENT_ROOT']}/require/header3/head3.php";
 require_once __DIR__ . "/JWT.php";
-$smaller = '/*smaller*/.store-img{width:10em}.store-div{margin:0.5em 0 0 0.5em;}';
 if (array_key_exists('iconSize', $_GET)) {
     $width = match ("{$_GET['iconSize']}") {
-        'smallest' => '/*smallest*/.store-img{width:7em}.store-div{margin:0.5em 0 0 0.5em;}',
-        'toosmall' => '/*smallest*//*toosmall*/.store-img{width:5em}.store-div{margin:0.5em 0 0 0.5em;}',
-        'expand' => "$width/*expanded*/",
-        'dev' => "$width/*dev*/",
-        'smaller' => "$smaller",
-        default => "$width",
+        'smallest' => 'smallest',
+        'toosmall' => 'toosmall',
+        default => "smaller",
     };
-} else $width = $smaller;
-$overflox = 20;
-if (preg_match('/\\.store-img\\{width:(\\d+)em;?}/', $width, $matches)) {
-    $overflox = $matches[1];
-} else $width = "$width.store-img{width:20em;}";
+}
 $inverted = isset($GLOBALS['inverted']);
-$overflox = ".overflox>div,.charname{width:calc({$overflox}em - 2ch);" .
-        "overflow-x:hidden;white-space:nowrap;text-overflow:ellipsis;}";
 $baseDirectory = 'images';
 $imageDirector = 'images';
 $canonicalPath = '/';
@@ -54,24 +37,30 @@ if ($is_custom_folder) {
 }
 $selectedMe = $canonicalPath === '/' && !$is_custom_folder;
 $title = (!$selectedMe ? matchUniverses($uniname) . " (" : '') .
-        'ANT\'s Character Gallery' . (!$selectedMe ? ")" : '');
+        'Favicond\'s Character Gallery' . (!$selectedMe ? ")" : '');
 if ($is_custom_folder) $title = 'Custom Character Gallery';
-$links = [new ANTNavLinkTag('stylesheet', ["cssx.css", 'ddDL-table.css']),
-        new ANTNavLinkTag('canonical', "https://antrequest.nl$canonicalPath"),
-        new ANTNavIStyle($inverted ? 'main img {filter:invert(100%)}' : "/*\$inverted*/"),
-        new ANTNavIStyle('.ShadowBoxedHover{transition:transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;}' .
-                '.ShadowBoxedHover:hover{box-shadow: 5px 5px 4px var(--box-color);transform: translate(-4px, -4px);}'),
-        new ANTNavIStyle("$width$overflox/**/.store-div{vertical-align: bottom;}")];
-if ($is_custom_folder) $links[] = new ANTNavMetaTag('robots', 'noindex,nofollow');
-create_head2($title, ['base' => '/gallery/',
+create_head3($title, ['base' => '/gallery/',
         'desc' => 'Explore the official character gallery of Favi Favicond at ANTRequest.nl!',
-], $links, array_merge([ANTNavFavicond('https://ANTRequest.nl', $title, $selectedMe)],
-        $canonicalPath !== '/' ? [ANTNavReddcond($canonicalPath, matchUniverses($uniname), true)] : array(),
-        $is_custom_folder ? [ANTNavBuzz("", matchUniverses($uniname), true)] :
-                array(), [ANTNavBinary('/gallery/ascii-table.php', 'Ascii Table'), new ANTNavOption(
-                '/dollmaker3/', '/dollmaker2/icon/endpoint.php?preset=Bee',
-                'dollmakerV5 ANT', new Color('a68300'),
-                new Color('fff100')),]));
+        'canonical' => "https://antrequest.nl$canonicalPath", 'bread' => [
+                array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
+                $canonicalPath !== '/' ? ['text' => matchUniverses($uniname),
+                        'href' => "https://antrequest.nl$canonicalPath"] : null,
+        ], 'stylelinks' => ["cssx.css", 'ddDL-table.css'], 'metatags' => [
+                $is_custom_folder ? ['robots', 'noindex,nofollow'] : null,
+        ],
+]);
+//create_head2($title, ['base' => '/gallery/',
+//        'desc' => 'Explore the official character gallery of Favi Favicond at ANTRequest.nl!',
+//        'defaultCSP' => 2, 'bread' => [
+//            array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
+//        ],
+//], $links, array_merge([ANTNavFavicond('https://ANTRequest.nl', $title, $selectedMe)],
+//        $canonicalPath !== '/' ? [ANTNavReddcond($canonicalPath, matchUniverses($uniname), true)] : array(),
+//        $is_custom_folder ? [ANTNavBuzz("", matchUniverses($uniname), true)] :
+//                array(), [ANTNavBinary('/gallery/ascii-table.php', 'Ascii Table'), new ANTNavOption(
+//                '/dollmaker3/', '/dollmaker2/icon/endpoint.php?preset=Bee',
+//                'dollmakerV5 ANT', new Color('a68300'),
+//                new Color('fff100')),]));
 require_once "{$_SERVER['DOCUMENT_ROOT']}/gallery/createSelectElement.php";
 global $characters_total, $reversed, $characters;
 global $width, $selectedFilter, $selectedBorder;
@@ -80,13 +69,6 @@ if (!$is_custom_folder) require_once __DIR__ . "/characters.php";
 global $unisort, $universes;
 $unisort['Favicond-All'] = $characters_total;
 array_unshift($universes, 'Favicond-All');
-require_once "loginService.php";
-global $JWT;
-if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
-    $currentUsername = htmlspecialchars12("{$token['username']}");
-    echo '<div style="height:3em;background-color:white;border-bottom:4px solid #e689bf;">';
-    echo "<div style=width:88%;max-width:88%;margin:auto>ANT//$currentUsername</div></div>";
-}
 echo '<!-- TEMPLATE ';
 ob_start() ?>
 <template id=MAMNode>
@@ -117,27 +99,11 @@ ob_start() ?>
 <!--<?= '-->' . preg_replace('/\\s+/', " ", ob_get_clean()) . ' /TEMPLATE ';
 global $Favi_verse ?>-->
 <!--<script type=module src=MAM.js></script>-->
-<script type=module src=JSONScript.js>//gmdate('M d H:i:s Y \\G\\M\\T', +$_SERVER['REQUEST_TIME']),</script>
 <script type=application/json is=output-script><?= json_encode([
             'FaviVerse' => $Favi_verse, 'customCharacters' => $customCharacters,
+            'REQUEST_TIME' => gmdate('M d H:i:s Y \\G\\M\\T', +$_SERVER['REQUEST_TIME'])
     ], JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
-<script type=module><?= "class ShadowBoxedHover extends HTMLElement {connectedCallback() {this.classList.add('Shadow"
-    . "BoxedHover');}} customElements.define('shadowboxed-hover', ShadowBoxedHover, {extends:'article'});" ?></script>
-<script type=module>
-    class ShowOnload extends HTMLTemplateElement {
-        #emptied = false;
-
-        connectedCallback() {
-            if (this.#emptied) return;
-            this.#emptied = true;
-            while (this.content.firstElementChild) {
-                this.before(this.content.firstElementChild);
-            }
-        }
-    }
-
-    customElements.define('show-onload', ShowOnload, {extends: 'template'});
-</script>
+<script type=module src=js/index.js></script>
 <main class=divs>
     <h1><?= $title ?></h1>
     <p>Welcome to ANTRequest.nl. a hobby site of the Fictional Character Favi Favicond!
@@ -147,25 +113,18 @@ global $Favi_verse ?>-->
             $customCharactersStr = '';
             if ($customCharacters) {
                 $urlencoded = urlencode($customCharactersStr = implode(',', $customCharacters));
-                echo "\x20<a href='/?chars=$urlencoded'>Share this Custom Folder.</a>";
+                echo "\x20<a href=/?chars=$urlencoded>Share this Custom Folder.</a>";
             } ?></span></p>
     <!--<div hidden><mam-tree style="--width:50em;--height:50em;"><mam-node img-src=icon.png
     img-width=1024 img-height=1024 img-alt="Alt Text"></mam-node></mam-tree></div>-->
     <!--suppress CssReplaceWithShorthandSafely -->
     <form method=get class=border>
         <details>
-            <summary style=>Filter Options</summary>
-            <div class=grid-3x style=padding-left:0.5em;padding-top:0.5em>
+            <summary>Filter Options</summary>
+            <div class='grid-3x filterOpts'>
                 <label><?= 'Icon Size: ' . createSelectElement("iconSize", [
                             'toosmall' => 'Too Small', 'smallest' => 'Smallest', 'smaller' => 'Smaller',
-                    ], function ($key) use ($width) {
-                        $ts = $key === 'toosmall';
-                        return ((str_starts_with($width, '/*smallest*//*toosmall*/') && $ts) ||
-                                (str_starts_with($width, '/*smallest*/.') && $key === 'smallest') ||
-                                (str_starts_with($width, '/*smaller*/') && $key === 'smaller') ||
-                                (str_starts_with($width, '/*normal*//*expanded*/') && $key === 'expand')
-                                || (str_starts_with($width, '/*normal*/.') && $key === 'normal'));
-                    }) ?></label>
+                    ], $width) ?></label>
                 <label><?= 'With Description: ' . createSelectElement("with-desc", [
                             'either' => 'Both', 'with' => 'Yes', 'no' => 'No',
                     ], $selectedFilter) ?></label>
@@ -207,7 +166,7 @@ global $Favi_verse ?>-->
     </form>
     <details class='border alt-uni'>
         <summary>Alternate Universes</summary>
-        <div><?= "<h2 id=Other-Universes style=margin-bottom:0;padding-left:0.5em>Other Universes</h2>\n";
+        <div><?= "<h2 id=Other-Universes class=altUniStyle>Other Universes</h2>\n";
             ob_start(fn(string $string): string => preg_replace('/>\\s+</', '><',
                     preg_replace('/\\s+/', "\x20", $string)));
             function createUniverseIcon(string $universeSlug, $return = false): string
@@ -216,7 +175,7 @@ global $Favi_verse ?>-->
                 $matchUniverse = matchUniverses($universeSlug);
                 $Universe = htmlspecialchars12($matchUniverse);
                 $univHref = "/gallery/universe/$universeSlug/" ?>
-                <article class=store-div style=--box-color:#00a8f3; is=shadowboxed-hover>
+                <article class=store-div is=shadowboxed-hover>
                 <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
                 <a href="<?= $univHref ?>"><img
                             style=width:10em class=store-img width=800
@@ -230,8 +189,8 @@ global $Favi_verse ?>-->
             $Universe = $matchUniverse = 'Main page';
             $universeSlug = 'Main';
             $univHref = "/" ?>
-            <p style=padding-left:0.5em>These other Universes contain more characters to meet!
-            <article class=store-div style=--box-color:#00a8f3; is=shadowboxed-hover>
+            <p class=padleft>These other Universes contain more characters to meet!
+            <article class=store-div is=shadowboxed-hover>
                 <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
                 <a href="<?= $univHref ?>"><img
                             style=width:10em class=store-img width=800
@@ -249,7 +208,7 @@ global $Favi_verse ?>-->
                     implode("\n", $versesArray);
             echo '</TEMPLATE>'; ?></div>
     </details>
-    <div style=margin-left:0;padding-bottom:1em class=border id=the-store><?= '<!-- XHTTP -->';
+    <div class=border id=the-store><?= '<!-- XHTTP -->';
         if ($selectedBorder) {
             $unisort = array();
             foreach ($characters as $character) {

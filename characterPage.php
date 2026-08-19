@@ -1,15 +1,10 @@
 <?php // ANTHeader
-use ANTHeader\ANTNavIStyle;
-use ANTHeader\ANTNavOption;
-use ANTHeader\ANTNavLinkTag;
-use function ANTHeader\create_head2;
-use function ANTHeader\ANTNavReddcond;
-use function ANTHeader\ANTNavFavicond;
+use function ANTHeader\create_head3;
 use function readCharacterJSON\matchColor;
 use function readCharacterJSON\readCharacterJSON;
 use function Helpers\htmlspecialchars12;
 
-require_once "{$_SERVER['DOCUMENT_ROOT']}/require/createHead2.php";
+require_once "{$_SERVER['DOCUMENT_ROOT']}/require/header3/head3.php";
 $homeIconBase64 = htmlspecialchars(base64_encode(file_get_contents('home.svg')), ENT_HTML5 | ENT_QUOTES);
 if (!preg_match('/^[a-zA-Z0-9\\-]+$/D', $char = $_GET['char'])) on404();
 
@@ -32,7 +27,9 @@ if (!file_exists($path)) on404();
 require_once "readCharacterJSON.php";
 $characterData = json_decode(file_get_contents($path) ?? '{}', true);
 $title = "{$characterData['name']} (ANT's Character Gallery)";
-$navigator = ANTNavFavicond("$canonicalPath$char", $title, true);
+//$navigator = ANTNavFavicond("$canonicalPath$char", $title, true);
+$borderColor = null;
+$backColor = null;
 if (array_key_exists('primaryColor', $characterData) || array_key_exists('secondaryColor', $characterData)) {
     if (!array_key_exists('primaryColor', $characterData)) {
         $characterData['primaryColor'] = '#00a8f3';
@@ -43,26 +40,12 @@ if (array_key_exists('primaryColor', $characterData) || array_key_exists('second
     $primaryColor = matchColor($characterData['primaryColor']);
     $secondaryColor = matchColor($characterData['secondaryColor'], false);
     if (preg_match('/^#?([a-f0-9]{6});#?([a-f0-9]{6});$/iD', "$primaryColor;$secondaryColor;", $matches)) {
-        $navigator = new ANTNavOption("$canonicalPath$char",
-                "/dollmaker2/icon/endpoint.php?bgcolor=%23$matches[1]&fgcolor=%238cfffa&L=%23fff200&W=%23000000&LC=%23ff0000&RC=%230000ff&v=1",
-                htmlspecialchars12($title), new Color("#$matches[2]"),
-                new Color("#$matches[1]"), true);
+//$navigator = new ANTNavOption("$canonicalPath$char",
+//"/dollmaker2/icon/endpoint.php?bgcolor=%23$matches[1]&fgcolor=%238cfffa&L=%23fff200&W=%23000000&LC=%23ff0000&RC=%230000ff&v=1",
+//htmlspecialchars12($title), new Color("#$matches[2]"),new Color("#$matches[1]"), true);
+        $borderColor = "#$matches[1]";
+        $backColor = "#$matches[2]";
     }
-}
-
-["bg_Regular" => $bg_Regular, "bg_BG" => $bg_BG, "bg_EYES" => $bg_EYES,
-        "bg_Pants" => $bg_Pants, "bg_Dark" => $bg_Dark] = new_style_shades('bg', $navigator->borderColor);
-$bgURL = "/dollmaker2/endpoint.svg.php?bgcolor=$bg_Regular&eye=$bg_EYES&pants=$bg_Pants&shoes=$bg_Dark";
-$bgURL = str_replace('#', '%23', $bgURL);
-function new_style_shades(string $name, Color $color): array
-{
-    $glitched = array();
-    $glitched["{$name}_Regular"] = ($color)->toString();
-    $glitched["{$name}_BG"] = ($color)->set_darkness(65.10)->toString();
-    $glitched["{$name}_EYES"] = ($color)->set_darkness(49.80)->toString();
-    $glitched["{$name}_Pants"] = ($color)->set_darkness(39.61)->toString();
-    $glitched["{$name}_Dark"] = ($color)->set_darkness(25.10)->toString();
-    return $glitched;
 }
 
 $array = readCharacterJSON($path, true);
@@ -83,11 +66,7 @@ $json = $array['json'];
 $array = $array['data'];
 function on404(): never
 {
-    http_response_code(404);
-    $navigator = ANTNavFavicond("/404", '404 Found Not', true);
-    create_head2('404 Found Not', ['base' => '/gallery/'], [
-            new ANTNavLinkTag('stylesheet', ["cssx.css", "characterPage.css", 'ddDL-table.css']),
-    ], [ANTNavFavicond('/', 'Home'), $navigator]) ?>
+    http_response_code(404); ?>
     <main class=divs>
         <h1>Character Not Found</h1>
         <p>That character is not on here.
@@ -108,7 +87,7 @@ if (!array__get_key_as_boolean('noOpener', $json)) {
 if (isset($GLOBALS['desc'])) $desc = "{$GLOBALS['desc']}";
 
 $htmlDescription = htmlspecialchars12($desc);
-create_head2($title, [
+create_head3($title, [
         'base' => '/gallery/', 'desc' => $desc,
         'ventHref' => match ($char) {
             'veloxcity' => 'https://www.roblox.com/games/1537690962/Bee-Swarm-Simulator',
@@ -116,31 +95,18 @@ create_head2($title, [
             'moon' => '/dollmaker3/v1u._3AZGf_tzan_0eD9__j9jP_9wIX_JSgs_wDx_QQC0AcB0QcB',
             'sun' => '/dollmaker3/v1u._1WU_f9VvP3_ZZW9_1W8_f80JNH_JSgs_wAAgAQC0AcB0QcB',
             default => array_key_exists('ventHref', $characterData) ? $characterData['ventHref'] : null,
-        },
-], [
-        new ANTNavLinkTag('stylesheet', [
+        }, 'bread' => [
+                array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
+                array('text' => $uniName, 'href' => $canonicalPath),
+                array('text' => "{$characterData['name']}", 'href' => "$canonicalPath$char"),
+        ], 'borderColor' => $borderColor, 'backColor' => $backColor,
+        'stylelinks' => [
                 "cssx.css", "characterPage.css", 'ddDL-table.css',
-        ]), new ANTNavIStyle(".divs>.character-profile{&>:first-child{margin-top:0}&>:last-child{margin-bottom:0}}"),
-        new ANTNavIStyle('h1{margin-bottom:0.5em}.store-img{border:none;border-bottom:3px solid gray}'),
-        new ANTNavIStyle(".store-img,.store-div{width:20em;}.overflox>div,.charname{width:calc(20em - 2ch);" .
-                "overflow-x:hidden;white-space:nowrap;text-overflow:ellipsis;}"),
-        new ANTNavLinkTag('canonical', "https://antrequest.nl$canonicalPath$char"),
-], [ANTNavFavicond('/', 'Home'),
-        ANTNavReddcond("$canonicalPath", 'Universe Home'),
-        $navigator,
+        ], 'canonical' => "https://antrequest.nl$canonicalPath$char"
 ]);
 require_once "dataDescriptionList.php";
-require_once "loginService.php";
 require_once "imageTag.php";
 $imgsrc = "$baseDirectory/$char.png";
-global $JWT;
-if (is_array($token = $JWT->validate("{$_COOKIE['htpasswd']}"))) {
-    $currentUsername = htmlspecialchars12("{$token['username']}");
-    echo <<<ACCOUNT
-    <div style="height:3em;background-color:white;border-bottom: 4px solid #e689bf;">
-    <div style="width:88%;max-width:88%;margin:auto">ANT//$currentUsername</div></div>
-    ACCOUNT. "\n\n";
-}
 
 $altTexts = array();
 if ($altContent = file_get_contents("htignore/$baseDirectory/$char/altText.txt")) {
@@ -160,8 +126,8 @@ function array__get_key_as_boolean(string $key, array $array): bool
 <script type=application/json is=output-script><?= json_encode($json) ?></script>
 <main>
     <div class=divs>
-        <h1 style=text-align:center><?= "Character &quot;$name&quot;" ?></h1>
-        <div style=text-align:center;margin-bottom:1em><?= imageTag($char,
+        <h1><?= "Character &quot;$name&quot;" ?></h1>
+        <div><?= imageTag($char,
                     'main', "$name's Main appearance", null, false,
                     ['introImage border'], $baseDirectory, true);
             foreach (['creationDate-epoch', 'LastModified-epoch', 'registerDate-epoch'] as $rm) {
@@ -172,8 +138,7 @@ function array__get_key_as_boolean(string $key, array $array): bool
                     "<data value=$uniname>{$array['UniverseId']}</data>") ?></div>
     </div>
     <div class=divs>
-        <div style="border-left:2px solid gray;border-right:2px solid gray;border-bottom:2px solid gray"
-             data-data><?= dataDescriptionList($array, array(), [
+        <div class=border-set2><?= dataDescriptionList($array, array(), [
                     'registerDate' => '/#what-is-registerDate',
                     'creationDate' => '/#what-is-creationDate',
                     'LastModified' => '/#what-is-LastModified',
@@ -188,7 +153,7 @@ function array__get_key_as_boolean(string $key, array $array): bool
                                            $prefixed = null, bool $mustsourced = true): string
             {
                 global $baseDirectory;
-                $classArray = ['store-img', 'listing'];
+                $classArray = ['store-img','store-big', 'listing'];
                 if ($mustsourced) $classArray[] = 'mustsourced';
                 $imageTag = imageTag($charId, $variant, $alt, $prefixed,
                         $ai * 2, $classArray, $baseDirectory, true);
@@ -199,8 +164,7 @@ function array__get_key_as_boolean(string $key, array $array): bool
     </div>
     <div class=divs>
         <h2 id=gallery>Gallery</h2>
-        <div style=margin-left:0;padding-bottom:1em
-             class=border><?= (function () use ($char, $name, $altTexts) {
+        <div class=border><?= (function () use ($char, $name, $altTexts) {
                 $altText1 = array_key_exists("main", $altTexts) ?
                         $altTexts["main"] : "$name's Main appearance";
                 $altText2 = array_key_exists("ai.main", $altTexts) ?
