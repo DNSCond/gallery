@@ -5,23 +5,24 @@ RewriteRule ^universe/([a-zA-Z0-9\-]+)(?:/char)?/([a-zA-Z0-9\-]+)/?$ characterPa
 RewriteRule ^universe/([a-zA-Z0-9\-]+)/?$ index.php?uni=$1 [L,QSA]
 
 RewriteRule ^char/([a-zA-Z0-9\-]+)/?$ characterPage.php?char=$1 [L,QSA]
-RewriteRule ^universe-img/([a-zA-Z0-9\-]+)\.webp$ servimg.php?univ=$1&format=webp [L,QSA]
-RewriteRule ^images/(ai)/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif|lightbox)$ servimg.php?uni=main&char=$2&var=$3&format=$4&withai=1 [L,QSA]
+RewriteRule ^universe-img/([a-zA-Z0-9\-]+)\.webp~([a-zA-Z0-9\-_]+)$ servimg.php?univ=$1&format=webp&hash=$2 [L,QSA]
+RewriteRule ^images/(ai)/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif|lightbox)~([a-zA-Z0-9\-_]+)$ servimg.php?uni=main&char=$2&var=$3&format=$4&withai=1&hash=$5 [L,QSA]
 
-RewriteRule ^universe-images/([a-zA-Z0-9\-]+)/ai/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|jpe?g|webp|avif|lightbox)$ servimg.php?uni=$1&prefix=gallery&char=$2&var=$3&format=$4&withai=1 [L,QSA]
-RewriteRule ^universe-images/([a-zA-Z0-9\-]+)/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|jpe?g|webp|avif|lightbox)$ servimg.php?uni=$1&prefix=gallery&char=$2&var=$3&format=$4&withai=0 [L,QSA]
-RewriteRule ^universe-images/([a-zA-Z0-9\-]+)/ai/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif|lightbox)$ servimg.php?uni=$1&char=$2&var=$3&format=$4&withai=1 [L,QSA]
-RewriteRule ^universe-images/([a-zA-Z0-9\-]+)/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif|lightbox)$ servimg.php?uni=$1&char=$2&var=$3&format=$4&withai=0 [L,QSA]
+RewriteRule ^universe-images/([a-zA-Z0-9\-]+)/ai/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|jpe?g|webp|avif|lightbox)~([a-zA-Z0-9\-_]+)$ servimg.php?uni=$1&prefix=gallery&char=$2&var=$3&format=$4&withai=1&hash=$5 [L,QSA]
+RewriteRule ^universe-images/([a-zA-Z0-9\-]+)/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|jpe?g|webp|avif|lightbox)~([a-zA-Z0-9\-_]+)$ servimg.php?uni=$1&prefix=gallery&char=$2&var=$3&format=$4&withai=0&hash=$5 [L,QSA]
+RewriteRule ^universe-images/([a-zA-Z0-9\-]+)/ai/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif|lightbox)~([a-zA-Z0-9\-_]+)$ servimg.php?uni=$1&char=$2&var=$3&format=$4&withai=1&hash=$5 [L,QSA]
+RewriteRule ^universe-images/([a-zA-Z0-9\-]+)/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif|lightbox)~([a-zA-Z0-9\-_]+)$ servimg.php?uni=$1&char=$2&var=$3&format=$4&withai=0&hash=$5 [L,QSA]
 
-RewriteRule ^(images)/ai/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|jpe?g|webp|avif|lightbox)$ servimg.php?uni=main&prefix=gallery&char=$2&var=$3&format=$4&withai=1 [L,QSA]
-RewriteRule ^(images)/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|jpe?g|webp|avif|lightbox)$ servimg.php?uni=main&prefix=gallery&char=$2&var=$3&format=$4&withai=0 [L,QSA]
+RewriteRule ^(images)/ai/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|jpe?g|webp|avif|lightbox)~([a-zA-Z0-9\-_]+)$ servimg.php?uni=main&prefix=gallery&char=$2&var=$3&format=$4&withai=1&hash=$5 [L,QSA]
+RewriteRule ^(images)/gallery\.([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|jpe?g|webp|avif|lightbox)~([a-zA-Z0-9\-_]+)$ servimg.php?uni=main&prefix=gallery&char=$2&var=$3&format=$4&withai=0&hash=$5 [L,QSA]
 
-RewriteRule ^(images)/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif|lightbox)$ servimg.php?uni=main&char=$2&var=$3&format=$4&withai=0  [L,QSA]
-RewriteRule ^(images)/ai/([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif|lightbox)$ servimg.php?uni=main&char=$2&var=main&format=$4&withai=1 [L,QSA]
-RewriteRule ^(images)/([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif|lightbox)$ servimg.php?uni=main&char=$2&var=main&format=$4&withai=0 [L,QSA]
+RewriteRule ^(images)/([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif|lightbox)~([a-zA-Z0-9\-_]+)$ servimg.php?uni=main&char=$2&var=$3&format=$4&withai=0&hash=$5 [L,QSA]
+RewriteRule ^(images)/ai/([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif|lightbox)~([a-zA-Z0-9\-_]+)$ servimg.php?uni=main&char=$2&var=main&format=$3&withai=1&hash=$4 [L,QSA]
+RewriteRule ^(images)/([a-zA-Z0-9\-]+)\.(png|webp|jpe?g|avif|lightbox)~([a-zA-Z0-9\-_]+)$ servimg.php?uni=main&char=$2&var=main&format=$3&withai=0&hash=$4 [L,QSA]
 RewriteRule ^(?:universe-)?images/.+$ servimg.php [L,QSA]
+RewriteRule ^universe-img/.*$ servimg.php [L,QSA]
 
-RewriteRule ^comic-images/([a-zA-Z0-9\-]+)/(\d+)/(\d\d\d)\.(webp|avif|lightbox)$ servimg.php?type=comic&format=$4&titleURL=$1&episodeId=$2&imageN=$3 [L,QSA]
+RewriteRule ^comic-images/([a-zA-Z0-9\-]+)/(\d+)/(\d\d\d)\.(webp|avif|lightbox)~([a-zA-Z0-9\-_]+)$ servimg.php?type=comic&format=$4&titleURL=$1&episodeId=$2&imageN=$3 [L,QSA]
 
 RewriteRule ^char/?$ . [L,R=307]
 

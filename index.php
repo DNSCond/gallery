@@ -130,18 +130,28 @@ global $Favi_verse ?>
                 if ($return) ob_start();
                 $matchUniverse = matchUniverses($universeSlug);
                 $Universe = htmlspecialchars12($matchUniverse);
+                $cont = file_get_contents(__DIR__ . "/htignore/universe-images/$universeSlug/universe-img.webp");
+                if ($cont) {
+                    $hash = rtrim(strtr(base64_encode(hash('sha256',
+                            $cont, true)), '+/', '-_'), '=');
+                } else $hash = 'null';
                 $univHref = "/gallery/universe/$universeSlug/" ?>
                 <article class='store-div div' is=shadowboxed-hover>
                 <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
                 <a href="<?= $univHref ?>"><img
                             class='store-img em10' width=800 height=1280
                             alt="<?= "Universe thumbnail for $Universe" ?>"
-                            src="<?= "universe-img/$universeSlug.webp" ?>"></a>
+                            src="<?= "universe-img/$universeSlug.webp~$hash" ?>"></a>
                 </article><?= "<!-- $Universe -->";
                 if ($return) return ob_get_clean();
                 return '';
             }
 
+            $cont = file_get_contents(__DIR__ . "/htignore/images/universe-img.webp");
+            if ($cont) {
+                $hash = rtrim(strtr(base64_encode(hash('sha256',
+                        $cont, true)), '+/', '-_'), '=');
+            } else $hash = 'null';
             $Universe = $matchUniverse = 'Main page';
             $universeSlug = 'Main';
             $univHref = "/" ?>
@@ -151,7 +161,7 @@ global $Favi_verse ?>
                 <a href="<?= $univHref ?>"><img
                             class='store-img em10' width=800 height=1280
                             alt="<?= "Universe thumbnail for $Universe" ?>"
-                            src="<?= "universe-img/$universeSlug.webp" ?>"></a>
+                            src="<?= "universe-img/$universeSlug.webp~$hash" ?>"></a>
             </article><?= "<!-- $Universe -->";
             $versesArray = array();
             foreach (glob(__DIR__ . '/htignore/universe-images/*/') as $item) {

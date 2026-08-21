@@ -9,10 +9,9 @@ function imageTag(string  $charId, string $variant, string $alt,
     $basePath = __DIR__ . "/htignore/$universe/$charId/$prefixed$variant";
     $baseURLAi = "$universe/ai/$prefixed$charId.$variant";
     $baseURL = "$universe/$prefixed$charId.$variant";
-    $suffix = '';
     if ($ai) {
         // If none of the files exist, return false
-        $files = ["$basePathAi.webp", "$basePathAi.png", "$basePathAi.jpeg", "$basePathAi.avif", "$basePathAi.jpg"];
+        $files = ["$basePathAi.webp", "$basePathAi.png", /*"$basePathAi.avif", "$basePathAi.jpeg", "$basePathAi.jpg"*/];
         $exists = false;
         foreach ($files as $file) {
             if (file_exists($file)) {
@@ -27,25 +26,47 @@ function imageTag(string  $charId, string $variant, string $alt,
     }
     $result = ($lnx ? "<a target='_blank' href=$baseURL.lightbox>" : '') . "<picture>";
     $alt = htmlspecialchars12($alt);
-    //$url = "images/$charId.$variant.png$suffix";
     $classes = implode(' ', $classes);
     if (array_key_exists('night', $_GET) && "{$_GET['night']}") {
         if (file_exists("$basePath-night.avif")) {
-            $result .= "<source srcset=\"$baseURL-night.avif$suffix\" type=image/avif>";
+            $result .= "<source srcset=\"$baseURL-night.avif\" type=image/avif>";
         }
     }
-    if (file_exists("$basePath.avif")) $result .= "<source srcset=\"$baseURL.avif$suffix\" type=image/avif>";
-    if (file_exists("$basePath.webp")) $result .= "<source srcset=\"$baseURL.webp$suffix\" type=image/webp>";
-    if (file_exists("$basePath.png")) $result .= "<source srcset=\"$baseURL.png$suffix\" type=image/png>";
-    if (file_exists("$basePath.jpeg")) $result .= "<source srcset=\"$baseURL.jpeg$suffix\" type=image/jpeg>";
-    elseif (file_exists("$basePath.jpg")) $result .= "<source srcset=\"$baseURL.jpg$suffix\" type=image/jpeg>";
-    if (!str_contains($result, '<source ') && str_contains($classes, 'mustsourced')) {
+    $baseSuffix = '';
+    if (file_exists("$basePath.avif")) {
+        $filegc = file_get_contents("$basePath.avif");
+        $suffix = base64UrlEncode_temporary(sha256Bin($filegc));
+        $result .= "<source srcset=\"$baseURL.avif~$suffix\" type=image/avif>";
+
+    }
+    //if (file_exists("$basePath.webp")) {
+    $filegc = file_get_contents("$basePath.webp");
+    $suffix = base64UrlEncode_temporary(sha256Bin($filegc));
+    $result .= "<source srcset=\"$baseURL.webp~$suffix\" type=image/webp>";
+    $baseSuffix = $suffix;//}
+    if (file_exists("$basePath.png")) {
+        $filegc = file_get_contents("$basePath.png");
+        $suffix = base64UrlEncode_temporary(sha256Bin($filegc));
+        $result .= "<source srcset=\"$baseURL.png~$suffix\" type=image/png>";
+    }
+
+    if (!str_contains($result, '<source ') &&
+        str_contains($classes, 'mustsourced')) {
         return false;
     } else {
-        $pathURL = file_exists("$basePath.webp") ? "$basePath.webp" : "$basePath.png";
-        $size = getimagesize($pathURL)[3];
-        $result .= "<img src=\"$baseURL.png$suffix\" $size alt=\"$alt"
-            . "\" class=\"$classes\" fetchpriority=auto loading=lazy>";
+        $size = getimagesize("$basePath.webp")[3];
+        $result .= "<img src=\"$baseURL.webp~$baseSuffix\" $size alt=\""
+            . "$alt\" class=\"$classes\" fetchpriority=auto loading=lazy>";
         return "$result</picture>" . ($lnx ? "</a>" : '');
     }
+}
+
+function sha256Bin(string $string): string
+{
+    return hash('sha256', $string, true);
+}
+
+function base64UrlEncode_temporary(string $data): string
+{
+    return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 }
