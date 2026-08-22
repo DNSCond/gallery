@@ -38,12 +38,17 @@ if (array_key_exists("univ", $_GET) &&
                 . ":100vh;background-color:black}img{max-width:100vw;max-height:100vh;display:block}</style>";
             echo "<meta name=robots content=noindex,nofollow><picture>";
             $baseURL = '/gallery/';
+            $webphash = null;
             $withai_ = $_GET['withai'] ? 'ai/' : '';
             $basePath = "htignore/$univ/{$_GET['char']}/$withai_$prefix{$_GET['var']}";
             foreach (["avif", "webp", "png"] as $format)
-                if (file_exists("htignore/$univ/{$_GET['char']}/$withai$prefix{$_GET['var']}.$format"))
-                    echo "<source srcset=$baseURL$univ/$withai_$prefix{$_GET['char']}.{$_GET['var']}.$format>";
-            echo "<img alt='The Image in a lightbox' src=$baseURL$univ/$withai_$prefix{$_GET['char']}.{$_GET['var']}.$format>";
+                if (file_exists($p = "htignore/$univ/{$_GET['char']}/$withai$prefix{$_GET['var']}.$format")) {
+                    $h = base64UrlEncode_temporary(sha256Bin(file_get_contents($p)));
+                    echo "<source srcset=$baseURL$univ/$withai_$prefix{$_GET['char']}.{$_GET['var']}.$format~$h>";
+                    if ($format === 'webp') $webphash = $h;
+                }
+            $f = ".webp~$webphash";
+            echo "<img alt='The Image in a lightbox' src=$baseURL$univ/$withai_$prefix{$_GET['char']}.{$_GET['var']}$f>";
             exit("</picture>");
         } elseif (preg_match('/^(png|jpe?g|webp|avif)$/iD', "{$_GET['format']}")) {
             $http = "htignore/$univ/{$_GET['char']}/$withai$prefix{$_GET['var']}.{$_GET['format']}";
@@ -79,27 +84,25 @@ function getArrayValue(array $array, string $key, ?string $validateRegex = null)
 if ($http === $original) http_response_code(404);
 $sha256 = base64UrlEncode_temporary(sha256Bin($fileContent = file_get_contents("$http")));
 $ext = getimagesizefromstring("$fileContent");
-$filemtime = filemtime($http);
-//header("FX-filemtime:" . gmdate('D M Y-m-d \\TH:i:s \\U\\T\\CO (e)', $filemtime));
-header("Content-Disposition: inline; filename=\"$name\"");
-header("content-type:{$ext['mime']}");
-header("etag: \"sha256b64-$sha256\"");
-header("image-width: $ext[0]");
-header("image-height:$ext[1]");
 $hashMatched = false;
 $hash = '';
 if (array_key_exists('hash', $_GET)) {
     $hash = "{$_GET['hash']}";
-    $hashMatched = "$sha256" === $hash;
-    //header("hash-match-e: '$sha256'");
-    //header("hash-match-h: '$hash'");
+    $hashMatched = $sha256 === $hash;
 }
 if ($hashMatched) {
     header("cache-control: public, max-age=" . (3600 * 24 * 2));
 } else {
-    header("cache-control: max-age=0");
+    http_response_code(404);
+    $sha256 = base64UrlEncode_temporary(sha256Bin($fileContent = file_get_contents("$original")));
+    $ext = getimagesizefromstring("$fileContent");
 }
-//header('hash-matched:?' . (int)$hashMatched);
+
+header("Content-Disposition: inline; filename=\"$name\"");
+if ($http !== $original && $hashMatched) header("etag: \"sha256b64-$sha256\"");
+header("content-type:{$ext['mime']}");
+header("image-width: $ext[0]");
+header("image-height:$ext[1]");
 echo $fileContent;
 function readJSONFile(string $file)
 {

@@ -24,7 +24,7 @@ function imageTag(string  $charId, string $variant, string $alt,
             $baseURL = $baseURLAi;
         } elseif ($ai === 2) return false;
     }
-    $result = ($lnx ? "<a target='_blank' href=$baseURL.lightbox>" : '') . "<picture>";
+    $result = ($lnx ? "<a target='_blank' href=$baseURL.lightbox~lightbox>" : '') . "<picture>";
     $alt = htmlspecialchars12($alt);
     $classes = implode(' ', $classes);
     if (array_key_exists('night', $_GET) && "{$_GET['night']}") {
