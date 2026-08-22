@@ -128,19 +128,18 @@ function createAlternates(string $charId, array &$char, string $name, int $AiArt
                           string $type, string $_boxcolor = '#00a8f3'): void
 {
     global $baseDirectory, $base;
-    foreach (glob(__DIR__ . "/htignore/$baseDirectory/$charId/*gallery.*.png") as $alternate) {
-        if (str_contains($alternate, 'watermarked')) continue;
-        if (preg_match('/(ai\\.)?gallery\\.([^.]+)\\.png$/D', $alternate, $variant)) {
+    foreach (glob(__DIR__ . "/htignore/$baseDirectory/$charId/*gallery.*.webp") as $alternate) {
+        if (preg_match('/(ai\\.)?gallery\\.([^.]+)\\.webp$/D', $alternate, $variant)) {
             if ($variant[1] && !$AiArt) continue;
             if ($AiArt === 2 && !$variant[1]) continue;
             $newchar = imageTag($charId, $variant[2], "Alternate of $name",
                 'gallery', $variant[1], ['store-img'], $baseDirectory);
             if ($type === 'smallest' || $type === 'toosmall') {
-                $char['subchars'][] = "<div class='store-div noborder' id="
-                    . "sec-$charId><a href=$base$charId>$newchar</a></div>";
+                $char['subchars'][] = "<div class='store-div div noborder' id"
+                    . "=sec-$charId><a href=$base$charId>$newchar</a></div>";
             } else {
-                $char['subchars'][] = "<article class=store-div style=--box-color:$_boxcolor; is"
-                    . "=shadowboxed-hover><h3 class=charname><a href=$charId#gallery>"
+                $char['subchars'][] = "<article class='store-div div' data-c=$_boxcolor"
+                    . " is=shadowboxed-hover><h3 class=charname><a href=$charId#gallery>"
                     . "$name (Alt)</a></h3><a href=$base$charId>$newchar</a></article>";
             }
         }

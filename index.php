@@ -61,7 +61,8 @@ global $Favi_verse ?>
 <script type=module src=js/index.js></script>
 <script type=application/json is=output-script><?= json_encode([
             'FaviVerse' => $Favi_verse, 'customCharacters' => $customCharacters,
-            'SOME_TIME' => gmdate('M d H:i:s Y \\G\\M\\T', 1717763696)
+            'SOME_TIME' => gmdate('M d H:i:s Y \\G\\M\\T', 1717763696),
+            //'characters' => array_map(fn($item) => $item['subchars'], $characters),
     ], JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
 <main class=divs>
     <h1><?= $title ?></h1>
