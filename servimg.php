@@ -1,14 +1,25 @@
-<?php //http_response_code(404);header('content-type: application/json');echo json_encode($_GET);
+<?php header('vary: sec-fetch-site');
+if (array_key_exists('HTTP_SEC_FETCH_SITE', $_SERVER)) {
+    $secFetchSite = strtolower($_SERVER['HTTP_SEC_FETCH_SITE']);
+    $allowedSites = ['same-origin', 'same-site', 'none'];
+    if (!in_array($secFetchSite, $allowedSites, true)) {
+        http_response_code(403);
+        exit;
+    }
+} else {
+    http_response_code(403);
+    exit;
+}
+
 $name = '404 error';
 require_once 'matchUniverses.php';
 //if(array_key_exists('asjson',$_GET)){header('content-type:application/json');echo json_encode($_GET);exit;}
 if (array_key_exists('asjson', $_GET)) {
     header('content-type:application/json');
-    echo json_encode($_GET);
+    echo json_encode(['_GET' => $_GET, '404' => file_exists("htignore/404placeholder.webp")]);
     exit;
 }
-
-$original = $http = "htignore/404placeholder.png";
+$original = $http = "htignore/404placeholder.webp";
 if (array_key_exists("univ", $_GET) &&
     array_key_exists("format", $_GET)) {
     $univ = "{$_GET['univ']}";

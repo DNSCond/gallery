@@ -29,15 +29,16 @@ function imageTag(string  $charId, string $variant, string $alt,
     $classes = implode(' ', $classes);
     if (array_key_exists('night', $_GET) && "{$_GET['night']}") {
         if (file_exists("$basePath-night.avif")) {
-            $result .= "<source srcset=\"$baseURL-night.avif\" type=image/avif>";
+            $filegc = file_get_contents("$basePath-night.avif");
+            $suffix = base64UrlEncode_temporary(sha256Bin($filegc));
+            $result .= "<source srcset=\"$baseURL-night.avif~$suffix\" type=image/avif>";
         }
     }
-    $baseSuffix = '';
+    //$baseSuffix = '';
     if (file_exists("$basePath.avif")) {
         $filegc = file_get_contents("$basePath.avif");
         $suffix = base64UrlEncode_temporary(sha256Bin($filegc));
         $result .= "<source srcset=\"$baseURL.avif~$suffix\" type=image/avif>";
-
     }
     //if (file_exists("$basePath.webp")) {
     $filegc = file_get_contents("$basePath.webp");

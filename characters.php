@@ -139,8 +139,8 @@ function createAlternates(string $charId, array &$char, string $name, int $AiArt
                     . "=sec-$charId><a href=$base$charId>$newchar</a></div>";
             } else {
                 $char['subchars'][] = "<article class='store-div div' data-c=$_boxcolor"
-                    . " is=shadowboxed-hover><h3 class=charname><a href=$charId#gallery>"
-                    . "$name (Alt)</a></h3><a href=$base$charId>$newchar</a></article>";
+                    . " is=shadowboxed-hover><h3 class=charname><a href=$charId#gallery"
+                    . ">$name (Alt)</a></h3><a href=$base$charId>$newchar</a></article>";
             }
         }
     }
