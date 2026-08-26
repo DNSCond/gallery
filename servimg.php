@@ -14,11 +14,6 @@ if (array_key_exists('HTTP_SEC_FETCH_SITE', $_SERVER)) {
 $name = '404 error';
 require_once 'matchUniverses.php';
 //if(array_key_exists('asjson',$_GET)){header('content-type:application/json');echo json_encode($_GET);exit;}
-if (array_key_exists('asjson', $_GET)) {
-    header('content-type:application/json');
-    echo json_encode(['_GET' => $_GET, '404' => file_exists("htignore/404placeholder.webp")]);
-    exit;
-}
 $original = $http = "htignore/404placeholder.webp";
 if (array_key_exists("univ", $_GET) &&
     array_key_exists("format", $_GET)) {
@@ -45,12 +40,14 @@ if (array_key_exists("univ", $_GET) &&
         preg_match('/^([a-zA-Z0-9\\-]+)$/iD', "{$_GET['char']}")) {
         $univ = $_GET['uni'] === 'main' ? 'images' : "universe-images/{$_GET['uni']}";
         if ("{$_GET['format']}" === 'lightbox') {
-            echo "<!DOCTYPE html><meta charset=UTF-8><style>body{margin:0;display:grid;place-items:center;height"
-                . ":100vh;background-color:black}img{max-width:100vw;max-height:100vh;display:block}</style>";
-            echo "<meta name=robots content=noindex,nofollow><picture>";
-            $baseURL = '/gallery/';
-            $webphash = null;
-            $withai_ = $_GET['withai'] ? 'ai/' : '';
+            $json = readJSONFile("htignore/$univ/{$_GET['char']}/main.json") ?? array();
+            $name = ($json['name'] ?? "{$_GET['char']}") ?? 'unknown';
+            $name = htmlspecialchars($name, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5);
+            echo "<!DOCTYPE html><meta charset=UTF-8><style>body{margin:0;display:grid;place-items:center;height:"
+                . "100vh;background-color:black}img{max-width:100vw;max-height:100vh;display:block}</style><title>";
+            echo "Character &quot;$name&quot; (ANTRequest.nl)</title><meta name=robots content=noindex,nofollow>";
+            echo "<meta name=viewport content='width=device-width,initial-scale=1'><picture>"; $baseURL = '/gallery/';
+            $webphash = null; $withai_ = $_GET['withai'] ? 'ai/' : '';
             $basePath = "htignore/$univ/{$_GET['char']}/$withai_$prefix{$_GET['var']}";
             foreach (["avif", "webp", "png"] as $format)
                 if (file_exists($p = "htignore/$univ/{$_GET['char']}/$withai$prefix{$_GET['var']}.$format")) {

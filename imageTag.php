@@ -40,11 +40,11 @@ function imageTag(string  $charId, string $variant, string $alt,
         $suffix = base64UrlEncode_temporary(sha256Bin($filegc));
         $result .= "<source srcset=\"$baseURL.avif~$suffix\" type=image/avif>";
     }
-    //if (file_exists("$basePath.webp")) {
     $filegc = file_get_contents("$basePath.webp");
     $suffix = base64UrlEncode_temporary(sha256Bin($filegc));
+    if (file_exists("$basePath.webp")) {
     $result .= "<source srcset=\"$baseURL.webp~$suffix\" type=image/webp>";
-    $baseSuffix = $suffix;//}
+    }$baseSuffix = $suffix;
     if (file_exists("$basePath.png")) {
         $filegc = file_get_contents("$basePath.png");
         $suffix = base64UrlEncode_temporary(sha256Bin($filegc));
