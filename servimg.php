@@ -1,14 +1,9 @@
 <?php header('vary: sec-fetch-site');
-if (array_key_exists('HTTP_SEC_FETCH_SITE', $_SERVER)) {
-    $secFetchSite = strtolower($_SERVER['HTTP_SEC_FETCH_SITE']);
-    $allowedSites = ['same-origin', 'same-site', 'none'];
-    if (!in_array($secFetchSite, $allowedSites, true)) {
+if (array_key_exists("HTTP_SEC_FETCH_SITE", $_SERVER)) {
+    if (strtolower($_SERVER["HTTP_SEC_FETCH_SITE"]) === "cross-site") {
         http_response_code(403);
         exit;
     }
-} else {
-    http_response_code(403);
-    exit;
 }
 
 $name = '404 error';
@@ -46,8 +41,10 @@ if (array_key_exists("univ", $_GET) &&
             echo "<!DOCTYPE html><meta charset=UTF-8><style>body{margin:0;display:grid;place-items:center;height:"
                 . "100vh;background-color:black}img{max-width:100vw;max-height:100vh;display:block}</style><title>";
             echo "Character &quot;$name&quot; (ANTRequest.nl)</title><meta name=robots content=noindex,nofollow>";
-            echo "<meta name=viewport content='width=device-width,initial-scale=1'><picture>"; $baseURL = '/gallery/';
-            $webphash = null; $withai_ = $_GET['withai'] ? 'ai/' : '';
+            echo "<meta name=viewport content='width=device-width,initial-scale=1'><picture>";
+            $baseURL = '/gallery/';
+            $webphash = null;
+            $withai_ = $_GET['withai'] ? 'ai/' : '';
             $basePath = "htignore/$univ/{$_GET['char']}/$withai_$prefix{$_GET['var']}";
             foreach (["avif", "webp", "png"] as $format)
                 if (file_exists($p = "htignore/$univ/{$_GET['char']}/$withai$prefix{$_GET['var']}.$format")) {
