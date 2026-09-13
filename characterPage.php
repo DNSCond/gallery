@@ -122,6 +122,7 @@ function array__get_key_as_boolean(string $key, array $array): bool
         return (bool)$array[$key];
     } else return false;
 } ?>
+<script src=js/DatetimeElement.js type=module></script>
 <script type=application/json is=output-script><?= json_encode($json) ?></script>
 <main>
     <div class=divs>

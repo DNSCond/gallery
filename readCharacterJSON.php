@@ -83,8 +83,8 @@ function toHTMLDatetime(int $time, bool $longDate): HTMLSafeEscaped
     // . " datetime=$datetime format='D M Y-m-d \\TH:i:s \\U\\T\\CO (e)'"
     // . " timezone=local><time datetime=$datetime>$date</time></clock-time>)");
     //}
-    return new HTMLSafeEscaped("<time datetime=" .
-        "$datetime is=relative-time-builtin>$date</time>");
+    return new HTMLSafeEscaped("<time datetime="
+        . "'$datetime' is=relative-time>$date</time>");
 }
 
 require_once "JWT.php";
