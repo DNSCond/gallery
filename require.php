@@ -8,11 +8,21 @@ function readJSON(string $path): mixed
 
 function readCharacterJSON(string $jsonFile): null|array
 {
-    $json = readJSON($jsonFile);
+    //$json = readJSON($jsonFile);
+    //if (preg_match(
+    //    '/htignore\\/universe-images\\/[a-zA-Z0-9\\-]+\\/([a-zA-Z0-9\\-]+)\/main\\.json$/D',
+    //    $jsonFile, $matches)) {$json['charId'] = $matches[1];return $json;}
+    return null;
+}
+
+function parseURL(string $jsonFile): null|array
+{
+    $json = array();
     if (preg_match(
-        '/htignore\\/universe-images\\/[a-zA-Z0-9\\-]+\\/([a-zA-Z0-9\\-]+)\/main\\.json$/D',
+        '/htignore\\/universe-images\\/([a-zA-Z0-9\\-]+)\\/([a-zA-Z0-9\\-]+)\/main\\.json$/D',
         $jsonFile, $matches)) {
-        $json['charId'] = $matches[1];
+        $json['univId'] = $matches[1];
+        $json['charId'] = $matches[2];
         return $json;
     }
     return null;

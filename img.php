@@ -5,6 +5,7 @@ if (array_key_exists("HTTP_SEC_FETCH_SITE", $_SERVER)) {
         exit;
     }
 }
+exit;
 $debug = false;
 //if(array_key_exists('asjson',$_GET)){http_response_code(501);header('content-type:application/json');echo json_encode($_GET);exit;}
 function trigger404(): never

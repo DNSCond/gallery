@@ -6,7 +6,7 @@ use function Helpers\htmlspecialchars12;
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/header3/head3.php";
 require_once __DIR__ . '/matchUniverses.php';
 
-global $characters, $uniSlugName;
+global $characters, $uniSlugName, $data;
 header('cache-control: public, max-age=600, stale-while-revalidate=86400, stale-if-error=432000');
 $nightLightOverride = array_key_exists('night', $_GET) && "{$_GET['night']}";
 $aiAlways = array_key_exists('withai', $_GET) && "{$_GET['withai']}";
@@ -18,14 +18,13 @@ if ($uniSlugName === null) {
 
 $title = $uniSlugName === 'main' ? 'Favicond\'s Character Gallery' . ($aiAlways ? "\x20(Ai Mode)" : '') :
         matchUniverses($uniSlugName) . ($aiAlways ? "\x20(Ai Mode)" : '') . "\x20(Favicond's Character Gallery)";
-
 create_head3($title, ['base' => '/gallery/',
         'desc' => 'Explore the character gallery of Favi Favicond at ANTRequest.nl!',
         'class' => array('smaller'), $nightLightOverride, 'bread' => [
                 array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
         ], 'canonical' => $uniSlugName === 'main' ? '/' : "gallery/universe/$uniSlugName/",
         'stylelinks' => ['statics/cssx.css', 'statics/ddDL-table.css'],
-        'borderColor' =>  ($aiAlways ? '#ff00ff' : '#00a8f3'),
+        'borderColor' => ($aiAlways ? '#ff00ff' : '#00a8f3'),
         'backColor' => ($aiAlways ? '#a600a6' : '#0073a6'),
 ]) ?>
 <div class=divs>
@@ -74,4 +73,5 @@ create_head3($title, ['base' => '/gallery/',
         </div>
     </details>
     <div class=border id=the-store><?= implode('', is_array($characters) ? $characters : array()) ?></div>
+    <script type=application/json is=output-script><?= json_encode($data) ?></script>
 </div>
