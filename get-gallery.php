@@ -17,6 +17,7 @@ if ($uniSlugName) foreach (glob(__DIR__ . "/htignore/universe-images/$uniSlugNam
     $char = readCharacterJSON($item);
     if (!is_array($char)) continue;
     if (array_key_exists('private', $char)) if ($char['private']) continue;
+    if (array_key_exists('aichar', $char)) if ($char['aichar']) continue;
     $_boxcolor = array_key_exists('primaryColor', $char) ? $char['primaryColor'] : '#00a8f3';
     if (!str_starts_with($_boxcolor, '#')) $_boxcolor = "#$_boxcolor";
     $name = htmlspecialchars12($char['name'] ?? $char['charId']);
@@ -24,7 +25,7 @@ if ($uniSlugName) foreach (glob(__DIR__ . "/htignore/universe-images/$uniSlugNam
         $aiAlways, $nightLightOverride, $uniSlugName, array('store-img'),
         true,
     );
-    if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-hover " .
-        "id=sec-{$char['charId']}><h3 class=charname><a href=$base{$char['charId']}" .
+    if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
+        "hover id=sec-{$char['charId']}><h3 class=charname><a href=$base{$char['charId']}" .
         ">$name</a></h3><a href=$base{$char['charId']}>$img</a></article>";
 }
