@@ -1,0 +1,15 @@
+.idea
+*.png
+*.kra
+piout
+*.jpg
+*.jpeg
+*.webp
+*.avif
+htignore/universe-images
+auth.txt
+output_svgs
+ususable
+*.zip
+*.7z
+htignore/comic-images
