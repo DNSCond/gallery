@@ -5,13 +5,13 @@ import json, pathlib
 #             .isoformat(timespec='milliseconds')\
 #             .replace('+00:00', 'Z')
 # iso_string = re.sub('\\.\\d+', '', iso_string)
-imagep = pathlib.Path('images')
+imagep = pathlib.Path('universe-images')
 images = pathlib.Path('universe-images/Favicond-Unknown')
 if (images / (path := input('charactername:'))).exists():
     input('name already exists')
     exit()
 
-(images / path).mkdir(parents=True, exist_ok=True)
+(images / path / 'gallery/ai').mkdir(parents=True, exist_ok=True)
 with open(images / path / 'main.json',
           'wt', encoding='utf8') as file:
     evilize = '1970-01-01T00:00:00Z'
@@ -24,7 +24,7 @@ with open(images / path / 'main.json',
         primaryColor="Favicond",
         secondaryColor="Favicond",
     ), indent=2))
-with (open(imagep / 'universe-images' / 'main' / 'placeholder.kra', 'rb') as src,
+with (open(imagep / 'main' / 'placeholder.kra', 'rb') as src,
       open(images / path / 'main.kra', 'wb') as out):
     out.write(src.read())
 pass
