@@ -25,8 +25,8 @@ create_head3($title, ['base' => '/gallery/',
                 array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
         ], 'canonical' => $uniSlugName === 'main' ? '/' : "gallery/universe/$uniSlugName/",
         'stylelinks' => ['statics/cssx.css', 'statics/ddDL-table.css'],
-        'borderColor' =>  ($aiAlways ? '#ff00ff' : '#0073a6'),
-        'backColor' => ($aiAlways ? '#a600a6' : '#00a8f3'),
+        'borderColor' =>  ($aiAlways ? '#ff00ff' : '#00a8f3'),
+        'backColor' => ($aiAlways ? '#a600a6' : '#0073a6'),
 ]) ?>
 <div class=divs>
     <h1><?= $title ?></h1>
