@@ -1,6 +1,6 @@
 <?php use function Helpers\htmlspecialchars12;
 
-function imageTag(string $charId, string $variant, string $alt, bool|int $ai, bool $night,
+function imageTag(string $charId, string $variant, string $alt, bool $ai, bool $night,
                   string $universeKey, array $classes = array(), bool $noLightbox = false): string|false
 {
     $prepath = '/htignore/universe-images';
