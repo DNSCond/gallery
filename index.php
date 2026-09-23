@@ -30,7 +30,7 @@ create_head3($title, ['base' => '/gallery/',
 ]) ?>
 <div class=divs>
     <h1><?= $title ?></h1>
-    <details class='border alt-uni' OPEN>
+    <details class='border alt-uni'>
         <summary>Alternate Universes</summary>
         <div><?= "<h2 id=Other-Universes class=altUniStyle>Other Universes</h2>\n";
             ob_start(fn(string $string): string => preg_replace('/>\\s+</',
