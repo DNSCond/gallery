@@ -1,7 +1,8 @@
-import re, pathlib, hashlib, base64, json, requests
+import re, pathlib, hashlib, base64, json, requests,shutil
 from glob import glob
 
 local = dict()
+shutil.rmtree('../' + (filename := 'imgdata'))
 pathlib.Path('../' + (filename := 'imgdata')).mkdir(exist_ok=True, parents=True)
 # (pathlib.Path('../{filename}') / path.parent.parent.name / path.parent.name).mkdir(exist_ok=True, parents=True)
 with open('../imgdata/.htaccess', 'wt', encoding='utf8') as file:
@@ -51,7 +52,7 @@ for i in glob('universe-images/*/*/'):
                 local[path.parent.parent.name][path.parent.name].get('main-see', dict())
             local[path.parent.parent.name][path.parent.name]['main-ai'] = \
                 local[path.parent.parent.name][path.parent.name].get('main-ai', dict())
-            asset['isAi'] = path.name.startswith('ai.')
+            # asset['isAi'] = path.name.startswith('ai.')
             if path.name.startswith('ai.'):
                 local[path.parent.parent.name][path.parent.name]['main-ai'][path.suffix[1:]] = asset
             else:
@@ -94,21 +95,24 @@ for i in glob('universe-images/*/*/'):
 for outer in local.values():
     for inner in outer.values():
         data_dict = dict()
+        data_ai_dict = dict()
         for asset in inner['assets']:
             *names, suffix = asset['oname'].split('.')
             name = '.'.join(names)
-            data_dict[name] = data_dict.get(name, dict())
+            local_dict = data_ai_dict if asset['isAi'] else data_dict
+            local_dict[name] = local_dict.get(name, dict())
             resp = requests.get(url := f'http://localhost/gallery/dev-only/imgdata.php?hash={asset['hash']}')
             # print(resp.status_code, url)
             # for key, val in dict(resp.headers).items():
             #     print(f'{key}: {val}')
             # print()
             matched = re.search('w=(\\d+), h=(\\d+)', resp.headers['image-size'])
-            data_dict[name][suffix] = {
+            local_dict[name][suffix] = {
                 'hash': asset['hash'], 'origin': asset['origin'],
                 'w': int(matched.group(1)), 'h': int(matched.group(2)),
-                'isAi': asset['isAi'], 't': resp.headers['image-type']}
+                't': resp.headers['image-type'], 'oName': asset['oname']}
         inner['asset2'] = data_dict
+        inner['assetAi'] = data_ai_dict
         del inner['assets']
 
 
@@ -128,9 +132,9 @@ for i in glob('universe-images/*/universe-img.webp'):
     resp = requests.get(url := f'http://localhost/gallery/dev-only/imgdata.php?hash={hash}{pathlib.Path(i).suffix}')
     matched = re.search('w=(\\d+), h=(\\d+)', resp.headers['image-size'])
     unidata[pathlib.Path(i).parent.stem] = {
-        'hash': f'{hash}{pathlib.Path(i).suffix}', 'origin': 'universe',
+        'hash': f'{hash}{pathlib.Path(i).suffix}',
         'w': int(matched.group(1)), 'h': int(matched.group(2)),
-        'isAi': False, 't': resp.headers['image-type']}
+        'origin': 'universe', 't': resp.headers['image-type']}
 copyfile('404placeholder.webp', '../imgdata/404placeholder.webp')
 with open(f'../{filename}/.assets.json', 'wt', encoding='utf8') as file:
     file.write(json.dumps(dict(chardata=local, unidata=unidata), indent=2))

@@ -48,12 +48,8 @@ if (array_key_exists('primaryColor', $characterData) || array_key_exists('second
         $backColor = "#$matches[2]";
     }
 }
-if (!array__get_key_as_boolean('noOpener', $datachar)) {
-    ob_start();
-    if (!include_once "$cbase/main.php")
-        echo "<p>" . htmlspecialchars12($desc);
-    $characterInfo = ob_get_clean();
-} else $characterInfo = "<p>" . htmlspecialchars12($desc);
+
+$characterInfo = "<p>" . htmlspecialchars12($desc);
 if (isset($GLOBALS['desc'])) $desc = "{$GLOBALS['desc']}";
 function array__get_key_as_boolean(string $key, array $array): bool
 {
@@ -73,7 +69,6 @@ create_head3($title = "{$datachar['name']} (ANT's Character Gallery)", [
         'canonical' => "$unicanonical$charId", 'nightLightOverride' => $nightLightOverride,
 ]) ?>
 <main>
-    <script type=application/json is=output-script><?= json_encode($chardata) ?></script>
     <div class=divs>
         <h1><?= "Character &quot;$name&quot;" ?></h1>
         <div><?= str_replace('fetchpriority=auto loading=lazy', 'fetchpriority=high', $main = imageTag(
@@ -119,19 +114,22 @@ create_head3($title = "{$datachar['name']} (ANT's Character Gallery)", [
                     'FavicondId' => '/#what-is-FavicondId',
                     'UniverseId' => '/#what-is-UniverseId',
             ]);
-            function galleryListing(string $variant, string $alt, bool $ai): string
+            $item = $chardata;
+            function galleryListing(array $hashes, string $alt, bool $ai): string
             {
-                global $uniSlugName, $nightLightOverride, $charId;
+                $aiAlways = $ai;
                 $classArray = ['store-img', 'store-big'];
-                $imageTag = imageTag($charId, $variant, $alt, $ai,
-                        $nightLightOverride, $uniSlugName, $classArray);
-                if ($imageTag === false) return "<!--$charId, $variant-->";
-                $alt = htmlspecialchars12($alt);
-                return "<div class=store-div>$imageTag<div class=altText>$alt</div></div>";
+                $formats = $aiAlways ? ['webp', 'png'] : ['avif', 'webp'];
+                $img = imageTag($hashes, $formats, $classArray, $aiAlways ? null : 'webp');
+                if ($img) return "<div class=store-div>$img<div class=altText>$alt</div></div>";
+                return '';
             } ?></div>
     </div>
     <div class=divs><?= "<div class=character-profile>\n$characterInfo\n</div>" ?></div>
-    <div class=divs><?= "<h2 id=gallery>Gallery</h2><p>closed for the time being<div class=border hidden>";
-
+    <div class=divs><?= "<h2 id=gallery>Gallery</h2><div class=border>";
+        echo galleryListing($item["main-see"], 'Main Appearance', false);
+        echo galleryListing($item['main-ai'], 'Main Ai Appearance', true);
+        foreach ($item['asset2'] as $asset) echo galleryListing($asset, 'An Appearance', false);
+        foreach ($item['assetAi'] as $asset) echo galleryListing($asset, 'An Ai Appearance', true);
         echo '</div>' ?></div>
 </main>

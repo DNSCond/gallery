@@ -15,16 +15,13 @@ function readCharacterJSON(string $jsonFile): null|array
     return null;
 }
 
+/**
+ * @param string $jsonFile
+ * @return array|null
+ * @deprecated
+ */
 function parseURL(string $jsonFile): null|array
 {
-    $json = array();
-    if (preg_match(
-        '/htignore\\/universe-images\\/([a-zA-Z0-9\\-]+)\\/([a-zA-Z0-9\\-]+)\/main\\.json$/D',
-        $jsonFile, $matches)) {
-        $json['univId'] = $matches[1];
-        $json['charId'] = $matches[2];
-        return $json;
-    }
     return null;
 }
 

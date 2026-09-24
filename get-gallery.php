@@ -22,9 +22,10 @@ if ($uniSlugName) foreach ($data[$uniSlugName] as $item) {
     $_boxcolor = array_key_exists('primaryColor', $char) ? $char['primaryColor'] : '#00a8f3';
     if (!str_starts_with($_boxcolor, '#')) $_boxcolor = "#$_boxcolor";
     $name = htmlspecialchars12($char['name'] ?? $char['charId']);
-    $img = imageTag($item["main-see"], ['avif', 'webp'], array('store-img'));
-    $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-hover" .
-        " id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
+    $formats = $aiAlways ? ['webp', 'png'] : ['avif', 'webp'];
+    $img = imageTag($item[$aiAlways ? 'main-ai' : "main-see"], $formats, array('store-img'), $aiAlways ? null : 'webp');
+    if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
+        "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
         ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
 }
 //if ($uniSlugName) foreach (glob(__DIR__ . "/htignore/universe-images/$uniSlugName/*/main.json") as $item) {
