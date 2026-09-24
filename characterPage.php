@@ -106,7 +106,7 @@ create_head3($title = "{$datachar['name']} (ANT's Character Gallery)", [
                         . "'$datetime' is=relative-time>$date</time>");
             } ?></div>
     </div>
-    <div class=divs>
+    <div class=divs hidden>
         <div class=border-set2><?= dataDescriptionList($datachar, array(), [
                     'registerDate' => '/#what-is-registerDate',
                     'creationDate' => '/#what-is-creationDate',
