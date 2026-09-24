@@ -2,7 +2,6 @@
 use function ANTHeader\create_head3;
 
 $uniSlugName = null;
-global $nightLightOverride;
 if (array_key_exists('uni', $_GET)) {
     if (preg_match('/^([a-zA-Z0-9\\-]+)$/iD', "{$_GET['uni']}")) {
         $uniSlugName = "{$_GET['uni']}";
@@ -14,30 +13,21 @@ if (array_key_exists('char', $_GET)) {
         $charId = "{$_GET['char']}";
     }
 }
-
-$mjson = ($cbase = __DIR__ . "/htignore/universe-images/$uniSlugName/$charId/") . "main.json";
-if ($charId === null || $uniSlugName === null || !file_exists($mjson)) on404();
-
-function on404(): never
-{
-    http_response_code(404);
-    echo '<!DOCTYPE html><META CHARSET=UTF-8>' ?>
-    <main class=divs>
-        <h1>Character Not Found</h1>
-        <p>That character is not on here.
-    </main><?= '<!-- hello -->';
-    exit;
-}
-
-$characters = array();
 require_once __DIR__ . '/require.php';
 require_once __DIR__ . '/imageTag.php';
-require_once "{$_SERVER['DOCUMENT_ROOT']}/require/header3/head3.php";
-header('cache-control: public, max-age=600, stale-while-revalidate=86400, stale-if-error=432000');
-$datachar = readCharacterJSON($mjson);
 require_once __DIR__ . '/matchUniverses.php';
+require_once "{$_SERVER['DOCUMENT_ROOT']}/require/header3/head3.php";
+$data = readJSON(__DIR__ . '/imgdata/.assets.json')['chardata'];
+if (!isPresent($data, [$uniSlugName, $charId, 'main.json'])) {
+    http_response_code(404);
+    exit;
+}
+$chardata = $data[$uniSlugName][$charId];
+$datachar = $chardata['main.json'];
 $uniName = matchUniverses($uniname = $datachar['UniverseId']);
 $name = htmlspecialchars12($datachar['name'] ?? $charId);
+header('cache-control: public, max-age=600, stale-while-revalidate=86400, stale-if-error=432000');
+
 $desc = $GLOBALS['defaultDesc'] = "$name\x20is a character of the $uniName Universe on ANTRequest.nl.";
 $unicanonical = "/gallery/universe/$uniSlugName/";
 
@@ -72,15 +62,6 @@ function array__get_key_as_boolean(string $key, array $array): bool
     } else return false;
 }
 
-$altTexts = array();
-if ($altContent = file_get_contents("$cbase/altText.txt")) {
-    require_once 'customFormat.php';
-    try {
-        $altTexts = array_merge($altTexts, parseNamedBlocks($altContent));
-    } catch (Exception) {
-        $altTexts = array();
-    }
-}
 $nightLightOverride = array_key_exists('night', $_GET) && "{$_GET['night']}";
 create_head3($title = "{$datachar['name']} (ANT's Character Gallery)", [
         'base' => '/gallery/', 'desc' => $desc, 'class' => ['larger'], 'bread' => [
@@ -92,14 +73,14 @@ create_head3($title = "{$datachar['name']} (ANT's Character Gallery)", [
         'canonical' => "$unicanonical$charId", 'nightLightOverride' => $nightLightOverride,
 ]) ?>
 <main>
+    <script type=application/json is=output-script><?= json_encode($chardata) ?></script>
     <div class=divs>
         <h1><?= "Character &quot;$name&quot;" ?></h1>
-        <div><?= imageTag($charId, 'main', "$name's Main appearance", false,
-                    $nightLightOverride, $uniSlugName, ['introImage border']);
+        <div><?= str_replace('fetchpriority=auto loading=lazy', 'fetchpriority=high', $main = imageTag(
+                    $chardata['main-see'], ['avif', 'webp', 'png'], ['introImage border']));
             require_once 'dataDescriptionList.php';
             $datachar['charId'] = "$uniSlugName/$charId";
-            $datachar['UniverseId'] = new HTMLSafeEscaped(
-                    "<data value=$uniname>{$datachar['UniverseId']}</data>");
+            $datachar['UniverseId'] = new HTMLSafeEscaped("<data value=$uniname>{$datachar['UniverseId']}</data>");
             $registerDate =
             $LastModified =
             $creationDate = INF;
@@ -150,32 +131,7 @@ create_head3($title = "{$datachar['name']} (ANT's Character Gallery)", [
             } ?></div>
     </div>
     <div class=divs><?= "<div class=character-profile>\n$characterInfo\n</div>" ?></div>
-    <div class=divs><?= '<h2 id=gallery>Gallery</h2><div class=border>';
-        $altText1 = array_key_exists("main", $altTexts) ?
-                $altTexts["main"] : "$name's Main appearance";
-        $altText2 = array_key_exists("ai.main", $altTexts) ?
-                $altTexts["ai.main"] : "Them as anime";
-        echo galleryListing('main', $altText1, false) .
-                galleryListing('main', $altText2, true);
+    <div class=divs><?= "<h2 id=gallery>Gallery</h2><p>closed for the time being<div class=border hidden>";
 
-        $cache = array();
-        foreach (glob("{$cbase}gallery/*.*") as $item) {
-            if (preg_match('/\\/gallery\\/([a-zA-Z0-9\\-]+)\\.(?:png|webp|avif)$/D',
-                    $item, $matches)) {
-                if (array_key_exists("no-ai/$matches[1]", $cache) && $cache["no-ai/$matches[1]"]) {
-                    continue;
-                } else $cache["no-ai/$matches[1]"] = true;
-                echo galleryListing($matches[1], "An Appearance", false);
-            }
-        }
-        foreach (glob("{$cbase}gallery/ai/*.*") as $item) {
-            if (preg_match('/\\/gallery\\/ai\\/([a-zA-Z0-9\\-]+)\\.(?:png|webp|avif)$/D',
-                    $item, $matches)) {
-                if (array_key_exists("with-ai/$matches[1]", $cache) && $cache["with-ai/$matches[1]"]) {
-                    continue;
-                } else $cache["with-ai/$matches[1]"] = true;
-                echo galleryListing($matches[1], "An Ai Appearance", true);
-            }
-        }
         echo '</div>' ?></div>
 </main>

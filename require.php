@@ -27,3 +27,17 @@ function parseURL(string $jsonFile): null|array
     }
     return null;
 }
+
+function isPresent(array $array, array $properties): bool
+{
+    $current = $array;
+    foreach ($properties as $property) {
+        if (!is_array($current)) return false;
+        if (array_key_exists($property, $current)) {
+            $current = $current[$property];
+        } else {
+            return false;
+        }
+    }
+    return true;
+}

@@ -1,4 +1,4 @@
-import re, pathlib, hashlib, base64, json
+import re, pathlib, hashlib, base64, json, requests
 from glob import glob
 
 local = dict()
@@ -37,19 +37,25 @@ for i in glob('universe-images/*/*/'):
                 file.write(cont)
             local[path.parent.parent.name] = local.get(path.parent.parent.name, dict())
             local[path.parent.parent.name][path.parent.name] = local[path.parent.parent.name].get(path.parent.name, {
-                'universe': path.parent.parent.name, 'charId': path.parent.name, 'assets': list(),
-                'main.json': json.loads(data)
+                'charId': path.parent.name,  # 'universe': path.parent.parent.name,
+                'assets': list(), 'main.json': json.loads(data)
             })
-            asset = dict(hash=f'{hash}{path.suffix}', oname=path.name, origin='main')
+            hashed = f'{hash}{path.suffix}'
+            resp = requests.get(url := f'http://localhost/gallery/dev-only/imgdata.php?hash={hashed}')
+            matched = re.search('w=(\\d+), h=(\\d+)', resp.headers['image-size'])
+            asset = dict(hash=hashed, oname=path.name, origin='main',
+                         w=int(matched.group(1)), h=int(matched.group(2)),
+                         t=resp.headers['image-type'])
             # local[path.parent.parent.name][path.parent.name]['assets'].append(asset)
-            local[path.parent.parent.name][path.parent.name]['main-see'] = None
-            local[path.parent.parent.name][path.parent.name]['main-ai'] = None
+            local[path.parent.parent.name][path.parent.name]['main-see'] = \
+                local[path.parent.parent.name][path.parent.name].get('main-see', dict())
+            local[path.parent.parent.name][path.parent.name]['main-ai'] = \
+                local[path.parent.parent.name][path.parent.name].get('main-ai', dict())
             asset['isAi'] = path.name.startswith('ai.')
-            asset['oName'] = path.name
             if path.name.startswith('ai.'):
-                local[path.parent.parent.name][path.parent.name]['main-ai'] = asset
+                local[path.parent.parent.name][path.parent.name]['main-ai'][path.suffix[1:]] = asset
             else:
-                local[path.parent.parent.name][path.parent.name]['main-see'] = asset
+                local[path.parent.parent.name][path.parent.name]['main-see'][path.suffix[1:]] = asset
     for path in pathlib.Path(i).iterdir():
         if path.is_dir():
             if path.name == 'gallery':
@@ -60,7 +66,7 @@ for i in glob('universe-images/*/*/'):
                                 continue
                             with open(inner_inner_path, 'rb') as file:
                                 cont = file.read()
-                                hash = base64.b64encode(hashlib.sha512().digest()).decode('utf-8') \
+                                hash = base64.b64encode(hashlib.sha512(cont).digest()).decode('utf-8') \
                                     .replace('/', '_').replace('+', '-').replace('=', str())
                             with open(f'../{filename}/{hash}{inner_inner_path.suffix}', 'wb') as file:
                                 file.write(cont)
@@ -74,7 +80,7 @@ for i in glob('universe-images/*/*/'):
                         continue
                     with open(inner_path, 'rb') as file:
                         cont = file.read()
-                        hash = base64.b64encode(hashlib.sha512().digest()).decode('utf-8') \
+                        hash = base64.b64encode(hashlib.sha512(cont).digest()).decode('utf-8') \
                             .replace('/', '_').replace('+', '-').replace('=', str())
                     with open(f'../{filename}/{hash}{inner_path.suffix}', 'wb') as file:
                         file.write(cont)
@@ -85,14 +91,47 @@ for i in glob('universe-images/*/*/'):
                     asset['isAi'] = False
     pass
 
+for outer in local.values():
+    for inner in outer.values():
+        data_dict = dict()
+        for asset in inner['assets']:
+            *names, suffix = asset['oname'].split('.')
+            name = '.'.join(names)
+            data_dict[name] = data_dict.get(name, dict())
+            resp = requests.get(url := f'http://localhost/gallery/dev-only/imgdata.php?hash={asset['hash']}')
+            # print(resp.status_code, url)
+            # for key, val in dict(resp.headers).items():
+            #     print(f'{key}: {val}')
+            # print()
+            matched = re.search('w=(\\d+), h=(\\d+)', resp.headers['image-size'])
+            data_dict[name][suffix] = {
+                'hash': asset['hash'], 'origin': asset['origin'],
+                'w': int(matched.group(1)), 'h': int(matched.group(2)),
+                'isAi': asset['isAi'], 't': resp.headers['image-type']}
+        inner['asset2'] = data_dict
+        del inner['assets']
+
 
 def copyfile(src: str, out: str):
     with open(src, 'rb') as src_file, open(out, 'wb') as out_file:
         out_file.write(src_file.read())
 
 
+unidata = dict()
+for i in glob('universe-images/*/universe-img.webp'):
+    with open(i, 'rb') as file:
+        cont = file.read()
+        hash = base64.b64encode(hashlib.sha512(cont).digest()).decode('utf-8') \
+            .replace('/', '_').replace('+', '-').replace('=', str())
+    with open(f'../{filename}/{hash}{pathlib.Path(i).suffix}', 'wb') as file:
+        file.write(cont)
+    resp = requests.get(url := f'http://localhost/gallery/dev-only/imgdata.php?hash={hash}{pathlib.Path(i).suffix}')
+    matched = re.search('w=(\\d+), h=(\\d+)', resp.headers['image-size'])
+    unidata[pathlib.Path(i).parent.stem] = {
+        'hash': f'{hash}{pathlib.Path(i).suffix}', 'origin': 'universe',
+        'w': int(matched.group(1)), 'h': int(matched.group(2)),
+        'isAi': False, 't': resp.headers['image-type']}
 copyfile('404placeholder.webp', '../imgdata/404placeholder.webp')
-
 with open(f'../{filename}/.assets.json', 'wt', encoding='utf8') as file:
-    file.write(json.dumps(local).replace('oname', 'oName'))
+    file.write(json.dumps(dict(chardata=local, unidata=unidata), indent=2))
 pass
