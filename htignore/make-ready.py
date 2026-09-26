@@ -19,13 +19,7 @@ pass
 for i in glob('universe-images/*/*/'):
     for path in pathlib.Path(i).iterdir():
         if path.is_file():
-            if path.suffix == '.php':
-                continue
-            if path.suffix == '.kra':
-                continue
-            if path.suffix == '.json':
-                continue
-            if path.name == 'altText.txt':
+            if path.suffix not in ['.png', '.jpeg', '.jpg', '.webp', '.avif']:
                 continue
             if not (path.name.startswith('main') or path.name.startswith('ai.main')):
                 continue
