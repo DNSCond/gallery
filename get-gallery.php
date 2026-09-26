@@ -28,12 +28,12 @@ if (isset($GLOBALS['all'])) {
         $img = imageTag($item[$aiAlways ? 'main-ai' : "main-see"], $formats, array('store-img'), $aiAlways ? null : 'webp');
         if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
             "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
-            ">$name (Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
+            ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
         foreach ($item['asset2'] as $asset) {
             $img = imageTag($asset, ['avif', 'webp'], array('store-img'));
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
                 "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
-                ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
+                ">$name (Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
         }
         foreach ($item['assetAi'] as $asset) {
             $img = imageTag($asset, ['avif', 'webp'], array('store-img'));
