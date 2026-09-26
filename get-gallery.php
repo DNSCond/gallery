@@ -12,9 +12,37 @@ if (array_key_exists('uni', $_GET)) {
         }
     }
 } else $uniSlugName = 'main';
+$uniSlugName = 'main';
 $base = "universe/$uniSlugName/";
 require __DIR__ . '/imageTag.php';
-if ($uniSlugName) foreach ($data[$uniSlugName] as $item) {
+if (isset($GLOBALS['all'])) {
+    foreach ($data as $every) foreach ($every as $item) {
+        $char = $item['main.json'];
+        if (!is_array($char)) continue;
+        if (array_key_exists('private', $char)) if ($char['private']) continue;
+        if (array_key_exists('aichar', $char)) if ($char['aichar']) continue;
+        $_boxcolor = array_key_exists('primaryColor', $char) ? $char['primaryColor'] : '#00a8f3';
+        if (!str_starts_with($_boxcolor, '#')) $_boxcolor = "#$_boxcolor";
+        $name = htmlspecialchars12($char['name'] ?? $char['charId']);
+        $formats = $aiAlways ? ['webp', 'png'] : ['avif', 'webp'];
+        $img = imageTag($item[$aiAlways ? 'main-ai' : "main-see"], $formats, array('store-img'), $aiAlways ? null : 'webp');
+        if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
+            "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
+            ">$name (Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
+        foreach ($item['asset2'] as $asset) {
+            $img = imageTag($asset, ['avif', 'webp'], array('store-img'));
+            if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
+                "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
+                ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
+        }
+        foreach ($item['assetAi'] as $asset) {
+            $img = imageTag($asset, ['avif', 'webp'], array('store-img'));
+            if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
+                "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
+                ">$name (Ai Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
+        }
+    }
+} elseif ($uniSlugName) foreach ($data[$uniSlugName] as $item) {
     $char = $item['main.json'];
     if (!is_array($char)) continue;
     if (array_key_exists('private', $char)) if ($char['private']) continue;
@@ -28,22 +56,3 @@ if ($uniSlugName) foreach ($data[$uniSlugName] as $item) {
         "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
         ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
 }
-//if ($uniSlugName) foreach (glob(__DIR__ . "/htignore/universe-images/$uniSlugName/*/main.json") as $item) {
-//    $url = readCharacterJSON($item);
-//    $char = $data[$url['univId']];
-//    if (!is_array($char)) continue;
-//    $char = $char[$url['charId']];
-//    if (!is_array($char)) continue;
-//    if (array_key_exists('private', $char)) if ($char['private']) continue;
-//    if (array_key_exists('aichar', $char)) if ($char['aichar']) continue;
-//    $_boxcolor = array_key_exists('primaryColor', $char) ? $char['primaryColor'] : '#00a8f3';
-//    if (!str_starts_with($_boxcolor, '#')) $_boxcolor = "#$_boxcolor";
-//    $name = htmlspecialchars12($char['name'] ?? $char['charId']);
-//    $img = imageTag($char['charId'], 'main', "$name's Main Appearance",
-//        $aiAlways, $nightLightOverride, $uniSlugName, array('store-img'),
-//        true,
-//    );
-//    if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
-//        "hover id=sec-{$char['charId']}><h3 class=charname><a href=$base{$char['charId']}" .
-//        ">$name</a></h3><a href=$base{$char['charId']}>$img</a></article>";
-//}

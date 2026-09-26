@@ -1,6 +1,4 @@
-<?php $width = 'smaller';
-
-use function ANTHeader\create_head3;
+<?php use function ANTHeader\create_head3;
 use function Helpers\htmlspecialchars12;
 
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/header3/head3.php";
@@ -11,22 +9,36 @@ header('cache-control: public, max-age=600, stale-while-revalidate=86400, stale-
 $nightLightOverride = array_key_exists('night', $_GET) && "{$_GET['night']}";
 $aiAlways = array_key_exists('withai', $_GET) && "{$_GET['withai']}";
 require_once __DIR__ . '/get-gallery.php';
-if ($uniSlugName === null) {
-    http_response_code(403);
-    exit('<!DOCTYPE html><meta CHARSET=UTF-8>$uniSlugName doesnt exist');
-}
-
-$title = $uniSlugName === 'main' ? 'Favicond\'s Character Gallery' . ($aiAlways ? "\x20(Ai Mode)" : '') :
-        matchUniverses($uniSlugName) . ($aiAlways ? "\x20(Ai Mode)" : '') . "\x20(Favicond's Character Gallery)";
-create_head3($title, ['base' => '/gallery/',
-        'desc' => 'Explore the character gallery of Favi Favicond at ANTRequest.nl!',
-        'class' => array('smaller'), $nightLightOverride, 'bread' => [
-                array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
-        ], 'canonical' => $uniSlugName === 'main' ? '/' : "gallery/universe/$uniSlugName/",
-        'stylelinks' => ['statics/cssx.css', 'statics/ddDL-table.css'],
-        'borderColor' => ($aiAlways ? '#ff00ff' : '#00a8f3'),
-        'backColor' => ($aiAlways ? '#a600a6' : '#0073a6'),
-]) ?>
+if (isset($GLOBALS['all'])) {
+    $title = 'All of Favicond\'s Character Gallery';
+    create_head3($title, ['base' => '/gallery/',
+            'desc' => 'Explore the character gallery of Favi Favicond at ANTRequest.nl!',
+            'class' => array('smaller'), $nightLightOverride, 'bread' => [
+                    array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
+                    array('text' => 'All of Favicond\'s Character Gallery', 'href' => '/gallery/all.php'),
+            ], 'canonical' => "gallery/all.php",
+            'stylelinks' => ['statics/cssx.css', 'statics/ddDL-table.css'],
+            'borderColor' => ($aiAlways ? '#ff00ff' : '#00a8f3'),
+            'backColor' => ($aiAlways ? '#a600a6' : '#0073a6'),
+    ]);
+    $uniSlugName = 'main';
+} else {
+    if ($uniSlugName === null) {
+        http_response_code(403);
+        exit('<!DOCTYPE html><meta CHARSET=UTF-8>$uniSlugName doesnt exist');
+    }
+    $title = $uniSlugName === 'main' ? 'Favicond\'s Character Gallery' . ($aiAlways ? "\x20(Ai Mode)" : '') :
+            matchUniverses($uniSlugName) . ($aiAlways ? "\x20(Ai Mode)" : '') . "\x20(Favicond's Character Gallery)";
+    create_head3($title, ['base' => '/gallery/',
+            'desc' => 'Explore the character gallery of Favi Favicond at ANTRequest.nl!',
+            'class' => array('smaller'), $nightLightOverride, 'bread' => [
+                    array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
+            ], 'canonical' => $uniSlugName === 'main' ? '/' : "gallery/universe/$uniSlugName/",
+            'stylelinks' => ['statics/cssx.css', 'statics/ddDL-table.css'],
+            'borderColor' => ($aiAlways ? '#ff00ff' : '#00a8f3'),
+            'backColor' => ($aiAlways ? '#a600a6' : '#0073a6'),
+    ]);
+} ?>
 <div class=divs>
     <h1><?= $title ?></h1>
     <details class='border alt-uni'>
