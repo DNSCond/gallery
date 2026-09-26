@@ -13,5 +13,6 @@ ususable
 *.zip
 *.7z
 htignore/comic-images
+htignore/credentails.json
 gallery.iml
 imgdata

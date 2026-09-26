@@ -21,8 +21,6 @@ with open(images / path / 'main.json',
         creationDate=evilize,
         LastModified=evilize,
         registerDate=evilize,
-        primaryColor="Favicond",
-        secondaryColor="Favicond",
     ), indent=2))
 with (open(imagep / 'main' / 'placeholder.kra', 'rb') as src,
       open(images / path / 'main.kra', 'wb') as out):
