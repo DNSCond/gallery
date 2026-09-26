@@ -12,10 +12,10 @@ if (array_key_exists('uni', $_GET)) {
         }
     }
 } else $uniSlugName = 'main';
-$uniSlugName = 'main';
 $base = "universe/$uniSlugName/";
 require __DIR__ . '/imageTag.php';
 if (isset($GLOBALS['all'])) {
+    $uniSlugName = 'main';
     foreach ($data as $every) foreach ($every as $item) {
         $char = $item['main.json'];
         if (!is_array($char)) continue;
@@ -25,7 +25,8 @@ if (isset($GLOBALS['all'])) {
         if (!str_starts_with($_boxcolor, '#')) $_boxcolor = "#$_boxcolor";
         $name = htmlspecialchars12($char['name'] ?? $char['charId']);
         $formats = $aiAlways ? ['webp', 'png'] : ['avif', 'webp'];
-        $img = imageTag($item[$aiAlways ? 'main-ai' : "main-see"], $formats, array('store-img'), $aiAlways ? null : 'webp');
+        $img = imageTag($item[$aiAlways ? 'main-ai' : "main-see"],
+            $formats, array('store-img'), $aiAlways ? null : 'webp');
         if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
             "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
             ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
@@ -51,7 +52,8 @@ if (isset($GLOBALS['all'])) {
     if (!str_starts_with($_boxcolor, '#')) $_boxcolor = "#$_boxcolor";
     $name = htmlspecialchars12($char['name'] ?? $char['charId']);
     $formats = $aiAlways ? ['webp', 'png'] : ['avif', 'webp'];
-    $img = imageTag($item[$aiAlways ? 'main-ai' : "main-see"], $formats, array('store-img'), $aiAlways ? null : 'webp');
+    $img = imageTag($item[$aiAlways ? 'main-ai' : "main-see"],
+        $formats, array('store-img'), $aiAlways ? null : 'webp');
     if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
         "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
         ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
