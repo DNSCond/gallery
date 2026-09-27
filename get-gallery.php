@@ -30,6 +30,7 @@ if (isset($GLOBALS['all'])) {
         if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
             "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
             ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
+        if (isset($GLOBALS['noalt'])) continue;
         foreach ($item['asset2'] as $asset) {
             $img = imageTag($asset, ['avif', 'webp'], array('store-img'));
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .

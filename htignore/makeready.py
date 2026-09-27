@@ -1,4 +1,5 @@
 import re, pathlib, hashlib, base64, json, requests, shutil
+from datetime import datetime
 from glob import glob
 
 
@@ -66,7 +67,7 @@ def main():
                     for inner_path in path.iterdir():
                         if inner_path.name == 'ai':
                             for inner_inner_path in inner_path.iterdir():
-                                if inner_inner_path.suffix == '.kra':
+                                if inner_inner_path.suffix not in ['.png', '.jpeg', '.jpg', '.webp', '.avif']:
                                     continue
                                 with open(inner_inner_path, 'rb') as file:
                                     cont = file.read()
@@ -80,7 +81,7 @@ def main():
                                 asset['origin'] = 'ai'
                                 asset['isAi'] = True
                             continue
-                        if inner_path.suffix == '.kra':
+                        if inner_path.suffix not in ['.png', '.jpeg', '.jpg', '.webp', '.avif']:
                             continue
                         with open(inner_path, 'rb') as file:
                             cont = file.read()
@@ -117,7 +118,35 @@ def main():
             inner['asset2'] = data_dict
             inner['assetAi'] = data_ai_dict
             del inner['assets']
+    new = dict(main=local['main'])
+    for key, val in local.items():
+        if key == 'main':
+            continue
+        new[key] = val
+    local = new
+    step0 = [(key, val) for key, val in local['main'].items()]
+    step0.sort(key=lambda thing: datetime.fromisoformat(thing[1]["main.json"]['creationDate']).timestamp())
+    # step1 = dict()
+    # for datalive in step0:
+    #     step1[datalive[1]['main.json']['UniverseId']] = step1.get(datalive[1]['main.json']['UniverseId'], list())
+    #     step1[datalive[1]['main.json']['UniverseId']].append(datalive)
+    # favicond = step1['Favicond-Main']
+    # del step1['Favicond-Main']
+    # # how do to this?
+    # step2 = [dict(i) for i in favicond].concat(dict(step1[i]) for i in sorted(step1.keys()))
+    # local['main'] = step2
 
+    pass  # gemei start
+    # step0: List of (char_id, char_data) sorted chronologically by creationDate
+    step0 = [(key, val) for key, val in local['main'].items()]
+    step0.sort(key=lambda thing: datetime.fromisoformat(thing[1]["main.json"]['creationDate']).timestamp())
+
+    # Sort the items according to UniverseId custom hierarchy
+    sorted_items = sorted(step0, key=get_sort_key)
+
+    # Reconstruct local['main'] back into its original dict structure { char_id: char_data }
+    local['main'] = {char_id: char_data for char_id, char_data in sorted_items}
+    pass  # gemini end
     unidata = dict()
     for i in glob('universe-images/*/universe-img.webp'):
         with open(i, 'rb') as file:
@@ -134,8 +163,14 @@ def main():
             'origin': 'universe', 't': resp.headers['image-type']}
     copyfile('404placeholder.webp', '../imgdata/404placeholder.webp')
     with open(f'../{filename}/.assets.json', 'wt', encoding='utf8') as file:
-        file.write(json.dumps(dict(chardata=local, unidata=unidata), indent=2))
+        file.write(json.dumps(dict(chardata=local, unidata=unidata), sort_keys=False))
     pass
+
+
+def get_sort_key(item):
+    u_id = str(item[1]["main.json"].get('UniverseId', ''))
+    is_favicond = 0 if u_id == 'Favicond-Main' else 1
+    return (is_favicond, u_id)
 
 
 if __name__ == '__main__':
