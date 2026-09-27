@@ -26,42 +26,39 @@ require __DIR__ . '/imageTag.php';
 if (isset($GLOBALS['all'])) {
     $uniSlugName = 'main';
     foreach ($data as $every) foreach ($every as $item) {
-        $char = $item['main.json'];
-        if (!is_array($char)) continue;
-        if (array_key_exists('private', $char)) if ($char['private']) continue;
-        if (array_key_exists('aichar', $char)) if ($char['aichar']) continue;
-        $_boxcolor = array_key_exists('primaryColor', $char) ? $char['primaryColor'] : '#00a8f3';
-        if (!str_starts_with($_boxcolor, '#')) $_boxcolor = "#$_boxcolor";
-        $name = htmlspecialchars12($char['name'] ?? $char['charId']);
-        $formats = $aiAlways ? ['webp', 'png'] : ['avif', 'webp'];
-        $img = imageTag($item[$aiAlways ? 'main-ai' : "main-see"],
-            $formats, array('store-img'), $aiAlways ? null : 'webp');
-        if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
-            "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
-            ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
+        $approved = appendMain($item, false, $characters);
         if (isset($GLOBALS['noalt']) && $GLOBALS['noalt']) continue;
+        if ($approved) {
+            [$_boxcolor, $name] = $approved;
+        } else continue;
         foreach ($item['asset2'] as $asset) {
             $img = imageTag($asset, ['avif', 'webp'], array('store-img'));
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
                 "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
                 ">$name (Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
         }
-        $img = imageTag($item['main-ai'], $formats, array('store-img'), null);
+        $img = imageTag($item['main-ai'], ['webp', 'png'], array('store-img'), null);
         if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
             "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
             ">$name (Ai) </a></h3><a href=$base{$item['charId']}>$img</a></article>";
         foreach ($item['assetAi'] as $asset) {
-            $img = imageTag($asset, ['avif', 'webp'], array('store-img'));
+            //$characters[] = "<script type=application/json is=output-script>" . json_encode($asset) . "</script>";
+            $img = imageTag($asset, ['webp', 'png'], array('store-img'), null);
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
                 "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
                 ">$name (Ai Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
         }
     }
 } elseif ($uniSlugName) foreach ($data[$uniSlugName] as $item) {
+    appendMain($item, $aiAlways, $characters);
+}
+function appendMain(array $item, bool $aiAlways, array &$characters): false|array
+{
+    global $base;
     $char = $item['main.json'];
-    if (!is_array($char)) continue;
-    if (array_key_exists('private', $char)) if ($char['private']) continue;
-    if (array_key_exists('aichar', $char)) if ($char['aichar']) continue;
+    if (!is_array($char)) return false;
+    if (array_key_exists('private', $char)) if ($char['private']) return false;
+    if (array_key_exists('aichar', $char)) if ($char['aichar']) return false;
     $_boxcolor = array_key_exists('primaryColor', $char) ? $char['primaryColor'] : '#00a8f3';
     if (!str_starts_with($_boxcolor, '#')) $_boxcolor = "#$_boxcolor";
     $name = htmlspecialchars12($char['name'] ?? $char['charId']);
@@ -71,4 +68,5 @@ if (isset($GLOBALS['all'])) {
     if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
         "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
         ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
+    return [$_boxcolor, $name];
 }

@@ -49,6 +49,11 @@ for step, file_name in enumerate(s - l):
     except FileNotFoundError:
         pass
     deleted = step
+if added or deleted:
+    file_name = '.assets.json'
+    sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
+    print(repr(file_name), 'overwritten')
+
 # 4. Close the session
 sftp.close()
 transport.close()

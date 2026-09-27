@@ -3,7 +3,7 @@
 function imageTag(array $hashes, array $formats, array $classes, ?string $fallback = 'webp'): string|false
 {
     if (!count($formats)) return false;
-    $formatsImploded = implode(' ', $formats);
+    //$formatsImploded = implode(' ', $formats);
 
     $lastValid = null;
     $result = "<picture>";
