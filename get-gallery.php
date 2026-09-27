@@ -1,5 +1,14 @@
 <?php use function Helpers\htmlspecialchars12;
 
+function matchUniverses(string $universe): string
+{
+    global $unidata;
+    $Favi_verse = $unidata;
+    if (array_key_exists($universe, $Favi_verse["unidata"])) {
+        return $Favi_verse["unidata"][$universe]["humanName"];
+    } else return $universe;
+}
+
 $uniSlugName = null;
 $characters = array();
 require __DIR__ . '/require.php';
@@ -30,13 +39,17 @@ if (isset($GLOBALS['all'])) {
         if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
             "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
             ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
-        if (isset($GLOBALS['noalt'])) continue;
+        if (isset($GLOBALS['noalt']) && $GLOBALS['noalt']) continue;
         foreach ($item['asset2'] as $asset) {
             $img = imageTag($asset, ['avif', 'webp'], array('store-img'));
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
                 "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
                 ">$name (Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
         }
+        $img = imageTag($item['main-ai'], $formats, array('store-img'), null);
+        if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
+            "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
+            ">$name (Ai) </a></h3><a href=$base{$item['charId']}>$img</a></article>";
         foreach ($item['assetAi'] as $asset) {
             $img = imageTag($asset, ['avif', 'webp'], array('store-img'));
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .

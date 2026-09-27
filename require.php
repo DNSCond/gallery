@@ -6,6 +6,11 @@ function readJSON(string $path): mixed
     return null;
 }
 
+/**
+ * @param string $jsonFile
+ * @return array|null
+ * @deprecated
+ */
 function readCharacterJSON(string $jsonFile): null|array
 {
     //$json = readJSON($jsonFile);

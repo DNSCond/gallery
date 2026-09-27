@@ -15,13 +15,22 @@ if (array_key_exists('char', $_GET)) {
 }
 require_once __DIR__ . '/require.php';
 require_once __DIR__ . '/imageTag.php';
-require_once __DIR__ . '/matchUniverses.php';
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/header3/head3.php";
-$data = readJSON(__DIR__ . '/imgdata/.assets.json')['chardata'];
+$data = ($unidata = readJSON(__DIR__ . '/imgdata/.assets.json'))['chardata'];
 if (!isPresent($data, [$uniSlugName, $charId, 'main.json'])) {
     http_response_code(404);
     exit;
 }
+
+function matchUniverses(string $universe): string
+{
+    global $unidata;
+    $Favi_verse = $unidata;
+    if (array_key_exists($universe, $Favi_verse["unidata"])) {
+        return $Favi_verse["unidata"][$universe]["humanName"];
+    } else return $universe;
+}
+
 $chardata = $data[$uniSlugName][$charId];
 $datachar = $chardata['main.json'];
 $uniName = matchUniverses($uniname = $datachar['UniverseId']);
@@ -62,7 +71,7 @@ $nightLightOverride = array_key_exists('night', $_GET) && "{$_GET['night']}";
 create_head3($title = "{$datachar['name']} (ANT's Character Gallery)", [
         'base' => '/gallery/', 'desc' => $desc, 'class' => ['larger'], 'bread' => [
                 array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
-                array('text' => $uniSlugName, 'href' => $unicanonical),
+                array('text' => matchUniverses($uniSlugName), 'href' => $unicanonical),
                 array('text' => $datachar['name'], 'href' => "$unicanonical$charId"),
         ], 'borderColor' => $borderColor, 'backColor' => $backColor, 'stylelinks' => [
                 'statics/cssx.css', 'statics/ddDL-table.css', 'statics/characterPage.css'],

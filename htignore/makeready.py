@@ -118,35 +118,8 @@ def main():
             inner['asset2'] = data_dict
             inner['assetAi'] = data_ai_dict
             del inner['assets']
-    new = dict(main=local['main'])
-    for key, val in local.items():
-        if key == 'main':
-            continue
-        new[key] = val
-    local = new
-    step0 = [(key, val) for key, val in local['main'].items()]
-    step0.sort(key=lambda thing: datetime.fromisoformat(thing[1]["main.json"]['creationDate']).timestamp())
-    # step1 = dict()
-    # for datalive in step0:
-    #     step1[datalive[1]['main.json']['UniverseId']] = step1.get(datalive[1]['main.json']['UniverseId'], list())
-    #     step1[datalive[1]['main.json']['UniverseId']].append(datalive)
-    # favicond = step1['Favicond-Main']
-    # del step1['Favicond-Main']
-    # # how do to this?
-    # step2 = [dict(i) for i in favicond].concat(dict(step1[i]) for i in sorted(step1.keys()))
-    # local['main'] = step2
-
-    pass  # gemei start
-    # step0: List of (char_id, char_data) sorted chronologically by creationDate
-    step0 = [(key, val) for key, val in local['main'].items()]
-    step0.sort(key=lambda thing: datetime.fromisoformat(thing[1]["main.json"]['creationDate']).timestamp())
-
-    # Sort the items according to UniverseId custom hierarchy
-    sorted_items = sorted(step0, key=get_sort_key)
-
-    # Reconstruct local['main'] back into its original dict structure { char_id: char_data }
-    local['main'] = {char_id: char_data for char_id, char_data in sorted_items}
-    pass  # gemini end
+        with open(f'./universe-images/universes.json', 'rt', encoding='utf8') as file:
+            univ = json.load(file)
     unidata = dict()
     for i in glob('universe-images/*/universe-img.webp'):
         with open(i, 'rb') as file:
@@ -157,20 +130,42 @@ def main():
             file.write(cont)
         resp = requests.get(url := f'http://localhost/gallery/dev-only/imgdata.php?hash={hash}{pathlib.Path(i).suffix}')
         matched = re.search('w=(\\d+), h=(\\d+)', resp.headers['image-size'])
-        unidata[pathlib.Path(i).parent.stem] = {
+        unidata[uniname := pathlib.Path(i).parent.stem] = {
             'hash': f'{hash}{pathlib.Path(i).suffix}',
             'w': int(matched.group(1)), 'h': int(matched.group(2)),
             'origin': 'universe', 't': resp.headers['image-type']}
+        unidata[uniname]['humanName'] = univ.get(uniname, uniname)
+    nokeys = set(unidata.keys())
+    for thing in sorted(set(univ.keys()) - nokeys):
+        unidata[thing] = {'humanName': univ[thing]}
+
+    new = dict(main=local['main'])
+    for key, val in local.items():
+        if key == 'main':
+            continue
+        new[key] = val
+    local = new
+    # step0: List of (char_id, char_data) sorted chronologically by creationDate
+    step0 = [(key, val) for key, val in local['main'].items()]
+    step0.sort(key=lambda thing: datetime.fromisoformat(thing[1]["main.json"]['creationDate']).timestamp())
+
+    def get_sort_key(item):
+        u_id = str(item[1]["main.json"].get('UniverseId', ''))
+        is_favicond = 0 if u_id == 'Favicond-Main' else 1
+        return (is_favicond, unidata.get(u_id, dict()).get('humanName', u_id))
+
+    # Sort the items according to UniverseId custom hierarchy
+    sorted_items = sorted(step0, key=get_sort_key)
+
+    # Reconstruct local['main'] back into its original dict structure { char_id: char_data }
+    local['main'] = {char_id: char_data for char_id, char_data in sorted_items}
+    pass  # gemini end
     copyfile('404placeholder.webp', '../imgdata/404placeholder.webp')
     with open(f'../{filename}/.assets.json', 'wt', encoding='utf8') as file:
-        file.write(json.dumps(dict(chardata=local, unidata=unidata), sort_keys=False))
+        file.write(json.dumps(dict(
+            chardata=local, unidata=unidata
+        ), sort_keys=False))
     pass
-
-
-def get_sort_key(item):
-    u_id = str(item[1]["main.json"].get('UniverseId', ''))
-    is_favicond = 0 if u_id == 'Favicond-Main' else 1
-    return (is_favicond, u_id)
 
 
 if __name__ == '__main__':
