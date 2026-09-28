@@ -24,8 +24,8 @@ if (array_key_exists('uni', $_GET)) {
 $base = "universe/$uniSlugName/";
 require __DIR__ . '/imageTag.php';
 if (isset($GLOBALS['all'])) {
-    $uniSlugName = 'main';
-    foreach ($data as $every) foreach ($every as $item) {
+    foreach ($data as $uniSlugName => $every) foreach ($every as $item) {
+        $base = "universe/$uniSlugName/";
         $approved = appendMain($item, false, $characters);
         if (isset($GLOBALS['noalt']) && $GLOBALS['noalt']) continue;
         if ($approved) {
@@ -42,13 +42,12 @@ if (isset($GLOBALS['all'])) {
             "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
             ">$name (Ai) </a></h3><a href=$base{$item['charId']}>$img</a></article>";
         foreach ($item['assetAi'] as $asset) {
-            //$characters[] = "<script type=application/json is=output-script>" . json_encode($asset) . "</script>";
             $img = imageTag($asset, ['webp', 'png'], array('store-img'), null);
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
                 "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
                 ">$name (Ai Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
         }
-    }
+    } $uniSlugName = 'main';
 } elseif ($uniSlugName) foreach ($data[$uniSlugName] as $item) {
     appendMain($item, $aiAlways, $characters);
 }

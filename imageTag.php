@@ -1,4 +1,4 @@
-<?php use function Helpers\htmlspecialchars12;
+<?php // use function Helpers\htmlspecialchars12;
 
 function imageTag(array $hashes, array $formats, array $classes, ?string $fallback = 'webp'): string|false
 {
