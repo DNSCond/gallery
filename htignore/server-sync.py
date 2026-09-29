@@ -41,6 +41,7 @@ for step, file_name in enumerate(l - s):
     print(step, 'added.')
     sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
     added = step
+print('---')
 for step, file_name in enumerate(s - l):
     print(step, 'deleted.')
     remote_path = f'/antrequest.nl/gallery/imgdata/{file_name}';
@@ -49,7 +50,8 @@ for step, file_name in enumerate(s - l):
     except FileNotFoundError:
         pass
     deleted = step
-if added or deleted:
+print('---')
+if added or deleted or True:
     file_name = '.assets.json'
     sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
     print(repr(file_name), 'overwritten')

@@ -42,6 +42,7 @@ if (isset($GLOBALS['all'])) {
 } ?>
 <div class=divs>
     <h1><?= $title ?></h1>
+    <script src=statics/index.js type=module></script>
     <details class='border alt-uni'>
         <summary>Alternate Universes</summary>
         <div><?= "<h2 id=Other-Universes class=altUniStyle>Other Universes</h2>\n";
