@@ -21,7 +21,8 @@ if (array_key_exists('uni', $_GET)) {
         }
     }
 } else $uniSlugName = 'main';
-$base = "universe/$uniSlugName/";
+$si = $aiAlways ? "-ai" : '';
+$base = "universe$si/$uniSlugName/";
 require __DIR__ . '/imageTag.php';
 if (isset($GLOBALS['all'])) {
     foreach ($data as $uniSlugName => $every) foreach ($every as $item) {
@@ -47,10 +48,10 @@ if (isset($GLOBALS['all'])) {
                 "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
                 ">$name (Ai Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
         }
-    } $uniSlugName = 'main';
-} elseif ($uniSlugName) foreach ($data[$uniSlugName] as $item) {
+    }
+    $uniSlugName = 'main';
+} elseif ($uniSlugName) foreach ($data[$uniSlugName] as $item)
     appendMain($item, $aiAlways, $characters);
-}
 function appendMain(array $item, bool $aiAlways, array &$characters): false|array
 {
     global $base;

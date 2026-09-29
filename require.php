@@ -1,4 +1,4 @@
-<?php
+<?php // readJSON
 function readJSON(string $path): mixed
 {
     $file = file_get_contents($path);
@@ -6,40 +6,22 @@ function readJSON(string $path): mixed
     return null;
 }
 
-/**
- * @param string $jsonFile
- * @return array|null
- * @deprecated
- */
-function readCharacterJSON(string $jsonFile): null|array
+function isPresent(array $current, array $properties): bool
 {
-    //$json = readJSON($jsonFile);
-    //if (preg_match(
-    //    '/htignore\\/universe-images\\/[a-zA-Z0-9\\-]+\\/([a-zA-Z0-9\\-]+)\/main\\.json$/D',
-    //    $jsonFile, $matches)) {$json['charId'] = $matches[1];return $json;}
-    return null;
-}
-
-/**
- * @param string $jsonFile
- * @return array|null
- * @deprecated
- */
-function parseURL(string $jsonFile): null|array
-{
-    return null;
-}
-
-function isPresent(array $array, array $properties): bool
-{
-    $current = $array;
     foreach ($properties as $property) {
         if (!is_array($current)) return false;
+        elseif ((null) === ($property)) return false;
+        if (!is_string($property)) return false;
         if (array_key_exists($property, $current)) {
             $current = $current[$property];
-        } else {
-            return false;
-        }
+        } else return false;
     }
     return true;
+}
+
+function array__get_key_as_boolean(string $key, array $array): bool
+{
+    if (array_key_exists($key, $array)) {
+        return (bool)$array[$key];
+    } else return false;
 }

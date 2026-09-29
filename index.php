@@ -1,8 +1,6 @@
 <?php use function ANTHeader\create_head3;
-use function Helpers\htmlspecialchars12;
 
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/header3/head3.php";
-
 global $characters, $uniSlugName, $data, $unidata;
 header('cache-control: public, max-age=600, stale-while-revalidate=86400, stale-if-error=432000');
 $nightLightOverride = array_key_exists('night', $_GET) && "{$_GET['night']}";
@@ -26,6 +24,8 @@ if (isset($GLOBALS['all'])) {
         http_response_code(403);
         exit('<!DOCTYPE html><meta CHARSET=UTF-8>$uniSlugName doesnt exist');
     }
+    $key = $uniSlugName;
+    $ai = $aiAlways ? "-ai" : '';
     $title = $uniSlugName === 'main' ? 'Favicond\'s Character Gallery' . ($aiAlways ? "\x20(Ai Mode)" : '') :
             matchUniverses($uniSlugName) . ($aiAlways ? "\x20(Ai Mode)" : '') . "\x20(Favicond's Character Gallery)";
     create_head3($title, ['base' => '/gallery/',
@@ -34,7 +34,7 @@ if (isset($GLOBALS['all'])) {
                     array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
                     $uniSlugName !== 'main' ? array('text' => matchUniverses($uniSlugName),
                             'href' => "universe/$uniSlugName/") : null,
-            ], 'canonical' => $uniSlugName === 'main' ? '/' : "gallery/universe/$uniSlugName/",
+            ], 'canonical' => $key === 'main' && !$ai ? '/' : "universe$ai/$key/",
             'stylelinks' => ['statics/cssx.css', 'statics/ddDL-table.css'],
             'borderColor' => ($aiAlways ? '#ff00ff' : '#00a8f3'),
             'backColor' => ($aiAlways ? '#a600a6' : '#0073a6'),
@@ -53,9 +53,10 @@ if (isset($GLOBALS['all'])) {
             foreach ($unidata['unidata'] as $key => $item) unidata($key, $item);
             function unidata($key, $item): void
             {
+                global $ai;
                 if (!array_key_exists('hash', $item)) return;
                 $Universe = matchUniverses($key);
-                $univHref = $key === 'main' ? '/' : "universe/$key/" ?>
+                $univHref = $key === 'main' && !$ai ? '/' : "universe$ai/$key/" ?>
                 <article class='store-div div' is=shadowboxed-hover>
                 <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
                 <a href="<?= $univHref ?>"><img

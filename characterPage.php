@@ -1,13 +1,13 @@
 <?php use function Helpers\htmlspecialchars12;
 use function ANTHeader\create_head3;
 
+$charId = null;
 $uniSlugName = null;
 if (array_key_exists('uni', $_GET)) {
     if (preg_match('/^([a-zA-Z0-9\\-]+)$/iD', "{$_GET['uni']}")) {
         $uniSlugName = "{$_GET['uni']}";
     }
 } else $uniSlugName = 'main';
-$charId = null;
 if (array_key_exists('char', $_GET)) {
     if (preg_match('/^([a-zA-Z0-9\\-]+)$/iD', "{$_GET['char']}")) {
         $charId = "{$_GET['char']}";
@@ -38,7 +38,9 @@ $name = htmlspecialchars12($datachar['name'] ?? $charId);
 header('cache-control: public, max-age=600, stale-while-revalidate=86400, stale-if-error=432000');
 
 $desc = $GLOBALS['defaultDesc'] = "$name\x20is a character of the $uniName Universe on ANTRequest.nl.";
-$unicanonical = "/gallery/universe/$uniSlugName/";
+$aiAlways = array_key_exists('withai', $_GET) && "{$_GET['withai']}";
+$si = $aiAlways ? "-ai" : '';
+$unicanonical = "/gallery/universe$si/$uniSlugName/";
 
 $backColor = null;
 $borderColor = null;
@@ -58,17 +60,11 @@ if (array_key_exists('primaryColor', $characterData) || array_key_exists('second
     }
 }
 
+$aiMode = $aiAlways ? "\x20(Ai Mode)" : '';
 $characterInfo = "<p>" . htmlspecialchars12($desc);
 if (isset($GLOBALS['desc'])) $desc = "{$GLOBALS['desc']}";
-function array__get_key_as_boolean(string $key, array $array): bool
-{
-    if (array_key_exists($key, $array)) {
-        return (bool)$array[$key];
-    } else return false;
-}
-
 $nightLightOverride = array_key_exists('night', $_GET) && "{$_GET['night']}";
-create_head3($title = "{$datachar['name']} (ANT's Character Gallery)", [
+create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
         'base' => '/gallery/', 'desc' => $desc, 'class' => ['larger'], 'bread' => [
                 array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
                 array('text' => matchUniverses($uniSlugName), 'href' => $unicanonical),
@@ -79,9 +75,10 @@ create_head3($title = "{$datachar['name']} (ANT's Character Gallery)", [
 ]) ?>
 <main>
     <div class=divs>
-        <h1><?= "Character &quot;$name&quot;" ?></h1>
-        <div><?= str_replace('fetchpriority=auto loading=lazy', 'fetchpriority=high', $main = imageTag(
-                    $chardata['main-see'], ['avif', 'webp', 'png'], ['introImage border']));
+        <h1><?= "Character &quot;$name&quot;$aiMode";
+            $main = $aiAlways ? imageTag($chardata['main-ai'], ['webp', 'png'], ['introImage border'], null)
+                    : imageTag($chardata['main-see'], ['avif', 'webp'], ['introImage border']) ?></h1>
+        <div><?= str_replace('fetchpriority=auto loading=lazy', 'fetchpriority=high', $main);
             require_once 'dataDescriptionList.php';
             $datachar['charId'] = "$uniSlugName/$charId";
             $datachar['UniverseId'] = new HTMLSafeEscaped("<data value=$uniname>{$datachar['UniverseId']}</data>");
