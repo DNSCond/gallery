@@ -14,6 +14,9 @@ $characters = array();
 require __DIR__ . '/require.php';
 global $nightLightOverride, $aiAlways;
 $data = ($unidata = readJSON(__DIR__ . '/imgdata/.assets.json'))['chardata'];
+$withalt = array_key_exists('withalt', $_GET) && "{$_GET['withalt']}";
+if ($withalt) $aiAlways = false;
+$allOf = array_key_exists('all', $_GET) && "{$_GET['all']}";
 if (array_key_exists('uni', $_GET)) {
     if (preg_match('/^([a-zA-Z0-9\\-]+)$/iD', "{$_GET['uni']}")) {
         if (array_key_exists("{$_GET['uni']}", $data)) {
@@ -27,11 +30,28 @@ require __DIR__ . '/imageTag.php';
 if (isset($GLOBALS['all'])) {
     foreach ($data as $uniSlugName => $every) foreach ($every as $item) {
         $base = "universe/$uniSlugName/";
-        $approved = appendMain($item, false, $characters);
-        if (isset($GLOBALS['noalt']) && $GLOBALS['noalt']) continue;
-        if ($approved) {
-            [$_boxcolor, $name] = $approved;
-        } else continue;
+        appendMain($item, false, $characters, $withalt);
+    }
+    $uniSlugName = 'main';
+} elseif ($uniSlugName) foreach ($data[$uniSlugName] as $item)
+    appendMain($item, $aiAlways, $characters, $withalt);
+function appendMain(array $item, bool $aiAlways, array &$characters, bool $withalt): void
+{
+    global $base;
+    $char = $item['main.json'];
+    if (!is_array($char)) return;
+    if (array_key_exists('private', $char)) if ($char['private']) return;
+    if (array_key_exists('aichar', $char)) if ($char['aichar']) return;
+    $_boxcolor = array_key_exists('primaryColor', $char) ? $char['primaryColor'] : '#00a8f3';
+    if (!str_starts_with($_boxcolor, '#')) $_boxcolor = "#$_boxcolor";
+    $name = htmlspecialchars12($char['name'] ?? $char['charId']);
+    $formats = $aiAlways ? ['webp', 'png'] : ['avif', 'webp'];
+    $img = imageTag($item[$aiAlways ? 'main-ai' : "main-see"],
+        $formats, array('store-img'), $aiAlways ? null : 'webp');
+    if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
+        "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
+        ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
+    if ($withalt) {
         foreach ($item['asset2'] as $asset) {
             $img = imageTag($asset, ['avif', 'webp'], array('store-img'));
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
@@ -49,24 +69,4 @@ if (isset($GLOBALS['all'])) {
                 ">$name (Ai Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
         }
     }
-    $uniSlugName = 'main';
-} elseif ($uniSlugName) foreach ($data[$uniSlugName] as $item)
-    appendMain($item, $aiAlways, $characters);
-function appendMain(array $item, bool $aiAlways, array &$characters): false|array
-{
-    global $base;
-    $char = $item['main.json'];
-    if (!is_array($char)) return false;
-    if (array_key_exists('private', $char)) if ($char['private']) return false;
-    if (array_key_exists('aichar', $char)) if ($char['aichar']) return false;
-    $_boxcolor = array_key_exists('primaryColor', $char) ? $char['primaryColor'] : '#00a8f3';
-    if (!str_starts_with($_boxcolor, '#')) $_boxcolor = "#$_boxcolor";
-    $name = htmlspecialchars12($char['name'] ?? $char['charId']);
-    $formats = $aiAlways ? ['webp', 'png'] : ['avif', 'webp'];
-    $img = imageTag($item[$aiAlways ? 'main-ai' : "main-see"],
-        $formats, array('store-img'), $aiAlways ? null : 'webp');
-    if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
-        "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
-        ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
-    return [$_boxcolor, $name];
 }
