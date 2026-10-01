@@ -54,15 +54,17 @@ if (isset($GLOBALS['all'])) {
             function unidata($key, $item): void
             {
                 global $ai;
-                if (!array_key_exists('hash', $item)) return;
+                if (!array_key_exists('noAi', $item)) return;
                 $Universe = matchUniverses($key);
+                $image = false;
+                if ($ai) $image = imageTag($item['wiAi'], ['png'],
+                        "Ai Universe thumbnail for $Universe", array('store-img', 'em10'), null);
+                if ($image === false) $image = imageTag($item['noAi'], ['webp'],
+                        "Universe thumbnail for $Universe", array('store-img', 'em10'));
                 $univHref = $key === 'main' && !$ai ? '/' : "universe$ai/$key/" ?>
                 <article class='store-div div' is=shadowboxed-hover>
                 <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
-                <a href="<?= $univHref ?>"><img
-                            class='store-img em10' width=800 height=1280
-                            alt="<?= "Universe thumbnail for $Universe" ?>"
-                            src="<?= "imgdata/{$item['hash']}" ?>"></a>
+                <a href="<?= $univHref ?>"><?= $image ?></a>
                 </article><?= "<!-- $Universe -->";
             }
 

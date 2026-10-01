@@ -76,8 +76,8 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
 <main>
     <div class=divs>
         <h1><?= "Character &quot;$name&quot;$aiMode";
-            $main = $aiAlways ? imageTag($chardata['main-ai'], ['webp', 'png'], ['introImage border'], null)
-                    : imageTag($chardata['main-see'], ['avif', 'webp'], ['introImage border']) ?></h1>
+            $main = $aiAlways ? imageTag($chardata['main-ai'], ['webp', 'png'], 'Main Appearance Ai', ['introImage border'], null)
+                    : imageTag($chardata['main-see'], ['avif', 'webp'], 'Main Appearance', ['introImage border']) ?></h1>
         <div><?= str_replace('fetchpriority=auto loading=lazy', 'fetchpriority=high', $main);
             require_once 'dataDescriptionList.php';
             $datachar['charId'] = "$uniSlugName/$charId";
@@ -126,7 +126,7 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
                 $aiAlways = $ai;
                 $classArray = ['store-img', 'store-big'];
                 $formats = $aiAlways ? ['webp', 'png'] : ['avif', 'webp'];
-                $img = imageTag($hashes, $formats, $classArray, $aiAlways ? null : 'webp');
+                $img = imageTag($hashes, $formats, $alt, $classArray, $aiAlways ? null : 'webp');
                 if ($img) return "<div class=store-div>$img<div class=altText>$alt</div></div>";
                 return '';
             } ?></div>

@@ -47,23 +47,23 @@ function appendMain(array $item, bool $aiAlways, array &$characters, bool $witha
     $name = htmlspecialchars12($char['name'] ?? $char['charId']);
     $formats = $aiAlways ? ['webp', 'png'] : ['avif', 'webp'];
     $img = imageTag($item[$aiAlways ? 'main-ai' : "main-see"],
-        $formats, array('store-img'), $aiAlways ? null : 'webp');
+        $formats, "",array('store-img'), $aiAlways ? null : 'webp');
     if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
         "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
         ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
     if ($withalt) {
         foreach ($item['asset2'] as $asset) {
-            $img = imageTag($asset, ['avif', 'webp'], array('store-img'));
+            $img = imageTag($asset, ['avif', 'webp'], "",array('store-img'));
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
                 "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
                 ">$name (Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
         }
-        $img = imageTag($item['main-ai'], ['webp', 'png'], array('store-img'), null);
+        $img = imageTag($item['main-ai'], ['webp', 'png'], "",array('store-img'), null);
         if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
             "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
             ">$name (Ai) </a></h3><a href=$base{$item['charId']}>$img</a></article>";
         foreach ($item['assetAi'] as $asset) {
-            $img = imageTag($asset, ['webp', 'png'], array('store-img'), null);
+            $img = imageTag($asset, ['webp', 'png'], "",array('store-img'), null);
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
                 "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
                 ">$name (Ai Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
