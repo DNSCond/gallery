@@ -37,12 +37,12 @@ l = set(local_files)
 step = int()
 added = int()
 deleted = int()
-for step, file_name in enumerate(l - s):
+for step, file_name in enumerate(l - s, start=1):
     print(step, 'added.')
     sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
     added = step
 print('---')
-for step, file_name in enumerate(s - l):
+for step, file_name in enumerate(s - l, start=1):
     print(step, 'deleted.')
     remote_path = f'/antrequest.nl/gallery/imgdata/{file_name}';
     try:
