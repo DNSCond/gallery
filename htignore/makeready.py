@@ -1,5 +1,5 @@
 import re, pathlib, hashlib, base64, json, requests, shutil
-from datetime import datetime
+from datetime import datetime, timezone
 from glob import glob
 
 
@@ -21,7 +21,8 @@ def main():
         file.write('RewriteCond %{HTTP:Sec-Fetch-Site} ^cross-site$ [NC]\n')
         file.write('RewriteRule ^ - [F,L]\n')
         file.write('Header append vary sec-fetch-site\n')
-        file.write('Header set Cache-Control "public, max-age=31536000, immutable"\n\n')
+        file.write('Header set Cache-Control "public, max-age=10"\n\n')
+        # file.write('Header set Cache-Control "public, max-age=31536000, immutable"\n\n')
         file.write('ErrorDocument 404 /gallery/imgdata/404placeholder.webp\n')
         file.write('ErrorDocument 403 /gallery/imgdata/404placeholder.webp\n')
     pass
@@ -178,8 +179,52 @@ def main():
     with open(f'../{folder}/.assets.json', 'wt', encoding='utf8') as file:
         file.write(json.dumps(dict(
             chardata=local, unidata=unidata
-        ), sort_keys=False, indent=2))
+        ), sort_keys=False))
+    with open('../imgdata/.htaccess', 'at', encoding='utf8') as file:
+        for univ, outer in local.items():
+            for charid, inner in outer.items():
+                if inner['main-see']:
+                    for data in inner['main-see'].values():
+                        write_file(file, data, inner['main.json'], charid, univ, unidata)
+                    for data in inner['main-ai'].values():
+                        write_file(file, data, inner['main.json'], charid, univ, unidata)
+                    for thing in inner['asset2'].values():
+                        for formats in thing.values():
+                            write_file(file, formats, inner['main.json'], charid, univ, unidata)
+                    for thing in inner['assetAi'].values():
+                        for formats in thing.values():
+                            write_file(file, formats, inner['main.json'], charid, univ, unidata)
+                    pass
     pass
+
+
+def write_file(file, data, chardata, charid, univ, unidata):
+    *names, suffix = data['hash'].split('.')
+    name = '.'.join(names)
+    file.write(f'\n<Files "{name}.{suffix}">\nHeader set\x20')
+    file.write(f'content-disposition "inline; filename=\\"{chardata['name']}.{suffix}\\""')
+    file.write(f'\nHeader set fx-data-names "fx-data-name, fx-data-oname, fx-data-charname, fx-mkready,'
+               ' fx-data-names, fx-relative-url, fx-data-mime, fx-data-w, fx-data-h, fx-data-univname"')
+    if bool(human := unidata.get(univ, dict()).get('humanName')):
+        file.write(f'\nHeader set fx-data-univname {encode_str_b64(human)}')
+    file.write(f'\nHeader set fx-data-name {encode_str_b64(chardata['name'])}')
+    file.write(f'\nHeader set fx-data-oname {encode_str_b64(data['oname'])}')
+    file.write(f'\nHeader set fx-data-charname {encode_str_b64(charid)}')
+    file.write(f'\nHeader set fx-relative-url /gallery/universe/{univ}/{charid}')
+    file.write(f'\nHeader set fx-mkready "{date_now()}"')
+    file.write(f'\nHeader set fx-data-mime {data['t']}')
+    file.write(f'\nHeader set fx-data-w {data['w']}')
+    file.write(f'\nHeader set fx-data-h {data['h']}')
+    file.write(f'\n</Files>\n')
+
+def date_now():
+    now = datetime.now(timezone.utc)  # .astimezone()
+    formatted_date = now.strftime("%a %b %d %Y %H:%M:%S GMT%z")
+    return formatted_date  # formatted_date
+
+
+def encode_str_b64(strx: str) -> str:
+    return f':{base64.b64encode(strx.encode('utf8')).decode('utf8')}:'
 
 
 if __name__ == '__main__':

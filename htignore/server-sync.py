@@ -55,6 +55,9 @@ if added or deleted or True:
     file_name = '.assets.json'
     sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
     print(repr(file_name), 'overwritten')
+    file_name = '.htaccess'
+    sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
+    print(repr(file_name), 'overwritten')
 
 # 4. Close the session
 sftp.close()
