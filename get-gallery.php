@@ -28,9 +28,12 @@ $si = $aiAlways ? "-ai" : '';
 $base = "universe$si/$uniSlugName/";
 require __DIR__ . '/imageTag.php';
 if (isset($GLOBALS['all'])) {
-    foreach ($data as $uniSlugName => $every) foreach ($every as $item) {
+    foreach ($data as $uniSlugName => $every) {
         $base = "universe/$uniSlugName/";
-        appendMain($item, false, $characters, $withalt);
+        $uninameData = matchUniverses($uniSlugName);
+        $unislugData = $uniSlugName === 'main' ? '/' : $base;
+        $characters[] = "<h2 class=h2-border><a href='$unislugData'>$uninameData</a></h2>";
+        foreach ($every as $item) appendMain($item, false, $characters, $withalt);
     }
     $uniSlugName = 'main';
 } elseif ($uniSlugName) foreach ($data[$uniSlugName] as $item)
@@ -47,23 +50,23 @@ function appendMain(array $item, bool $aiAlways, array &$characters, bool $witha
     $name = htmlspecialchars12($char['name'] ?? $char['charId']);
     $formats = $aiAlways ? ['webp', 'png'] : ['avif', 'webp'];
     $img = imageTag($item[$aiAlways ? 'main-ai' : "main-see"],
-        $formats, "",array('store-img'), $aiAlways ? null : 'webp');
+        $formats, "", array('store-img'), $aiAlways ? null : 'webp');
     if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
         "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
         ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
     if ($withalt) {
         foreach ($item['asset2'] as $asset) {
-            $img = imageTag($asset, ['avif', 'webp'], "",array('store-img'));
+            $img = imageTag($asset, ['avif', 'webp'], "", array('store-img'));
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
                 "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
                 ">$name (Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
         }
-        $img = imageTag($item['main-ai'], ['webp', 'png'], "",array('store-img'), null);
+        $img = imageTag($item['main-ai'], ['webp', 'png'], "", array('store-img'), null);
         if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
             "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
             ">$name (Ai) </a></h3><a href=$base{$item['charId']}>$img</a></article>";
         foreach ($item['assetAi'] as $asset) {
-            $img = imageTag($asset, ['webp', 'png'], "",array('store-img'), null);
+            $img = imageTag($asset, ['webp', 'png'], "", array('store-img'), null);
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
                 "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
                 ">$name (Ai Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
