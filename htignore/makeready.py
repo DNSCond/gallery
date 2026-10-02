@@ -21,8 +21,8 @@ def main():
         file.write('RewriteCond %{HTTP:Sec-Fetch-Site} ^cross-site$ [NC]\n')
         file.write('RewriteRule ^ - [F,L]\n')
         file.write('Header append vary sec-fetch-site\n')
-        file.write('Header set Cache-Control "public, max-age=10"\n\n')
-        # file.write('Header set Cache-Control "public, max-age=31536000, immutable"\n\n')
+        # file.write('Header set Cache-Control "public, max-age=10"\n\n')
+        file.write('Header set Cache-Control "public, max-age=31536000, immutable"\n\n')
         file.write('ErrorDocument 404 /gallery/imgdata/404placeholder.webp\n')
         file.write('ErrorDocument 403 /gallery/imgdata/404placeholder.webp\n')
     pass
