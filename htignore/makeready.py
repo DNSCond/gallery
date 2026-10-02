@@ -203,8 +203,8 @@ def write_file(file, data, chardata, charid, univ, unidata):
     name = '.'.join(names)
     file.write(f'\n<Files "{name}.{suffix}">\nHeader set\x20')
     file.write(f'content-disposition "inline; filename=\\"{chardata['name']}.{suffix}\\""')
-    file.write(f'\nHeader set fx-data-names "fx-data-name, fx-data-oname, fx-data-charname, fx-mkready,'
-               ' fx-data-names, fx-relative-url, fx-data-mime, fx-data-w, fx-data-h, fx-data-univname"')
+    #file.write(f'\nHeader set fx-data-names "fx-data-name, fx-data-oname, fx-data-charname, fx-mkready,'
+    #           ' fx-data-names, fx-relative-url, fx-data-mime, fx-data-w, fx-data-h, fx-data-univname"')
     if bool(human := unidata.get(univ, dict()).get('humanName')):
         file.write(f'\nHeader set fx-data-univname {encode_str_b64(human)}')
     file.write(f'\nHeader set fx-data-name {encode_str_b64(chardata['name'])}')
