@@ -81,7 +81,8 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
         <div><?= str_replace('fetchpriority=auto loading=lazy', 'fetchpriority=high', $main);
             require_once 'dataDescriptionList.php';
             $datachar['charId'] = "$uniSlugName/$charId";
-            $datachar['UniverseId'] = new HTMLSafeEscaped("<data value=$uniname>{$datachar['UniverseId']}</data>");
+            $datachar['UniverseId'] = new HTMLSafeEscaped("<data value=$uniname>"
+                     . matchUniverses($uniname) . "\x20($uniname)</data>");
             $registerDate =
             $LastModified =
             $creationDate = INF;

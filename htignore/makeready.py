@@ -1,5 +1,6 @@
 import re, pathlib, hashlib, base64, json, requests, shutil
 from datetime import datetime, timezone
+from htmlparser import html_to_jsonml
 from glob import glob
 
 
@@ -9,8 +10,10 @@ def copyfile(src: str, out: str):
 
 
 def main():
-    print('make-ready')
     local = dict()
+    htmls = list()
+    errors = False
+    print('make-ready')
     shutil.rmtree('../' + (folder := 'imgdata'))
     pathlib.Path('../' + folder).mkdir(exist_ok=True, parents=True)
     # (pathlib.Path('../{folder}') / path.parent.parent.name / path.parent.name).mkdir(exist_ok=True, parents=True)
@@ -25,27 +28,32 @@ def main():
         file.write('Header set Cache-Control "public, max-age=31536000, immutable"\n\n')
         file.write('ErrorDocument 404 /gallery/imgdata/404placeholder.webp\n')
         file.write('ErrorDocument 403 /gallery/imgdata/404placeholder.webp\n')
-    pass
     for i in glob('universe-images/*/*/'):
+        with open(pathlib.Path(i) / 'main.json', 'rb') as jsonfile:
+            try:
+                main_json = json.loads(jsonfile.read())
+            except json.decoder.JSONDecodeError:
+                print('error while proccessing:', (pathlib.Path(i) / 'main.json').resolve())
+                errors = True
+                continue
         for path in pathlib.Path(i).iterdir():
             if path.is_file():
+                if path.suffix in {'.html'}:
+                    htmls.append(path)
+                    continue
                 if path.suffix not in {'.png', '.jpeg', '.jpg', '.webp', '.avif'}:
                     continue
                 if not (path.name.startswith('main') or path.name.startswith('ai.main')):
                     continue
-                with open(path, 'rb') as file, open(pathlib.Path(i) / 'main.json', 'rb') as jsonfile:
+                with open(path, 'rb') as file:
                     cont = file.read()
                     hash = base64.b64encode(hashlib.sha512(cont).digest()).decode('utf-8') \
                         .replace('/', '_').replace('+', '-').replace('=', str())
-                    data = jsonfile.read()
                 with open(f'../{folder}/{hash}{path.suffix}', 'wb') as file:
                     file.write(cont)
                 local[path.parent.parent.name] = local.get(path.parent.parent.name, dict())
                 local[path.parent.parent.name][path.parent.name] = local[path.parent.parent.name].get(
-                    path.parent.name, {
-                        'charId': path.parent.name,  # 'universe': path.parent.parent.name,
-                        'assets': list(), 'main.json': json.loads(data)
-                    })
+                    path.parent.name, {'charId': path.parent.name, 'assets': list(), 'main.json': main_json})
                 hashed = f'{hash}{path.suffix}'
                 resp = requests.get(f'http://localhost/gallery/dev-only/imgdata.php?hash={hashed}')
                 sizes = resp.headers.get('image-size')
@@ -176,6 +184,16 @@ def main():
     local['main'] = {char_id: char_data for char_id, char_data in sorted_items}
     pass  # gemini end
     copyfile('404placeholder.webp', '../imgdata/404placeholder.webp')
+    for htmld in htmls:
+        with open(htmld, 'rb') as file:
+            content = file.read()
+            hashed = base64.b64encode(hashlib.sha512(content).digest()).decode('utf-8') \
+                .replace('/', '_').replace('+', '-').replace('=', str())
+
+        with open(f'../{folder}/{hashed}.html.json', 'wt', encoding='utf8') as file:
+            file.write(json.dumps(html_to_jsonml(
+                '<body>' + content.replace(b'\r\n', b'\n')
+                .replace(b'\r', b'\n').decode('utf-8') + '</body>')))
     with open(f'../{folder}/.assets.json', 'wt', encoding='utf8') as file:
         file.write(json.dumps(dict(
             chardata=local, unidata=unidata
@@ -195,7 +213,7 @@ def main():
                         for formats in thing.values():
                             write_file(file, formats, inner['main.json'], charid, univ, unidata)
                     pass
-    pass
+    return errors
 
 
 def write_file(file, data, chardata, charid, univ, unidata):
@@ -203,7 +221,7 @@ def write_file(file, data, chardata, charid, univ, unidata):
     name = '.'.join(names)
     file.write(f'\n<Files "{name}.{suffix}">\nHeader set\x20')
     file.write(f'content-disposition "inline; filename=\\"{chardata['name']}.{suffix}\\""')
-    #file.write(f'\nHeader set fx-data-names "fx-data-name, fx-data-oname, fx-data-charname, fx-mkready,'
+    # file.write(f'\nHeader set fx-data-names "fx-data-name, fx-data-oname, fx-data-charname, fx-mkready,'
     #           ' fx-data-names, fx-relative-url, fx-data-mime, fx-data-w, fx-data-h, fx-data-univname"')
     if bool(human := unidata.get(univ, dict()).get('humanName')):
         file.write(f'\nHeader set fx-data-univname {encode_str_b64(human)}')
@@ -217,6 +235,7 @@ def write_file(file, data, chardata, charid, univ, unidata):
     file.write(f'\nHeader set fx-data-h {data['h']}')
     file.write(f'\n</Files>\n')
 
+
 def date_now():
     now = datetime.now(timezone.utc)  # .astimezone()
     formatted_date = now.strftime("%a %b %d %Y %H:%M:%S GMT%z")
@@ -228,4 +247,6 @@ def encode_str_b64(strx: str) -> str:
 
 
 if __name__ == '__main__':
-    main()
+    if main():
+        input('enter to exit:')
+pass
