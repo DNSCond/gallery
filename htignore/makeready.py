@@ -52,8 +52,10 @@ def main():
                 with open(f'../{folder}/{hash}{path.suffix}', 'wb') as file:
                     file.write(cont)
                 local[path.parent.parent.name] = local.get(path.parent.parent.name, dict())
-                local[path.parent.parent.name][path.parent.name] = local[path.parent.parent.name].get(
-                    path.parent.name, {'charId': path.parent.name, 'assets': list(), 'main.json': main_json})
+                local[path.parent.parent.name][path.parent.name] = local \
+                    [path.parent.parent.name].get(path.parent.name, {
+                    'charId': path.parent.name, 'assets': list(),
+                    'main.json': main_json, 'htdesc': None})
                 hashed = f'{hash}{path.suffix}'
                 resp = requests.get(f'http://localhost/gallery/dev-only/imgdata.php?hash={hashed}')
                 sizes = resp.headers.get('image-size')
@@ -61,9 +63,9 @@ def main():
                     print(pathlib.Path(i), 'failed because it isnt found')
                     continue
                 matched = re.search('w=(\\d+), h=(\\d+)', sizes)
-                asset = dict(hash=hashed, oname=path.name, origin='main',
+                asset = dict(hash=hashed, oname=path.name,
                              w=int(matched.group(1)), h=int(matched.group(2)),
-                             t=resp.headers['image-type'])
+                             t=resp.headers['image-type'], origin='main')
                 local[path.parent.parent.name][path.parent.name]['main-see'] = \
                     local[path.parent.parent.name][path.parent.name].get('main-see', dict())
                 local[path.parent.parent.name][path.parent.name]['main-ai'] = \
@@ -117,7 +119,6 @@ def main():
                 resp = requests.get(f'http://localhost/gallery/dev-only/imgdata.php?hash={asset['hash']}')
                 sizes = resp.headers.get('image-size')
                 if sizes is None:
-                    print(pathlib.Path(i), 'failed because it isnt found')
                     continue
                 matched = re.search('w=(\\d+), h=(\\d+)', sizes)
                 local_dict[name][suffix] = {
@@ -169,7 +170,7 @@ def main():
         sorted_items = [(inner_key, inner_val) for inner_key, inner_val in val.items()]
         sorted_items.sort(key=lambda dat: (
             1 if dat[1]["main.json"]['UniverseId'] == 'RecycleReady' else 0,
-            0#datetime.fromisoformat(dat[1]["main.json"]['creationDate']).timestamp()
+            0  # datetime.fromisoformat(dat[1]["main.json"]['creationDate']).timestamp()
         ))
         new[key] = {char_id: char_data for char_id, char_data in sorted_items}
     local = new
@@ -188,6 +189,11 @@ def main():
     local['main'] = {char_id: char_data for char_id, char_data in sorted_items}
     pass  # gemini end
     copyfile('404placeholder.webp', '../imgdata/404placeholder.webp')
+    reverse_map = dict()
+    for unid, char in local.items():
+        for charid in char:
+            reverse_map[charid] = unid
+
     for htmld in htmls:
         with open(htmld, 'rb') as file:
             content = file.read()
@@ -195,12 +201,17 @@ def main():
                 .replace('/', '_').replace('+', '-').replace('=', str())
 
         with open(f'../{folder}/{hashed}.html.json', 'wt', encoding='utf8') as file:
-            file.write(json.dumps(html_to_jsonml(
+            htdata = html_to_jsonml(
                 '<body>' + content.replace(b'\r\n', b'\n')
-                .replace(b'\r', b'\n').decode('utf-8') + '</body>')))
+                .replace(b'\r', b'\n').decode('utf-8') + '</body>')
+            file.write(json.dumps(process_htdata(htdata, reverse_map)))
+        local[pathlib.Path(htmld).parent.parent.name] \
+            [pathlib.Path(htmld).parent.name] \
+            ["htdesc"] = f"{hashed}.html.json"
+        # print(pathlib.Path(htmld).resolve())
     with open(f'../{folder}/.assets.json', 'wt', encoding='utf8') as file:
         file.write(json.dumps(dict(
-            chardata=local, unidata=unidata
+            chardata=local, unidata=unidata, rev_map=reverse_map,
         ), sort_keys=False))
     with open('../imgdata/.htaccess', 'at', encoding='utf8') as file:
         for univ, outer in local.items():
@@ -221,6 +232,53 @@ def main():
 
 
 pass  # def printreturn(*args, **kwargs):print(*args, kwargs)return args
+
+
+def process_htdata(htdata, context):
+    return transform_jsonml(htdata, {
+        'char-rel': (lambda element: process_char_ref(element, context)),
+    })
+
+
+# tag = element[0]
+# return ["a", attrs] + element[2:]
+def process_char_ref(element, context):
+    href = None
+    if bool(uni_name := context.get(element[1].get('who'))):
+        href = f'universe/{uni_name}/{element[1].get('who')}'
+    attrs = dict(href=href)
+    return ["a", attrs] + element[2:]
+
+
+def transform_jsonml(node, handlers):
+    """
+    Recursively transforms a JsonML tree using a dictionary of handler functions.
+
+    handlers: dict mapping tag names (str) to functions that take a full
+              JsonML element list and return the replacement JsonML element list.
+    """
+    if not isinstance(node, list) or not node:
+        return node
+
+    tag_name = node[0]
+    attrs = node[1]
+
+    # First, recursively transform all child nodes (index 2 onwards)
+    transformed_children = []
+    for child in node[2:]:
+        if isinstance(child, list):
+            transformed_children.append(transform_jsonml(child, handlers))
+        else:
+            transformed_children.append(child)
+
+    # Reconstruct the current element with transformed children
+    current_element = [tag_name, attrs] + transformed_children
+
+    # If a handler is defined for this element's tag name, apply it
+    if tag_name in handlers:
+        return handlers[tag_name](current_element)
+
+    return current_element
 
 
 def write_file(file, data, chardata, charid, univ, unidata):

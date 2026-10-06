@@ -22,7 +22,7 @@
 }
 
 .divs > .character-profile {
-    & > :first-child {
+    & > :first-child{
         margin-top: 0
     }
 
@@ -42,14 +42,14 @@ h1 {
 
 .store-img {
     border: none;
-    border-bottom: 3px solid gray
+    border-bottom: 3px solid gray;
 }
 
 .store-img, .store-div {
     width: 20em;
 }
 
-.overflox > div, .charname {
+.charname {
     width: calc(20em - 2ch);
     overflow-x: hidden;
     white-space: nowrap;

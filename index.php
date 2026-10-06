@@ -45,7 +45,7 @@ if (isset($GLOBALS['all'])) {
     <script src=statics/index.js type=module></script>
     <details class='border alt-uni'>
         <summary>Alternate Universes</summary>
-        <div><?= "<h2 id=Other-Universes class=altUniStyle>Other Universes</h2>\n";
+        <div><?= "<h2 id=Other-Universes class='altUniStyle h2-border'>Other Universes</h2>\n";
             ob_start(fn(string $string): string => preg_replace('/>\\s+</',
                     '><', preg_replace('/\\s+/', "\x20", $string)));
             unidata('main', $unidata['unidata']['main']);
@@ -76,5 +76,22 @@ if (isset($GLOBALS['all'])) {
             global $Favi_verse ?>">Disable Ai Mode</a>
         </div>
     </details>
-    <div class=border id=the-store><?= implode('', is_array($characters) ? $characters : array()) ?></div>
+    <div class=border id=the-store><?= implode('', is_array($characters) ? $characters : array());
+        global $ai;
+        $image = false;
+        $classes = ['introImage', 'uni'];
+        $Universe = matchUniverses($uniSlugName);
+        $item = $unidata['unidata'][$uniSlugName];
+        if ($item) {
+            if ($ai) $image = imageTag($item['wiAi'], ['png'],
+                    "Ai Universe thumbnail for $Universe", $classes, null);
+            if ($image === false) $image = imageTag($item['noAi'], ['webp'],
+                    "Universe thumbnail for $Universe", $classes);
+            /** @noinspection PhpFullyQualifiedNameUsageInspection */
+            $Universe = \Helpers\htmlspecialchars12($Universe);
+            $image = $image === false ? '' : "<div class='divs center'><h2>$Universe</h2>$image";
+        } ?></div>
 </div>
+<div><?= $image;
+    if ($image) echo "</div>" ?></div>
+

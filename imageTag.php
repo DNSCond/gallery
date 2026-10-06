@@ -5,7 +5,6 @@ function imageTag(array $hashes, array $formats, string $alt,
 {
     if (!count($formats)) return false;
     //$formatsImploded = implode(' ', $formats);
-
     $lastValid = null;
     $result = "<picture>";
     foreach ($formats as $format) {

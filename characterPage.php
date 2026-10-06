@@ -37,7 +37,7 @@ $uniName = matchUniverses($uniname = $datachar['UniverseId']);
 $name = htmlspecialchars12($datachar['name'] ?? $charId);
 header('cache-control: public, max-age=600, stale-while-revalidate=86400, stale-if-error=432000');
 
-$desc = $GLOBALS['defaultDesc'] = "$name\x20is a character of the $uniName Universe on ANTRequest.nl.";
+$desc = "$name\x20is a character of the $uniName Universe on ANTRequest.nl.";
 $aiAlways = array_key_exists('withai', $_GET) && "{$_GET['withai']}";
 $si = $aiAlways ? "-ai" : '';
 $unicanonical = "/gallery/universe$si/$uniSlugName/";
@@ -61,17 +61,15 @@ if (array_key_exists('primaryColor', $characterData) || array_key_exists('second
 }
 
 $aiMode = $aiAlways ? "\x20(Ai Mode)" : '';
-$characterInfo = "<p>" . htmlspecialchars12($desc);
-if (isset($GLOBALS['desc'])) $desc = "{$GLOBALS['desc']}";
 $nightLightOverride = array_key_exists('night', $_GET) && "{$_GET['night']}";
 create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
-        'base' => '/gallery/', 'desc' => $desc, 'class' => ['larger'], 'bread' => [
+        'base' => '/gallery/', 'nightLightOverride' => $nightLightOverride, 'bread' => [
                 array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
                 array('text' => matchUniverses($uniSlugName), 'href' => $unicanonical),
                 array('text' => $datachar['name'], 'href' => "$unicanonical$charId"),
         ], 'borderColor' => $borderColor, 'backColor' => $backColor, 'stylelinks' => [
                 'statics/cssx.css', 'statics/ddDL-table.css', 'statics/characterPage.css'],
-        'canonical' => "$unicanonical$charId", 'nightLightOverride' => $nightLightOverride,
+        'canonical' => "$unicanonical$charId", 'class' => ['larger'],
 ]) ?>
 <main>
     <div class=divs>
@@ -82,7 +80,7 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
             require_once 'dataDescriptionList.php';
             $datachar['charId'] = "$uniSlugName/$charId";
             $datachar['UniverseId'] = new HTMLSafeEscaped("<data value=$uniname>"
-                     . matchUniverses($uniname) . "\x20($uniname)</data>");
+                    . matchUniverses($uniname) . "\x20($uniname)</data>");
             $registerDate =
             $LastModified =
             $creationDate = INF;
@@ -122,6 +120,32 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
                     'UniverseId' => '/#what-is-UniverseId',
             ]);
             $item = $chardata;
+            if (!is_null($chardata['htdesc'])) {
+                $htdesc = readJSON(__DIR__ . "/imgdata/{$chardata['htdesc']}");
+                if (is_array($htdesc)) {
+                    if (array_key_exists('class', $htdesc[1])) {
+                        $htdesc[1]['class'] = "{$htdesc[1]['class']} character-profile";
+                    } else $htdesc[1]['class'] = "character-profile";
+                    $characterInfo = mkHTMLFromJSON($htdesc);
+                } else $characterInfo = '';
+            } else $characterInfo = '';
+            function mkHTMLFromJSON(mixed $desc): string
+            {
+                $result = "<$desc[0]";
+                foreach ($desc[1] as $name => $value) {
+                    $result .= "\x20$name=\"$value\"";
+                }
+                $result .= ">";
+                if (in_array(strtolower($desc[0]), ['br', 'hr', 'source', 'img', 'wbr'])) {
+                    return $result;
+                }
+                foreach ($desc as $pos => $val) {
+                    if ($pos == 0 || $pos == 1) continue;
+                    $result .= is_string($val) ? $val : mkHTMLFromJSON($val);
+                }
+                return "$result</$desc[0]>";
+            }
+
             function galleryListing(array $hashes, string $alt, bool $ai): string
             {
                 $aiAlways = $ai;
@@ -132,7 +156,7 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
                 return '';
             } ?></div>
     </div>
-    <div class=divs><?= "<div class=character-profile>\n$characterInfo\n</div>" ?></div>
+    <div class=divs><?= "\n$characterInfo\n" ?></div>
     <div class=divs><?= "<h2 id=gallery>Gallery</h2><div class=border>";
         echo galleryListing($item["main-see"], 'Main Appearance', false);
         echo galleryListing($item['main-ai'], 'Main Ai Appearance', true);

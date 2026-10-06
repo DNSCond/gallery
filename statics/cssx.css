@@ -70,13 +70,10 @@ details[open] > summary {
 }
 
 .charname {
-    padding: 0.5em;
-    overflow-x: scroll;
-}
-
-h3.charname {
     margin: 0;
     font-size: 1em;
+    padding: 0.5em;
+    overflow-x: scroll;
     font-weight: normal;
 }
 
@@ -148,7 +145,7 @@ body {
         width: 20em;
     }
 
-    .overflox > div, .charname {
+    .charname {
         width: calc(var(--width) - 2ch);
         overflow-x: hidden;
         white-space: nowrap;
@@ -194,4 +191,18 @@ body {
 .ShadowBoxedHover:hover {
     box-shadow: 5px 5px 4px var(--box-color);
     transform: translate(-4px, -4px);
+}
+
+.introImage.uni {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 84vh;
+    box-sizing: border-box;
+    aspect-ratio: 800 / 1280;
+    border: 3px solid grey;
+}
+
+.center {
+    text-align: center;
 }

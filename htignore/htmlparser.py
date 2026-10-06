@@ -5,7 +5,7 @@ def html_to_jsonml(html_str):
     """
     Converts an HTML string into JsonML array structure using BeautifulSoup.
     """
-    soup = BeautifulSoup(html_str, 'html.parser')
+    soup = BeautifulSoup(html_str, 'html5lib')
 
     def parse_node(node):
         # Handle string/text nodes
@@ -50,7 +50,7 @@ def html_to_jsonml(html_str):
     # Return single root element if present, otherwise wrapper array
     if len(children) == 1 and isinstance(children[0], list):
         return children[0]
-    return ["div", *children]  # children
+    return ["div", dict(), *children]  # children
 
 
 pass

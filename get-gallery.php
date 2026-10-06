@@ -36,8 +36,14 @@ if (isset($GLOBALS['all'])) {
         foreach ($every as $item) appendMain($item, false, $characters, $withalt);
     }
     $uniSlugName = 'main';
-} elseif ($uniSlugName) foreach ($data[$uniSlugName] as $item)
-    appendMain($item, $aiAlways, $characters, $withalt);
+} elseif ($uniSlugName) {
+    $uninameData = matchUniverses($uniSlugName);
+    $characters[] = "<h2 class=h2-border>Characters of &lt;$uninameData&gt;</h2>";
+    foreach ($data[$uniSlugName] as $item) {
+        appendMain($item, $aiAlways, $characters, $withalt);
+    }
+}
+
 function appendMain(array $item, bool $aiAlways, array &$characters, bool $withalt): void
 {
     global $base;
