@@ -169,7 +169,7 @@ def main():
         sorted_items = [(inner_key, inner_val) for inner_key, inner_val in val.items()]
         sorted_items.sort(key=lambda dat: (
             1 if dat[1]["main.json"]['UniverseId'] == 'RecycleReady' else 0,
-            datetime.fromisoformat(dat[1]["main.json"]['creationDate']).timestamp()
+            0#datetime.fromisoformat(dat[1]["main.json"]['creationDate']).timestamp()
         ))
         new[key] = {char_id: char_data for char_id, char_data in sorted_items}
     local = new
