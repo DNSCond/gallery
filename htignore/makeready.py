@@ -165,12 +165,16 @@ def main():
 
     new = dict(main=local['main'])
     for key, val in local.items():
-        if key == 'main':
-            continue
-        new[key] = val
+        if key == 'main': continue
+        sorted_items = [(inner_key, inner_val) for inner_key, inner_val in val.items()]
+        sorted_items.sort(key=lambda dat: (
+            1 if dat[1]["main.json"]['UniverseId'] == 'RecycleReady' else 0,
+            datetime.fromisoformat(dat[1]["main.json"]['creationDate']).timestamp()
+        ))
+        new[key] = {char_id: char_data for char_id, char_data in sorted_items}
     local = new
     step0 = [(key, val) for key, val in local['main'].items()]
-    step0.sort(key=lambda thing: datetime.fromisoformat(thing[1]["main.json"]['creationDate']).timestamp())
+    step0.sort(key=lambda dat: datetime.fromisoformat(dat[1]["main.json"]['creationDate']).timestamp())
 
     def get_sort_key(item):
         u_id = str(item[1]["main.json"].get('UniverseId', ''))
@@ -214,6 +218,9 @@ def main():
                             write_file(file, formats, inner['main.json'], charid, univ, unidata)
                     pass
     return errors
+
+
+pass  # def printreturn(*args, **kwargs):print(*args, kwargs)return args
 
 
 def write_file(file, data, chardata, charid, univ, unidata):
