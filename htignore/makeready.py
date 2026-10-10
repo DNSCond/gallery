@@ -192,6 +192,9 @@ def main():
     reverse_map = dict()
     for unid, char in local.items():
         for charid in char:
+            if reverse_map.get(charid) is not None:
+                print(charid, 'is a duplicate of another')
+                errors = True
             reverse_map[charid] = unid
 
     for htmld in htmls:
