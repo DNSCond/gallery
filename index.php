@@ -46,8 +46,11 @@ if (isset($GLOBALS['all'])) {
     <details class='border alt-uni'>
         <summary>Alternate Universes</summary>
         <div><?= "<h2 id=Other-Universes class='altUniStyle h2-border'>Other Universes</h2>\n";
-            ob_start(fn(string $string): string => preg_replace('/>\\s+</',
-                    '><', preg_replace('/\\s+/', "\x20", $string)));
+            ob_start(function (string $string): string {
+                $string = preg_replace('/\\s+/', "\x20", $string);
+                $string = preg_replace('/>\\s+</', '><', $string);
+                return ltrim($string);
+            });
             unidata('main', $unidata['unidata']['main']);
             unset($unidata['unidata']['main']);
             foreach ($unidata['unidata'] as $key => $item) unidata($key, $item);
