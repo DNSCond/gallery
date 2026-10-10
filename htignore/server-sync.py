@@ -1,7 +1,9 @@
 from makeready import main as mkready
 import paramiko, json, os
 
-mkready()
+if mkready():
+    input('an error has occured, aborting')
+    exit()
 path = "../imgdata"  # Current directory
 
 # Get all files and directories
