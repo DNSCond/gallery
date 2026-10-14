@@ -53,7 +53,12 @@ if (isset($GLOBALS['all'])) {
             });
             unidata('main', $unidata['unidata']['main']);
             unset($unidata['unidata']['main']);
+            unidata('Heroes', $unidata['unidata']['Heroes']);
+            unset($unidata['unidata']['Heroes']);
+            $unknownData = $unidata['unidata']['Favicond-Unknown'];
+            unset($unidata['unidata']['Favicond-Unknown']);
             foreach ($unidata['unidata'] as $key => $item) unidata($key, $item);
+            unidata('Favicond-Unknown', $unknownData);
             function unidata($key, $item): void
             {
                 global $ai;

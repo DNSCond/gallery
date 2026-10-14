@@ -46,12 +46,8 @@ $backColor = null;
 $borderColor = null;
 $characterData = $datachar;
 if (array_key_exists('primaryColor', $characterData) || array_key_exists('secondaryColor', $characterData)) {
-    if (!array_key_exists('primaryColor', $characterData)) {
-        $characterData['primaryColor'] = '#00a8f3';
-    }
-    if (!array_key_exists('secondaryColor', $characterData)) {
-        $characterData['secondaryColor'] = '#0073a6';
-    }
+    if (!array_key_exists('secondaryColor', $characterData)) $characterData['secondaryColor'] = '#0073a6';
+    if (!array_key_exists('primaryColor', $characterData)) $characterData['primaryColor'] = '#00a8f3';
     $primaryColor = $characterData['primaryColor'];
     $secondaryColor = $characterData['secondaryColor'];
     if (preg_match('/^#?([a-f0-9]{6});#?([a-f0-9]{6});$/iD', "$primaryColor;$secondaryColor;", $matches)) {
@@ -156,7 +152,7 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
                 return '';
             } ?></div>
     </div>
-    <div class=divs><?= "\n$characterInfo\n" ?></div>
+    <div class=divs><?= "\n$characterInfo\n\x20\x20\x20\x20" ?></div>
     <div class=divs><?= "<h2 id=gallery>Gallery</h2><div class=border>";
         echo galleryListing($item["main-see"], 'Main Appearance', false);
         echo galleryListing($item['main-ai'], 'Main Ai Appearance', true);
