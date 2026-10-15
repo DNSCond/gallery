@@ -9,6 +9,7 @@ function matchUniverses(string $universe): string
     } else return $universe;
 }
 
+$characterCount = 0;
 $uniSlugName = null;
 $characters = array();
 require __DIR__ . '/require.php';
@@ -41,7 +42,9 @@ if (isset($GLOBALS['all'])) {
     $characters[] = "<h2 class=h2-border>Characters of &lt;$uninameData&gt;</h2>";
     foreach ($data[$uniSlugName] as $item) {
         appendMain($item, $aiAlways, $characters, $withalt);
+        $characterCount++;
     }
+    header("character-count:$characterCount");
 }
 
 function appendMain(array $item, bool $aiAlways, array &$characters, bool $withalt): void
