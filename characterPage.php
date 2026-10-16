@@ -16,9 +16,16 @@ if (array_key_exists('char', $_GET)) {
 require_once __DIR__ . '/require.php';
 require_once __DIR__ . '/imageTag.php';
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/header3/head3.php";
+$aiAlways = array_key_exists('withai', $_GET) && "{$_GET['withai']}";
 $data = ($unidata = readJSON(__DIR__ . '/imgdata/.assets.json'))['chardata'];
 if (!isPresent($data, [$uniSlugName, $charId, 'main.json'])) {
+    if (array_key_exists($charId, $unidata['rev_map'])) {
+        http_response_code(307);
+        header("Location: /gallery/universe/{$unidata['rev_map'][$charId]}/$charId");
+        exit;
+    }
     http_response_code(404);
+    require_once "{$_SERVER['DOCUMENT_ROOT']}/require/404document.php";
     exit;
 }
 
@@ -37,9 +44,8 @@ $uniName = matchUniverses($uniname = $datachar['UniverseId']);
 $name = htmlspecialchars12($datachar['name'] ?? $charId);
 header('cache-control: public, max-age=600, stale-while-revalidate=86400, stale-if-error=432000');
 
-$desc = "$name\x20is a character of the $uniName Universe on ANTRequest.nl.";
-$aiAlways = array_key_exists('withai', $_GET) && "{$_GET['withai']}";
 $si = $aiAlways ? "-ai" : '';
+$desc = "$name\x20is a character of the $uniName Universe on ANTRequest.nl.";
 $unicanonical = "/gallery/universe$si/$uniSlugName/";
 
 $backColor = null;

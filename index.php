@@ -22,7 +22,7 @@ if (isset($GLOBALS['all'])) {
 } else {
     if ($uniSlugName === null) {
         http_response_code(403);
-        exit('<!DOCTYPE html><meta CHARSET=UTF-8>$uniSlugName doesnt exist');
+        require_once "{$_SERVER['DOCUMENT_ROOT']}/require/403document.php";
     }
     $key = $uniSlugName;
     $ai = $aiAlways ? "-ai" : '';
@@ -51,14 +51,18 @@ if (isset($GLOBALS['all'])) {
                 $string = preg_replace('/>\\s+</', '><', $string);
                 return ltrim($string);
             });
-            unidata('main', $unidata['unidata']['main']);
-            unset($unidata['unidata']['main']);
-            unidata('Heroes', $unidata['unidata']['Heroes']);
-            unset($unidata['unidata']['Heroes']);
-            $unknownData = $unidata['unidata']['Favicond-Unknown'];
-            unset($unidata['unidata']['Favicond-Unknown']);
-            foreach ($unidata['unidata'] as $key => $item) unidata($key, $item);
+            $newUniData = $unidata;
+            unidata('main', $newUniData['unidata']['main']);
+            unset($newUniData['unidata']['main']);
+            unidata('Heroes', $newUniData['unidata']['Heroes']);
+            unset($newUniData['unidata']['Heroes']);
+            $recycleData = $newUniData['unidata']['RecycleReady'];
+            $unknownData = $newUniData['unidata']['Favicond-Unknown'];
+            unset($newUniData['unidata']['Favicond-Unknown']);
+            unset($newUniData['unidata']['RecycleReady']);
+            foreach ($newUniData['unidata'] as $key => $item) unidata($key, $item);
             unidata('Favicond-Unknown', $unknownData);
+            unidata('RecycleReady', $recycleData);
             function unidata($key, $item): void
             {
                 global $ai;
@@ -90,16 +94,17 @@ if (isset($GLOBALS['all'])) {
         $classes = ['introImage', 'uni'];
         $Universe = matchUniverses($uniSlugName);
         $item = $unidata['unidata'][$uniSlugName];
-        if ($item) {
+        if ($item && $uniSlugName !== 'main') {
+            $alt = "Universe thumbnail for $Universe";
             if ($ai) $image = imageTag($item['wiAi'], ['png'],
-                    "Ai Universe thumbnail for $Universe", $classes, null);
-            if ($image === false) $image = imageTag($item['noAi'], ['webp'],
-                    "Universe thumbnail for $Universe", $classes);
+                    "Ai $alt", $classes, null);
+            if ($image === false) $image = imageTag($item['noAi'],
+                    ['webp'], $alt, $classes);
             /** @noinspection PhpFullyQualifiedNameUsageInspection */
             $Universe = \Helpers\htmlspecialchars12($Universe);
-            $image = $image === false ? '' : "<div class='divs center'><h2>$Universe</h2>$image";
-        } ?></div>
+            $image = $image === false ? false : "<div class='divs center'><h2>$Universe</h2>$image";
+        }
+        if ($image === false) $image = '' ?></div>
 </div>
 <div><?= $image;
     if ($image) echo "</div>" ?></div>
-

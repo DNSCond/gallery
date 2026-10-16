@@ -163,6 +163,11 @@ def main():
     nokeys = set(unidata.keys())
     for thing in sorted(set(univ.keys()) - nokeys):
         unidata[thing] = {'humanName': univ[thing]}
+        if (pathlib.Path('universe-images') / thing).exists():
+            unidata[thing].update({'noAi': {'webp': {
+                'hash': '404placeholder.webp', 'w': 800, 'h': 1280,
+                'origin': 'universe-no-pict', 't': 'image/webp'
+            }}, "wiAi": dict()})
 
     new = dict(main=local['main'])
     for key, val in local.items():
