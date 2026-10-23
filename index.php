@@ -43,7 +43,7 @@ if (isset($GLOBALS['all'])) {
 <div class=divs>
     <h1><?= $title ?></h1>
     <script src=statics/index.js type=module></script>
-    <details class='border alt-uni'>
+    <details class='border alt-uni' open>
         <summary>Alternate Universes</summary>
         <div><?= "<h2 id=Other-Universes class='altUniStyle h2-border'>Other Universes</h2>\n";
             ob_start(function (string $string): string {
@@ -77,6 +77,7 @@ if (isset($GLOBALS['all'])) {
                 <article class='store-div div' is=shadowboxed-hover>
                 <h3 class=charname><a href="<?= $univHref ?>"><?= $Universe ?></a></h3>
                 <a href="<?= $univHref ?>"><?= $image ?></a>
+                <div class='charname border-top'><?= "Chars: {$item['chars']}" ?></div>
                 </article><?= "<!-- $Universe -->";
             }
 

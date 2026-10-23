@@ -156,18 +156,18 @@ def main():
         uniname = pathlib.Path(i).parent.stem
         unidata[uniname] = unidata.get(uniname, {
             'humanName': univ.get(uniname, uniname),
-            "noAi": dict(), "wiAi": dict()})
+            "noAi": dict(), "wiAi": dict(), 'chars': len(local[uniname].keys())})
         unidata[uniname]['wiAi' if pathlib.Path(i).stem.endswith('-ai') else 'noAi'][pathlib.Path(i).suffix[1:]] = {
             'hash': f'{hash}{pathlib.Path(i).suffix}', 'w': int(matched.group(1)), 'h': int(matched.group(2)),
             'origin': 'universe', 't': resp.headers['image-type']}
     nokeys = set(unidata.keys())
-    for thing in sorted(set(univ.keys()) - nokeys):
-        unidata[thing] = {'humanName': univ[thing]}
-        if (pathlib.Path('universe-images') / thing).exists():
-            unidata[thing].update({'noAi': {'webp': {
+    for uniname in sorted(set(univ.keys()) - nokeys):
+        unidata[uniname] = {'humanName': univ[uniname]}
+        if (pathlib.Path('universe-images') / uniname).exists():
+            unidata[uniname].update({"wiAi": dict(), 'noAi': {'webp': {
                 'hash': '404placeholder.webp', 'w': 800, 'h': 1280,
                 'origin': 'universe-no-pict', 't': 'image/webp'
-            }}, "wiAi": dict()})
+            }}, 'chars': len(local[uniname].keys())})
 
     new = dict(main=local['main'])
     for key, val in local.items():
@@ -175,8 +175,7 @@ def main():
         sorted_items = [(inner_key, inner_val) for inner_key, inner_val in val.items()]
         sorted_items.sort(key=lambda dat: (
             1 if dat[1]["main.json"]['UniverseId'] == 'RecycleReady' else 0,
-            0  # datetime.fromisoformat(dat[1]["main.json"]['creationDate']).timestamp()
-        ))
+            0))  # datetime.fromisoformat(dat[1]["main.json"]['creationDate']).timestamp()
         new[key] = {char_id: char_data for char_id, char_data in sorted_items}
     local = new
     step0 = [(key, val) for key, val in local['main'].items()]
@@ -220,7 +219,7 @@ def main():
     with open(f'../{folder}/.assets.json', 'wt', encoding='utf8') as file:
         file.write(json.dumps(dict(
             chardata=local, unidata=unidata, rev_map=reverse_map,
-        ), sort_keys=False))
+        ), sort_keys=False, indent=2))
     with open('../imgdata/.htaccess', 'at', encoding='utf8') as file:
         for univ, outer in local.items():
             for charid, inner in outer.items():
