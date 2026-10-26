@@ -20,7 +20,7 @@ function imageTag(array $hashes, array $formats, string $alt,
     else $format = $lastValid;
     if (!array_key_exists($format, $hashes)) return false;
     $size = "width={$hashes[$format]['w']} height={$hashes[$format]['h']}";
-    $result .= "<img src=\"imgdata/{$hashes[$format]['hash']}\" $size alt"
-        . "=\"$alt\" class=\"$classes\" fetchpriority=auto loading=lazy>";
+    $result .= "<img src=\"imgdata/{$hashes[$format]['hash']}\" $size alt=\"$alt\" class=\""
+        . "$classes\" data-type='{$hashes[$format]['t']}' fetchpriority=auto loading=lazy>";
     return "$result</picture>";
 }

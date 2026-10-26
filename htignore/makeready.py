@@ -4,6 +4,7 @@ from htmlparser import html_to_jsonml
 from glob import glob
 
 truncated_len = 8
+image_formats = {'.png', '.jpeg', '.jpg', '.webp', '.avif'}
 
 
 def copyfile(src: str, out: str):
@@ -40,10 +41,10 @@ def main():
                 continue
         for path in pathlib.Path(i).iterdir():
             if path.is_file():
-                if path.suffix in {'.html'}:
+                if path.suffix in {'.html', '.php'}:
                     htmls.append(path)
                     continue
-                if path.suffix not in {'.png', '.jpeg', '.jpg', '.webp', '.avif'}:
+                if path.suffix not in image_formats:
                     continue
                 if not (path.name.startswith('main') or path.name.startswith('ai.main')):
                     continue
@@ -82,7 +83,7 @@ def main():
                     for inner_path in path.iterdir():
                         if inner_path.name == 'ai':
                             for inner_inner_path in inner_path.iterdir():
-                                if inner_inner_path.suffix not in {'.png', '.jpeg', '.jpg', '.webp', '.avif'}:
+                                if inner_inner_path.suffix not in image_formats:
                                     continue
                                 with open(inner_inner_path, 'rb') as file:
                                     cont = file.read()
@@ -96,7 +97,7 @@ def main():
                                 asset['origin'] = 'ai'
                                 asset['isAi'] = True
                             continue
-                        if inner_path.suffix not in {'.png', '.jpeg', '.jpg', '.webp', '.avif'}:
+                        if inner_path.suffix not in image_formats:
                             continue
                         with open(inner_path, 'rb') as file:
                             cont = file.read()
@@ -208,7 +209,6 @@ def main():
             content = file.read()
             hashed = base64.b64encode(hashlib.sha512(content).digest()).decode('utf-8') \
                 .replace('/', '_').replace('+', '-').replace('=', str())
-
         with open(f'../{folder}/{hashed}.html.json', 'wt', encoding='utf8') as file:
             htdata = html_to_jsonml(
                 '<body>' + content.replace(b'\r\n', b'\n')
@@ -221,7 +221,7 @@ def main():
     with open(f'../{folder}/.assets.json', 'wt', encoding='utf8') as file:
         file.write(json.dumps(dict(
             chardata=local, unidata=unidata, rev_map=reverse_map,
-        ), sort_keys=False))  # , indent=2
+        ), sort_keys=False, indent=2))
     with open('../imgdata/.htaccess', 'at', encoding='utf8') as file:
         for univ, outer in local.items():
             for charid, inner in outer.items():

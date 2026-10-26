@@ -65,7 +65,8 @@ if (array_key_exists('primaryColor', $characterData) || array_key_exists('second
 $main = false;
 $aiMode = $aiAlways ? "\x20(Ai)" : '';
 if ($aiAlways) {
-    $main = imageTag($chardata['main-ai'], ['webp', 'png'], 'Main Appearance Ai', ['introImage border'], null);
+    $main = imageTag($chardata['main-ai'], ['webp', 'png', 'jpg', 'jpeg'],
+            'Main Ai Appearance', ['introImage border'], null);
     if ($main === false) {
         http_response_code(307);
         header("Location:/gallery/universe/$uniSlugName/$charId");
@@ -161,7 +162,7 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
             {
                 $aiAlways = $ai;
                 $classArray = ['store-img', 'store-big'];
-                $formats = $aiAlways ? ['webp', 'png'] : ['avif', 'webp'];
+                $formats = $aiAlways ? ['webp', 'png', 'jpg', 'jpeg'] : ['avif', 'webp'];
                 $img = imageTag($hashes, $formats, $alt, $classArray, $aiAlways ? null : 'webp');
                 if ($img) return "<div class=store-div>$img<div class=altText>$alt</div></div>";
                 return '';
