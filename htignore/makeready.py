@@ -221,7 +221,7 @@ def main():
     with open(f'../{folder}/.assets.json', 'wt', encoding='utf8') as file:
         file.write(json.dumps(dict(
             chardata=local, unidata=unidata, rev_map=reverse_map,
-        ), sort_keys=False, indent=2))
+        ), sort_keys=False))  # , indent=2
     with open('../imgdata/.htaccess', 'at', encoding='utf8') as file:
         for univ, outer in local.items():
             for charid, inner in outer.items():

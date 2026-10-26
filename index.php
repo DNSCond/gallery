@@ -97,8 +97,8 @@ if (isset($GLOBALS['all'])) {
         $item = $unidata['unidata'][$uniSlugName];
         if ($item && $uniSlugName !== 'main') {
             $alt = "Universe thumbnail for $Universe";
-            if ($ai) $image = imageTag($item['wiAi'], ['png'],
-                    "Ai $alt", $classes, null);
+            if ($ai) $image = imageTag($item['wiAi'], ['png',
+                    'jpg', 'jpeg'], "Ai $alt", $classes, null);
             if ($image === false) $image = imageTag($item['noAi'],
                     ['webp'], $alt, $classes);
             /** @noinspection PhpFullyQualifiedNameUsageInspection */
