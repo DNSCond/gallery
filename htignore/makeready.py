@@ -16,7 +16,6 @@ def main():
     htmls = list()
     errors = False
     print('make-ready')
-    truncated_list = list()
     shutil.rmtree('../' + (folder := 'imgdata'))
     pathlib.Path('../' + folder).mkdir(exist_ok=True, parents=True)
     # (pathlib.Path('../{folder}') / path.parent.parent.name / path.parent.name).mkdir(exist_ok=True, parents=True)
@@ -52,7 +51,6 @@ def main():
                     cont = file.read()
                     hash = base64.b64encode(hashlib.sha512(cont).digest()).decode('utf-8') \
                         .replace('/', '_').replace('+', '-').replace('=', str())[0::truncated_len]
-                truncated_list.append(hash)
                 with open(f'../{folder}/{hash}{path.suffix}', 'wb') as file:
                     file.write(cont)
                 local[path.parent.parent.name] = local.get(path.parent.parent.name, dict())
@@ -90,7 +88,6 @@ def main():
                                     cont = file.read()
                                     hash = base64.b64encode(hashlib.sha512(cont).digest()).decode('utf-8') \
                                         .replace('/', '_').replace('+', '-').replace('=', str())[0::truncated_len]
-                                truncated_list.append(hash)
                                 with open(f'../{folder}/{hash}{inner_inner_path.suffix}', 'wb') as file:
                                     file.write(cont)
                                 datapath = inner_inner_path.parent.parent
@@ -105,7 +102,6 @@ def main():
                             cont = file.read()
                             hash = base64.b64encode(hashlib.sha512(cont).digest()).decode('utf-8') \
                                 .replace('/', '_').replace('+', '-').replace('=', str())[0::truncated_len]
-                        truncated_list.append(hash)
                         with open(f'../{folder}/{hash}{inner_path.suffix}', 'wb') as file:
                             file.write(cont)
                         datapath = inner_path.parent
@@ -147,7 +143,6 @@ def main():
             cont = file.read()
             hash = base64.b64encode(hashlib.sha512(cont).digest()).decode('utf-8') \
                 .replace('/', '_').replace('+', '-').replace('=', str())[0::truncated_len]
-        truncated_list.append(hash)
         with open(f'../{folder}/{hash}{pathlib.Path(i).suffix}', 'wb') as file:
             file.write(cont)
         resp = requests.get(f'http://localhost/gallery/dev-only/imgdata.php?hash={hash}{pathlib.Path(i).suffix}')
@@ -208,7 +203,6 @@ def main():
                 print(charid, 'is a duplicate of another')
                 errors = True
             reverse_map[charid] = unid
-
     for htmld in htmls:
         with open(htmld, 'rb') as file:
             content = file.read()
@@ -243,9 +237,6 @@ def main():
                         for formats in thing.values():
                             write_file(file, formats, inner['main.json'], charid, univ, unidata)
                     pass
-    if len(truncated_list) != len(set(truncated_list)):
-        print('truncated_list contained duplicates')
-        return True
     return errors
 
 
