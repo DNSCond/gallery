@@ -62,7 +62,16 @@ if (array_key_exists('primaryColor', $characterData) || array_key_exists('second
     }
 }
 
-$aiMode = $aiAlways ? "\x20(Ai Mode)" : '';
+$main = false;
+$aiMode = $aiAlways ? "\x20(Ai)" : '';
+if ($aiAlways) {
+    $main = imageTag($chardata['main-ai'], ['webp', 'png'], 'Main Appearance Ai', ['introImage border'], null);
+    if ($main === false) {
+        http_response_code(307);
+        header("Location:/gallery/universe/$uniSlugName/$charId");
+        exit;
+    }
+}
 $nightLightOverride = array_key_exists('night', $_GET) && "{$_GET['night']}";
 create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
         'base' => '/gallery/', 'nightLightOverride' => $nightLightOverride, 'bread' => [
@@ -75,9 +84,9 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
 ]) ?>
 <main>
     <div class=divs>
-        <h1><?= "Character &quot;$name&quot;$aiMode";
-            $main = $aiAlways ? imageTag($chardata['main-ai'], ['webp', 'png'], 'Main Appearance Ai', ['introImage border'], null)
-                    : imageTag($chardata['main-see'], ['avif', 'webp'], 'Main Appearance', ['introImage border']) ?></h1>
+        <h1><?= "&quot;$name&quot;$aiMode";
+            if ($main === false) $main = imageTag($chardata['main-see'], ['avif',
+                    'webp'], 'Main Appearance', ['introImage border']) ?></h1>
         <div><?= str_replace('fetchpriority=auto loading=lazy', 'fetchpriority=high', $main);
             require_once 'dataDescriptionList.php';
             $datachar['charId'] = "$uniSlugName/$charId";
