@@ -14,6 +14,7 @@ ususable
 usable-unsued
 *.zip
 *.7z
+htignore/misc-ai
 htignore/comic-images
 htignore/credentails.json
 gallery.iml

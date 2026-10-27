@@ -1,0 +1,20 @@
+div.img-src {
+    > :first-child {
+        border: 4px solid gray;
+        display: inline-block;
+        margin-bottom: 1em;
+
+        > img {
+            width: 100%;
+            height: auto;
+            max-width: 30em;
+            display: block;
+        }
+
+        > div {
+            border-top: 4px solid gray;
+            max-width: 29em;
+            padding: 0.5em;
+        }
+    }
+}

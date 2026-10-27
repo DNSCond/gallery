@@ -1,10 +1,8 @@
 import re, pathlib, hashlib, base64, json, requests, shutil
+from others import makeready2, truncated_len, image_formats
 from datetime import datetime, timezone
 from htmlparser import html_to_jsonml
 from glob import glob
-
-truncated_len = 8
-image_formats = {'.png', '.jpeg', '.jpg', '.webp', '.avif'}
 
 
 def copyfile(src: str, out: str):
@@ -221,7 +219,8 @@ def main():
     with open(f'../{folder}/.assets.json', 'wt', encoding='utf8') as file:
         file.write(json.dumps(dict(
             chardata=local, unidata=unidata, rev_map=reverse_map,
-        ), sort_keys=False, indent=2))
+        ), sort_keys=False))  # , indent=2
+    misc = makeready2()
     with open('../imgdata/.htaccess', 'at', encoding='utf8') as file:
         for univ, outer in local.items():
             for charid, inner in outer.items():
@@ -237,7 +236,7 @@ def main():
                         for formats in thing.values():
                             write_file(file, formats, inner['main.json'], charid, univ, unidata)
                     pass
-    return errors
+    return errors or misc['errored']
 
 
 pass  # def printreturn(*args, **kwargs):print(*args, kwargs)return args

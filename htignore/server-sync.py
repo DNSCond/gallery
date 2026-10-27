@@ -16,8 +16,8 @@ with open('credentails.json', 'rt', encoding='utf8') as file:
     data = json.load(file)
 
 # Server connection details
-host = data['host']
 port = 22
+host = data['host']
 username = data['user']
 password = data['pass']  # Or use a private key file
 
@@ -53,13 +53,15 @@ for step, file_name in enumerate(s - l, start=1):
         pass
     deleted = step
 print('---')
-if added or deleted or True:
-    file_name = '.assets.json'
-    sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
-    print(repr(file_name), 'overwritten')
-    file_name = '.htaccess'
-    sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
-    print(repr(file_name), 'overwritten')
+file_name = '.assets.json'
+sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
+print(repr(file_name), 'overwritten')
+file_name = '.htaccess'
+sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
+print(repr(file_name), 'overwritten')
+file_name = '.misc-ai.json'
+sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
+print(repr(file_name), 'overwritten')
 
 # 4. Close the session
 sftp.close()

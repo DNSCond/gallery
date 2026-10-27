@@ -10,13 +10,13 @@ if (isset($GLOBALS['all'])) {
     $title = 'All of Favicond\'s Character Gallery';
     create_head3($title, ['base' => '/gallery/',
             'desc' => 'Explore the character gallery of Favi Favicond at ANTRequest.nl!',
-            'class' => array('smaller'), $nightLightOverride, 'bread' => [
+            'class' => array('smaller'), 'nightLightOverride' => $nightLightOverride, 'bread' => [
                     array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
                     array('text' => 'All of Favicond\'s Character Gallery', 'href' => '/gallery/all.php'),
-            ], 'canonical' => "gallery/all.php",
-            'stylelinks' => ['statics/cssx.css', 'statics/ddDL-table.css'],
+            ], 'stylelinks' => ['statics/cssx.css', 'statics/ddDL-table.css'],
             'borderColor' => ($aiAlways ? '#ff00ff' : '#00a8f3'),
             'backColor' => ($aiAlways ? '#a600a6' : '#0073a6'),
+            'canonical' => "/gallery/all.php",
     ]);
     $uniSlugName = 'main';
 } else {
@@ -30,11 +30,11 @@ if (isset($GLOBALS['all'])) {
             matchUniverses($uniSlugName) . ($aiAlways ? "\x20(Ai Mode)" : '') . "\x20(Favicond's Character Gallery)";
     create_head3($title, ['base' => '/gallery/',
             'desc' => 'Explore the character gallery of Favi Favicond at ANTRequest.nl!',
-            'class' => array('smaller'), $nightLightOverride, 'bread' => [
+            'class' => array('smaller'), 'nightLightOverride' => $nightLightOverride, 'bread' => [
                     array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
                     $uniSlugName !== 'main' ? array('text' => matchUniverses($uniSlugName),
                             'href' => "universe/$uniSlugName/") : null,
-            ], 'canonical' => $key === 'main' && !$ai ? '/' : "universe$ai/$key/",
+            ], 'canonical' => $key === 'main' && !$ai ? '/gallery/' : "gallery/universe$ai/$key/",
             'stylelinks' => ['statics/cssx.css', 'statics/ddDL-table.css'],
             'borderColor' => ($aiAlways ? '#ff00ff' : '#00a8f3'),
             'backColor' => ($aiAlways ? '#a600a6' : '#0073a6'),
@@ -81,15 +81,16 @@ if (isset($GLOBALS['all'])) {
                 </article><?= "<!-- $Universe -->";
             }
 
+            global $Favi_verse;
             ob_end_flush() ?></div>
         <HR>
         <div class=altUniStyle>
-            <a href="<?= "universe-ai/$uniSlugName/" ?>">Enable Ai Mode</a>
-            <a href="<?= $uniSlugName === 'main' ? '/' : "universe/$uniSlugName/";
-            global $Favi_verse ?>">Disable Ai Mode</a>
+            <a href="<?= "universe-ai/$uniSlugName/" ?>">Enable Ai Mode</a>,
+            <a href="<?= $uniSlugName === 'main' ? '/' : "universe/$uniSlugName/" ?>">Disable Ai Mode</a>,
+            <a href="<?= 'other' ?>">See Miscellaneous Ai Images</a>
         </div>
     </details>
-    <div class=border id=the-store><?= implode('', is_array($characters) ? $characters : array());
+    <nav class=border id=the-store><?= implode('', is_array($characters) ? $characters : array());
         global $ai;
         $image = false;
         $classes = ['introImage', 'uni'];
@@ -105,7 +106,7 @@ if (isset($GLOBALS['all'])) {
             $Universe = \Helpers\htmlspecialchars12($Universe);
             $image = $image === false ? false : "<div class='divs center'><h2>$Universe</h2>$image";
         }
-        if ($image === false) $image = '' ?></div>
+        if ($image === false) $image = '' ?></nav>
 </div>
 <div><?= $image;
     if ($image) echo "</div>" ?></div>
