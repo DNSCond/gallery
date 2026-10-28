@@ -87,7 +87,7 @@ if (isset($GLOBALS['all'])) {
         <div class=altUniStyle>
             <a href="<?= "universe-ai/$uniSlugName/" ?>">Enable Ai Mode</a>,
             <a href="<?= $uniSlugName === 'main' ? '/' : "universe/$uniSlugName/" ?>">Disable Ai Mode</a>,
-            <a href="<?= 'other' ?>">See Miscellaneous Ai Images</a>
+            <a href="<?= 'other' ?>">See Miscellaneous Ai Images</a>.
         </div>
     </details>
     <nav class=border id=the-store><?= implode('', is_array($characters) ? $characters : array());
@@ -107,6 +107,4 @@ if (isset($GLOBALS['all'])) {
             $image = $image === false ? false : "<div class='divs center'><h2>$Universe</h2>$image";
         }
         if ($image === false) $image = '' ?></nav>
-</div>
-<div><?= $image;
-    if ($image) echo "</div>" ?></div>
+</div><?= $image . ($image ? '</div>' : '') ?><!-- Object -->
