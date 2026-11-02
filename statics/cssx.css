@@ -58,10 +58,6 @@ form.border {
     summary {
         padding-left: 0.5em;
     }
-
-    .div {
-        width: 10em;
-    }
 }
 
 details[open] > summary {
