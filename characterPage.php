@@ -56,7 +56,8 @@ if (array_key_exists('primaryColor', $characterData) || array_key_exists('second
     if (!array_key_exists('primaryColor', $characterData)) $characterData['primaryColor'] = '#00a8f3';
     $primaryColor = $characterData['primaryColor'];
     $secondaryColor = $characterData['secondaryColor'];
-    if (preg_match('/^#?([a-f0-9]{6});#?([a-f0-9]{6});$/iD', "$primaryColor;$secondaryColor;", $matches)) {
+    if (preg_match('/^#?([a-f0-9]{6});#?([a-f0-9]{6});$/iD',
+        "$primaryColor;$secondaryColor;", $matches)) {
         $borderColor = "#$matches[1]";
         $backColor = "#$matches[2]";
     }
@@ -132,6 +133,7 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
                     'UniverseId' => '/#what-is-UniverseId',
             ]);
             $item = $chardata;
+            require_once 'jsonHTML.php';
             if (!is_null($chardata['htdesc'])) {
                 $htdesc = readJSON(__DIR__ . "/imgdata/{$chardata['htdesc']}");
                 if (is_array($htdesc)) {
@@ -141,22 +143,6 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
                     $characterInfo = mkHTMLFromJSON($htdesc);
                 } else $characterInfo = '';
             } else $characterInfo = '';
-            function mkHTMLFromJSON(mixed $desc): string
-            {
-                $result = "<$desc[0]";
-                foreach ($desc[1] as $name => $value) {
-                    $result .= "\x20$name=\"$value\"";
-                }
-                $result .= ">";
-                if (in_array(strtolower($desc[0]), ['br', 'hr', 'source', 'img', 'wbr'])) {
-                    return $result;
-                }
-                foreach ($desc as $pos => $val) {
-                    if ($pos == 0 || $pos == 1) continue;
-                    $result .= is_string($val) ? $val : mkHTMLFromJSON($val);
-                }
-                return "$result</$desc[0]>";
-            }
 
             function galleryListing(array $hashes, string $alt, bool $ai): string
             {

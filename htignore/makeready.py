@@ -1,7 +1,7 @@
+from others import makeready2, truncated_len, image_formats, mkstory
 import re, pathlib, hashlib, base64, json, requests, shutil
-from others import makeready2, truncated_len, image_formats
+from htmlparser import html_to_jsonml, process_htdata
 from datetime import datetime, timezone
-from htmlparser import html_to_jsonml
 from glob import glob
 
 
@@ -221,72 +221,22 @@ def main():
             chardata=local, unidata=unidata, rev_map=reverse_map,
         ), sort_keys=False))  # , indent=2
     misc = makeready2()
-    with open('../imgdata/.htaccess', 'at', encoding='utf8') as file:
-        for univ, outer in local.items():
-            for charid, inner in outer.items():
-                if inner['main-see']:
-                    for data in inner['main-see'].values():
-                        write_file(file, data, inner['main.json'], charid, univ, unidata)
-                    for data in inner['main-ai'].values():
-                        write_file(file, data, inner['main.json'], charid, univ, unidata)
-                    for thing in inner['asset2'].values():
-                        for formats in thing.values():
-                            write_file(file, formats, inner['main.json'], charid, univ, unidata)
-                    for thing in inner['assetAi'].values():
-                        for formats in thing.values():
-                            write_file(file, formats, inner['main.json'], charid, univ, unidata)
-                    pass
-    return errors or misc['errored']
-
-
-pass  # def printreturn(*args, **kwargs):print(*args, kwargs)return args
-
-
-def process_htdata(htdata, context):
-    return transform_jsonml(htdata, {
-        'char-rel': (lambda element: process_char_ref(element, context)),
-    })
-
-
-# tag = element[0]
-# return ["a", attrs] + element[2:]
-def process_char_ref(element, context):
-    href = None
-    if bool(uni_name := context.get(element[1].get('who'))):
-        href = f'universe/{uni_name}/{element[1].get('who')}'
-    attrs = dict(href=href)
-    return ["a", attrs] + element[2:]
-
-
-def transform_jsonml(node, handlers):
-    """
-    Recursively transforms a JsonML tree using a dictionary of handler functions.
-
-    handlers: dict mapping tag names (str) to functions that take a full
-              JsonML element list and return the replacement JsonML element list.
-    """
-    if not isinstance(node, list) or not node:
-        return node
-
-    tag_name = node[0]
-    attrs = node[1]
-
-    # First, recursively transform all child nodes (index 2 onwards)
-    transformed_children = []
-    for child in node[2:]:
-        if isinstance(child, list):
-            transformed_children.append(transform_jsonml(child, handlers))
-        else:
-            transformed_children.append(child)
-
-    # Reconstruct the current element with transformed children
-    current_element = [tag_name, attrs] + transformed_children
-
-    # If a handler is defined for this element's tag name, apply it
-    if tag_name in handlers:
-        return handlers[tag_name](current_element)
-
-    return current_element
+    # with open('../imgdata/.htaccess', 'at', encoding='utf8') as file:
+    #     for univ, outer in local.items():
+    #         for charid, inner in outer.items():
+    #             if inner['main-see']:
+    #                 for data in inner['main-see'].values():
+    #                     write_file(file, data, inner['main.json'], charid, univ, unidata)
+    #                 for data in inner['main-ai'].values():
+    #                     write_file(file, data, inner['main.json'], charid, univ, unidata)
+    #                 for thing in inner['asset2'].values():
+    #                     for formats in thing.values():
+    #                         write_file(file, formats, inner['main.json'], charid, univ, unidata)
+    #                 for thing in inner['assetAi'].values():
+    #                     for formats in thing.values():
+    #                         write_file(file, formats, inner['main.json'], charid, univ, unidata)
+    #                 pass
+    return errors or misc['errored'] or mkstory(local, reverse_map, unidata)
 
 
 def write_file(file, data, chardata, charid, univ, unidata):

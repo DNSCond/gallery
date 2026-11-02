@@ -44,6 +44,10 @@ for step, file_name in enumerate(l - s, start=1):
     sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
     added = step
 print('---')
+file_name = '.assets.json'
+sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
+print(repr(file_name), 'overwritten')
+print('---')
 for step, file_name in enumerate(s - l, start=1):
     print(step, 'deleted.')
     remote_path = f'/antrequest.nl/gallery/imgdata/{file_name}';
@@ -53,9 +57,6 @@ for step, file_name in enumerate(s - l, start=1):
         pass
     deleted = step
 print('---')
-file_name = '.assets.json'
-sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
-print(repr(file_name), 'overwritten')
 file_name = '.htaccess'
 sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
 print(repr(file_name), 'overwritten')
