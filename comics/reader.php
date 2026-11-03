@@ -16,20 +16,22 @@ if (!$found) {
     require_once "{$_SERVER['DOCUMENT_ROOT']}/require/404document.php";
     exit;
 }
+$withPNGButton = array_key_exists('withpng', $_GET) && "{$_GET['withpng']}";
 create_head3($title = $data['chdata']['name'], [
-    'base' => '/gallery/', 'bread' => [
+    'base' => '/gallery/', 'canonical' => "/gallery/comics/_{$_GET['titleURL']}/{$_GET['episodeId']}", 'bread' => [
         array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
         array('text' => 'Comics', 'href' => '/gallery/comics/'),
         array('text' => "$title", 'href' => "/gallery/comics/_{$_GET['titleURL']}/"),
         array('text' => "Episode {$_GET['episodeId']}", 'href' => "/gallery/comics/_{$_GET['titleURL']}/{$_GET['episodeId']}"),
-    ], 'canonical' => "/gallery/comics/", 'stylelinks' => ['statics/cssx.css', 'statics/webtoon-img.css'],
+    ], 'stylelinks' => ['statics/cssx.css', 'statics/webtoon-img.css'],
 ]);
-echo "<div class=divs><h1>$title</h1></div>\n";
 $episode = 0;
+echo "<div class=divs><h1>$title</h1></div><script src=statics/png-conv.js type=module></script>\n";
 foreach ($data['imgs'] as $img) {
     $echo = imageTag(null, $img, ['avif', 'webp'],
         "Episode Image\x20" . (++$episode), ['webtoon-img']);
     if ($episode === 1 || $episode === 2) $echo = str_replace(
         'fetchpriority=auto loading=lazy', 'fetchpriority=high', $echo);
-    echo "$echo\n";
+    if ($withPNGButton) $echo = "$echo<div class=divs><div class=lh><button class=comic-png>create png</button></div></div>";
+    echo str_replace("data-file-name=''", "data-file-name='Episode Image $episode'", "$echo\n");
 }

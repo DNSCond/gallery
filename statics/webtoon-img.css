@@ -9,6 +9,13 @@
     margin: auto;
     width: 800px;
     max-width: 100vw;
+    border-bottom: 3px solid gray;
+}
+
+.lh {
+    box-sizing: content-box;
+    min-height: 1.5em;
+    height: 1.5em;
 }
 
 h1 {

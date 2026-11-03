@@ -1,7 +1,15 @@
 //<script type=application/json is=output-script><\\?= json_encode($data) ?\\></script>
-Array.from(document.getElementsByClassName('png')).forEach(each => {
-    const img = each.parentElement.parentElement.querySelector('img'),
-        pic = each.parentElement.parentElement.querySelector('picture');
+Array.from(document.getElementsByClassName('png'), button => ({
+    img: button.parentElement.parentElement.querySelector('img'), button,
+    pic: button.parentElement.parentElement.querySelector('picture'),
+})).forEach(forEachButton);
+Array.from(document.getElementsByClassName('comic-png'), button => ({
+    img: button.parentElement.parentElement.previousElementSibling.querySelector('img'), button,
+    pic: button.parentElement.parentElement.previousElementSibling,
+})).forEach(forEachButton);
+
+function forEachButton({button, img, pic}) {
+    const each = button;
     each.addEventListener('click', () => convertImageSourceToPNG(img).then(blob => {
         const blobHref = URL.createObjectURL(blob),
             a = document.createElement('a');
@@ -10,7 +18,7 @@ Array.from(document.getElementsByClassName('png')).forEach(each => {
         a.href = blobHref;
         each.replaceWith(a);
     }), {once: true});
-});
+}
 
 export function convertImageSourceToPNG(img) {
     return createImageBitmap(img).then(imageBitmap => {

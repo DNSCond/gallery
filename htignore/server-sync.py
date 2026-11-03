@@ -54,6 +54,7 @@ def overwrite(file_name):
 overwrite('.assets.json')
 overwrite('.htaccess')
 overwrite( '.misc-ai.json')
+overwrite( '.comic-assets.json')
 print('---')
 for step, file_name in enumerate(s - l, start=1):
     print(step, 'deleted.')
