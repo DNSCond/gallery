@@ -1,0 +1,14 @@
+.webtoon-img {
+    display: block;
+    margin: auto;
+}
+
+.divs {
+    margin: auto;
+    width: 800px;
+    max-width: 100vw;
+}
+
+h1 {
+    text-align: center;
+}

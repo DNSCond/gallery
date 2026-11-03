@@ -8,6 +8,7 @@ function readJSON(string $path): mixed
 
 function isPresent(array $current, array $properties): bool
 {
+    /** @noinspection DuplicatedCode */
     foreach ($properties as $property) {
         if (!is_array($current)) return false;
         elseif ((null) === ($property)) return false;
@@ -17,6 +18,20 @@ function isPresent(array $current, array $properties): bool
         } else return false;
     }
     return true;
+}
+
+function fetchThingOrNull(array $current, array $properties): mixed
+{
+    /** @noinspection DuplicatedCode */
+    foreach ($properties as $property) {
+        if (!is_array($current)) return null;
+        elseif ((null) === ($property)) return null;
+        if (!is_string($property)) return null;
+        if (array_key_exists($property, $current)) {
+            $current = $current[$property];
+        } else return null;
+    }
+    return $current;
 }
 
 function array__get_key_as_boolean(string $key, array $array): bool

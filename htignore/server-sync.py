@@ -44,25 +44,26 @@ for step, file_name in enumerate(l - s, start=1):
     sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
     added = step
 print('---')
-file_name = '.assets.json'
-sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
-print(repr(file_name), 'overwritten')
+
+
+def overwrite(file_name):
+    sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
+    print(repr(file_name), 'overwritten')
+
+
+overwrite('.assets.json')
+overwrite('.htaccess')
+overwrite( '.misc-ai.json')
 print('---')
 for step, file_name in enumerate(s - l, start=1):
     print(step, 'deleted.')
-    remote_path = f'/antrequest.nl/gallery/imgdata/{file_name}';
+    remote_path = f'/antrequest.nl/gallery/imgdata/{file_name}'
     try:
         sftp.remove(remote_path)
     except FileNotFoundError:
         pass
     deleted = step
 print('---')
-file_name = '.htaccess'
-sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
-print(repr(file_name), 'overwritten')
-file_name = '.misc-ai.json'
-sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
-print(repr(file_name), 'overwritten')
 
 # 4. Close the session
 sftp.close()

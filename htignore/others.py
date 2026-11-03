@@ -92,4 +92,63 @@ def mkstory(character_data, reverse_map, unidata):
     return False
 
 
+def comics():
+    errored = False
+    database = dict()
+    for ii in glob('comic-images/*/*/edata.json'):
+        paththing = pathlib.Path(ii)
+
+        with open(ii, 'rt', encoding='utf8') as file:
+            jdata = json.loads(file.read())
+        imgdata = dict(chdata=jdata, imgs=dict())
+        database[paththing.parent.parent.name] = database.get(paththing.parent.parent.name, dict())
+        database[paththing.parent.parent.name][paththing.parent.name] = imgdata
+        imgdata = imgdata['imgs']
+        for i in pathlib.Path(ii).parent.iterdir():
+            if pathlib.Path(i).suffix not in image_formats:
+                continue
+            data = img(str(i))
+            if data is None:
+                errored = True
+                continue
+            imgdata[pathlib.Path(i).stem] = imgdata.get(pathlib.Path(i).stem, dict())
+            imgdata[pathlib.Path(i).stem][pathlib.Path(i).suffix[1::]] = data
+    for ii in glob('comic-images/*/edata.json'):
+        paththing = pathlib.Path(ii)
+        database[paththing.parent.name] = dict(eps=database[paththing.parent.name])
+        with open(ii, 'rt', encoding='utf8') as file:
+            database[paththing.parent.name]['datatoon'] = json.loads(file.read())
+    with open('../imgdata/.comic-assets.json', 'wt', encoding='utf8') as file:
+        file.write(json.dumps(dict(data=database), sort_keys=False))
+    return errored
+
+
+def img(src_path: str, folder='imgdata'):
+    with open(src_path, 'rb') as file:
+        content = file.read()
+        hashed = base64.b64encode(hashlib.sha512(content).digest()).decode('utf-8') \
+            .replace('/', '_').replace('+', '-').replace('=', str())[0::truncated_len]
+    path = f'{hashed}{pathlib.Path(src_path).suffix}'
+    with open(f'../{folder}/{path}', 'wb') as file:
+        file.write(content)
+    resp = requests.get(f'http://localhost/gallery/dev-only/imgdata.php?hash={path}')
+    # print(resp.status_code, url)
+    # for key, val in dict(resp.headers).items():
+    #     print(f'{key}: {val}')
+    # print()
+    sizes = resp.headers.get('image-size')
+    if sizes is None:
+        print(path, 'failed because it isnt found')
+        return None
+    matched = re.search('w=(\\d+), h=(\\d+)', sizes)
+    if matched is None:
+        print(path, 'matched is incorrect format')
+        return None
+    return dict(
+        oname=pathlib.Path(src_path).name,
+        hash=path, t=resp.headers['image-type'],
+        w=int(matched.group(1)), h=int(matched.group(2)))
+    pass
+
+
 pass

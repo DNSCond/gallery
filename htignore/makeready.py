@@ -1,4 +1,4 @@
-from others import makeready2, truncated_len, image_formats, mkstory
+from others import makeready2, truncated_len, image_formats, mkstory, comics
 import re, pathlib, hashlib, base64, json, requests, shutil
 from htmlparser import html_to_jsonml, process_htdata
 from datetime import datetime, timezone
@@ -207,7 +207,7 @@ def main():
         with open(htmld, 'rb') as file:
             content = file.read()
             hashed = base64.b64encode(hashlib.sha512(content).digest()).decode('utf-8') \
-                .replace('/', '_').replace('+', '-').replace('=', str())
+                .replace('/', '_').replace('+', '-').replace('=', str())[0::truncated_len]
         with open(f'../{folder}/{hashed}.html.json', 'wt', encoding='utf8') as file:
             htdata = html_to_jsonml(
                 '<body>' + content.replace(b'\r\n', b'\n')
@@ -237,7 +237,7 @@ def main():
     #                     for formats in thing.values():
     #                         write_file(file, formats, inner['main.json'], charid, univ, unidata)
     #                 pass
-    return errors or misc['errored'] or mkstory(local, reverse_map, unidata)
+    return errors or misc['errored'] or mkstory(local, reverse_map, unidata) or comics()
 
 
 def write_file(file, data, chardata, charid, univ, unidata):
