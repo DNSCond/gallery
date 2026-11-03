@@ -7,4 +7,3 @@
     }
 }
 http_response_code(404);
-//<script type=application/json is=output-script><\\?= json_encode($data) ?\\></script>

@@ -41,7 +41,7 @@ function matchUniverses(string $universe): string
 $chardata = $data[$uniSlugName][$charId];
 $datachar = $chardata['main.json'];
 $uniName = matchUniverses($uniname = $datachar['UniverseId']);
-$name = htmlspecialchars12($datachar['name'] ?? $charId);
+$name = htmlspecialchars12($nameUnescaped = $datachar['name'] ?? $charId);
 header('cache-control: public, max-age=600, stale-while-revalidate=86400, stale-if-error=432000');
 
 $si = $aiAlways ? "-ai" : '';
@@ -57,7 +57,7 @@ if (array_key_exists('primaryColor', $characterData) || array_key_exists('second
     $primaryColor = $characterData['primaryColor'];
     $secondaryColor = $characterData['secondaryColor'];
     if (preg_match('/^#?([a-f0-9]{6});#?([a-f0-9]{6});$/iD',
-        "$primaryColor;$secondaryColor;", $matches)) {
+            "$primaryColor;$secondaryColor;", $matches)) {
         $borderColor = "#$matches[1]";
         $backColor = "#$matches[2]";
     }
@@ -66,8 +66,8 @@ if (array_key_exists('primaryColor', $characterData) || array_key_exists('second
 $main = false;
 $aiMode = $aiAlways ? "\x20(Ai)" : '';
 if ($aiAlways) {
-    $main = imageTag($chardata['main-ai'], ['webp', 'png', 'jpg', 'jpeg'],
-            'Main Ai Appearance', ['introImage border'], null);
+    $main = imageTag($nameUnescaped, $chardata['main-ai'], ['webp', 'png',
+            'jpg', 'jpeg'], 'Main Ai Appearance', ['introImage border'], null);
     if ($main === false) {
         http_response_code(307);
         header("Location:/gallery/universe/$uniSlugName/$charId");
@@ -87,8 +87,8 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
 <main>
     <div class=divs>
         <h1><?= "&quot;$name&quot;$aiMode";
-            if ($main === false) $main = imageTag($chardata['main-see'], ['avif',
-                    'webp'], 'Main Appearance', ['introImage border']) ?></h1>
+            if ($main === false) $main = imageTag($nameUnescaped, $chardata['main-see'],
+                    ['avif', 'webp'], 'Main Appearance', ['introImage border']) ?></h1>
         <div><?= str_replace('fetchpriority=auto loading=lazy', 'fetchpriority=high', $main);
             require_once 'dataDescriptionList.php';
             $datachar['charId'] = "$uniSlugName/$charId";
@@ -120,10 +120,11 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
                 if ($time === 0) return new HTMLSafeEscaped("<span>Unknown</span>");
                 $date = date('D Y-M-d', $time);
                 $datetime = gmdate('Y-m-d\\TH:i:s\\Z', $time);
-                return new HTMLSafeEscaped("<time datetime="
-                        . "'$datetime' is=relative-time>$date</time>");
+                return new HTMLSafeEscaped("<time datetime='"
+                        . "$datetime' is=relative-time>$date</time>");
             } ?></div>
     </div>
+    <script type=module src=statics/png-conv.js></script>
     <div class=divs>
         <div class=border-set2><?= dataDescriptionList($datachar, array(), [
                     'registerDate' => '/#what-is-registerDate',
@@ -147,10 +148,13 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
             function galleryListing(array $hashes, string $alt, bool $ai): string
             {
                 $aiAlways = $ai;
+                global $nameUnescaped;
                 $classArray = ['store-img', 'store-big'];
+                $pngButton = "<div class='altText line-height-1'><button class=png>create png</button></div>";
                 $formats = $aiAlways ? ['webp', 'png', 'jpg', 'jpeg'] : ['avif', 'webp'];
-                $img = imageTag($hashes, $formats, $alt, $classArray, $aiAlways ? null : 'webp');
-                if ($img) return "<div class=store-div>$img<div class=altText>$alt</div></div>";
+                $img = imageTag($nameUnescaped, $hashes, $formats,
+                        $alt, $classArray, $aiAlways ? null : 'webp');
+                if ($img) return "<div class=store-div>$img<div class=altText>$alt</div>$pngButton</div>";
                 return '';
             } ?></div>
     </div>

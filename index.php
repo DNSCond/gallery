@@ -78,10 +78,10 @@ if (isset($GLOBALS['all'])) {
                 if (!array_key_exists('noAi', $item)) return;
                 $Universe = matchUniverses($key);
                 $image = false;
-                if ($ai) $image = imageTag($item['wiAi'], ['png'],
+                if ($ai) $image = imageTag($Universe, $item['wiAi'], ['png'],
                         "Ai Universe thumbnail for $Universe", array('store-img', 'em10'), null);
-                if ($image === false) $image = imageTag($item['noAi'], ['webp'],
-                        "Universe thumbnail for $Universe", array('store-img', 'em10'));
+                if ($image === false) $image = imageTag($Universe, $item['noAi'],
+                        ['webp'], "Universe thumbnail for $Universe", array('store-img', 'em10'));
                 $univHref = $key === 'main' && !$ai ? '/' : "universe$ai/$key/";
 
                 echo "<article class='store-div div' is=shadowboxed-hover>";
@@ -110,9 +110,9 @@ if (isset($GLOBALS['all'])) {
         $item = $unidata['unidata'][$uniSlugName];
         if ($item && $uniSlugName !== 'main') {
             $alt = "Universe thumbnail for $Universe";
-            if ($ai) $image = imageTag($item['wiAi'], ['png',
-                    'jpg', 'jpeg'], "Ai $alt", $classes, null);
-            if ($image === false) $image = imageTag($item['noAi'],
+            if ($ai) $image = imageTag($Universe, $item['wiAi'],
+                    ['png', 'jpg', 'jpeg'], "Ai $alt", $classes, null);
+            if ($image === false) $image = imageTag($Universe, $item['noAi'],
                     ['webp'], $alt, $classes);
             /** @noinspection PhpFullyQualifiedNameUsageInspection */
             $Universe = \Helpers\htmlspecialchars12($Universe);

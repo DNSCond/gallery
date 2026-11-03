@@ -58,28 +58,29 @@ function appendMain(array $item, bool $aiAlways, array &$characters, bool $witha
     if (array_key_exists('aichar', $char)) if ($char['aichar']) return;
     $_boxcolor = array_key_exists('primaryColor', $char) ? $char['primaryColor'] : '#00a8f3';
     if (!str_starts_with($_boxcolor, '#')) $_boxcolor = "#$_boxcolor";
-    $name = htmlspecialchars12($char['name'] ?? $char['charId']);
+    $name = htmlspecialchars12($nameUnescaped = $char['name'] ?? $char['charId']);
     $formats = $aiAlways ? $formatsWiAi : $formatsNoAi;
-    $img = imageTag($item[$aiAlways ? 'main-ai' : "main-see"], $formats,
-        $name, array('store-img'), $aiAlways ? null : 'webp');
+    $img = imageTag($nameUnescaped, $item[$aiAlways ? 'main-ai' : "main-see"],
+        $formats, $name, array('store-img'), $aiAlways ? null : 'webp');
     if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
         "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
         ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
     if ($withalt) {
         foreach ($item['asset2'] as $asset) {
-            $img = imageTag($asset, $formatsNoAi, "$name (Alt)", array('store-img'));
+            $img = imageTag($nameUnescaped, $asset,
+                $formatsNoAi, "$name (Alt)", array('store-img'));
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
                 "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
                 ">$name (Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
         }
-        $img = imageTag($item['main-ai'], $formatsWiAi,
-            "$name (Ai)", array('store-img'), null);
+        $img = imageTag($nameUnescaped, $item['main-ai'],
+            $formatsWiAi, "$name (Ai)", array('store-img'), null);
         if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
             "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
             ">$name (Ai) </a></h3><a href=$base{$item['charId']}>$img</a></article>";
         foreach ($item['assetAi'] as $asset) {
-            $img = imageTag($asset, $formatsWiAi,
-                "$name (Ai Alt)", array('store-img'), null);
+            $img = imageTag($nameUnescaped, $asset,
+                $formatsWiAi, "$name (Ai Alt)", array('store-img'), null);
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
                 "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
                 ">$name (Ai Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";

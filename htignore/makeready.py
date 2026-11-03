@@ -66,14 +66,16 @@ def main():
                 matched = re.search('w=(\\d+), h=(\\d+)', sizes)
                 asset = dict(hash=hashed, oname=path.name,
                              w=int(matched.group(1)), h=int(matched.group(2)),
-                             t=resp.headers['image-type'], origin='main')
+                             t=resp.headers['image-type'])
                 local[path.parent.parent.name][path.parent.name]['main-see'] = \
                     local[path.parent.parent.name][path.parent.name].get('main-see', dict())
                 local[path.parent.parent.name][path.parent.name]['main-ai'] = \
                     local[path.parent.parent.name][path.parent.name].get('main-ai', dict())
                 if path.name.startswith('ai.'):
+                    local[path.parent.parent.name][path.parent.name]['main-ai']['data-name'] = path.stem
                     local[path.parent.parent.name][path.parent.name]['main-ai'][path.suffix[1:]] = asset
                 else:
+                    local[path.parent.parent.name][path.parent.name]['main-see']['data-name'] = path.stem
                     local[path.parent.parent.name][path.parent.name]['main-see'][path.suffix[1:]] = asset
         for path in pathlib.Path(i).iterdir():
             if path.is_dir():
@@ -90,10 +92,10 @@ def main():
                                 with open(f'../{folder}/{hash}{inner_inner_path.suffix}', 'wb') as file:
                                     file.write(cont)
                                 datapath = inner_inner_path.parent.parent
-                                asset = dict(hash=f'{hash}{inner_inner_path.suffix}', oname=inner_inner_path.name)
+                                asset = dict(
+                                    hash=f'{hash}{inner_inner_path.suffix}',
+                                    oname=inner_inner_path.name, isAi=True)
                                 local[datapath.parent.parent.name][datapath.parent.name]['assets'].append(asset)
-                                asset['origin'] = 'ai'
-                                asset['isAi'] = True
                             continue
                         if inner_path.suffix not in image_formats:
                             continue
@@ -104,10 +106,8 @@ def main():
                         with open(f'../{folder}/{hash}{inner_path.suffix}', 'wb') as file:
                             file.write(cont)
                         datapath = inner_path.parent
-                        asset = dict(hash=f'{hash}{inner_path.suffix}', oname=inner_path.name)
+                        asset = dict(hash=f'{hash}{inner_path.suffix}', oname=inner_path.name, isAi=False)
                         local[datapath.parent.parent.name][datapath.parent.name]['assets'].append(asset)
-                        asset['origin'] = 'gallery'
-                        asset['isAi'] = False
     for outer in local.values():
         for inner in outer.values():
             data_dict = dict()
@@ -122,10 +122,11 @@ def main():
                 if sizes is None:
                     continue
                 matched = re.search('w=(\\d+), h=(\\d+)', sizes)
+                local_dict[name]['data-name'] = pathlib.Path(asset['oname']).stem
                 local_dict[name][suffix] = {
-                    'hash': asset['hash'], 'origin': asset['origin'],
+                    'hash': asset['hash'], 'oname': asset['oname'],
                     'w': int(matched.group(1)), 'h': int(matched.group(2)),
-                    't': resp.headers['image-type'], 'oname': asset['oname']}
+                    't': resp.headers['image-type']}
             inner['asset2'] = data_dict
             inner['assetAi'] = data_ai_dict
             del inner['assets']
@@ -160,15 +161,15 @@ def main():
             'humanName': univ.get(uniname, uniname),
             "noAi": dict(), "wiAi": dict(), 'chars': len(local[uniname].keys())})
         unidata[uniname]['wiAi' if pathlib.Path(i).stem.endswith('-ai') else 'noAi'][pathlib.Path(i).suffix[1:]] = {
-            'hash': f'{hash}{pathlib.Path(i).suffix}', 'w': int(matched.group(1)), 'h': int(matched.group(2)),
-            'origin': 'universe', 't': resp.headers['image-type']}
+            'hash': f'{hash}{pathlib.Path(i).suffix}', 't': resp.headers['image-type'],
+            'w': int(matched.group(1)), 'h': int(matched.group(2)),
+        }
     nokeys = set(unidata.keys())
     for uniname in sorted(set(univ.keys()) - nokeys):
         unidata[uniname] = {'humanName': univ[uniname]}
         if (pathlib.Path('universe-images') / uniname).exists():
             unidata[uniname].update({"wiAi": dict(), 'noAi': {'webp': {
-                'hash': '404placeholder.webp', 'w': 800, 'h': 1280,
-                'origin': 'universe-no-pict', 't': 'image/webp'
+                'hash': '404placeholder.webp', 'w': 800, 'h': 1280, 't': 'image/webp'
             }}, 'chars': len(local[uniname].keys())})
 
     new = dict(main=local['main'])

@@ -1,11 +1,13 @@
 <?php use function Helpers\htmlspecialchars12;
 
-function imageTag(array $hashes, array $formats, string $alt,
-                  array $classes, ?string $fallback = 'webp'): string|false
+function imageTag(?string $characterName, array $hashes, array $formats, string $alt,
+                  array   $classes, ?string $fallback = 'webp'): string|false
 {
-    if (!count($formats)) return false;
     $lastValid = null;
-    $result = "<picture>";
+    if (!count($formats)) return false;
+    $cname = is_string($characterName) ? "$characterName--" : '';
+    $fn = htmlspecialchars12("$cname{$hashes['data-name']}");
+    $result = "<picture data-file-name='$fn'>";
     foreach ($formats as $format) {
         if (array_key_exists($format, $hashes)) {
             $size = "width={$hashes[$format]['w']} height={$hashes[$format]['h']}";
