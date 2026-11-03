@@ -20,9 +20,8 @@ create_head3($title = $data['chdata']['name'], [
     'base' => '/gallery/', 'bread' => [
         array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
         array('text' => 'Comics', 'href' => '/gallery/comics/'),
-        // array('text' => "$title", 'href' => "/gallery/comics/_{$_GET['titleURL']}/"),
-        array('text' => "$title (Episode {$_GET['episodeId']})", 'href' => "/gallery/comics/_{$_GET['titleURL']}/{$_GET['episodeId']}"),
-        // array('text' => "Episode {$_GET['episodeId']}", 'href' => "/gallery/comics/_{$_GET['titleURL']}/{$_GET['episodeId']}"),
+        array('text' => "$title", 'href' => "/gallery/comics/_{$_GET['titleURL']}/"),
+        array('text' => "Episode {$_GET['episodeId']}", 'href' => "/gallery/comics/_{$_GET['titleURL']}/{$_GET['episodeId']}"),
     ], 'canonical' => "/gallery/comics/", 'stylelinks' => ['statics/cssx.css', 'statics/webtoon-img.css'],
 ]);
 echo "<div class=divs><h1>$title</h1></div>\n";

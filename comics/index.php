@@ -1,29 +1,40 @@
 <?php use function ANTHeader\create_head3;
 use function Helpers\htmlspecialchars12;
 
+$dataURL = '';
+$humanTitle = '';
 require_once __DIR__ . '/../require.php';
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/header3/head3.php";
-create_head3($title = 'Comics', [
-    'base' => '/gallery/', 'bread' => [
+$datacar = readJSON(__DIR__ . '/../imgdata/.comic-assets.json');
+if (array_key_exists('titleURL', $_GET)) {
+    if (array_key_exists($_GET['titleURL'], $datacar['data'])) {
+        $humanTitle = $datacar['data'][$_GET['titleURL']]['datatoon']['name'];
+        $dataURL = "{$_GET['titleURL']}";
+    } else http_response_code(404);
+}
+create_head3($title = $humanTitle ? "$humanTitle (Comics)" : 'Comics', [
+    'base' => '/gallery/', 'class' => array('smaller'), 'bread' => [
         array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
         array('text' => 'Comics', 'href' => '/gallery/comics/'),
-    ], 'canonical' => "/gallery/comics/",
+        $dataURL ? array('text' => $humanTitle, 'href' => "/gallery/comics/_$dataURL/") : null,
+    ], 'canonical' => "/gallery/comics/" . ($dataURL ? "_$dataURL/" : ''),
     'stylelinks' => ["statics/cssx.css"],
 ]);
-$datacar = readJSON(__DIR__ . '/../imgdata/.comic-assets.json');
-echo '<script type=application/json is=output-script>' . json_encode($datacar, JSON_PRETTY_PRINT) . '</script>';
-if ($datacar) {
-    $data = [];
-    foreach ($datacar['data'] as $name => $webtoon) {
-        $htmlName = htmlspecialchars12("{$webtoon['datatoon']['name']}");
-        $data[] = "<h2>$htmlName</h2><ol>";
-        foreach ($webtoon['eps'] as $chapterId => $chapter) {
-            $htmlName = htmlspecialchars12("{$chapter['chdata']['name']}");
-            $data[] = "<li><a href=comics/_$name/$chapterId>$htmlName</a>";
-        }
-        echo '</ol>';
+echo "<div class=divs><h1>$title</h1><div><script src=statics/index.js type=module></script>";
+if ($dataURL !== '') {
+    echo "<h2>Episodes</h2><ol>";
+    foreach ($datacar['data'][$_GET['titleURL']]['eps'] as $chapterId => $chapter) {
+        $htmlName = htmlspecialchars12("{$chapter['chdata']['name']}");
+        echo "<li><a href=comics/_$dataURL/$chapterId>$htmlName</a>";
     }
-    $data = implode('', $data);
-} else $data = '<p>No Information Found';
-
-echo "<div class=divs><h1>$title</h1><div>$data</div></div>\n";
+    echo '</ol><h2>Other Webtoons!</h2>';
+}
+foreach ($datacar['data'] as $name => $webtoon) {
+    $htmlName = htmlspecialchars12("{$webtoon['datatoon']['name']}");
+    /** @noinspection HtmlUnknownTarget */
+    $img = '<img src=imgdata/404placeholder.webp width=800 height=1280 alt="image not found" class=store-img>';
+    echo "<article class=store-div data-c=#00a8f3 is=shadowboxed-hover>" .
+        "<h3 class=charname><a href=comics/_$name/>$htmlName</a></h3>" .
+        "<a href=comics/_$name/>$img</a></article>";
+}
+echo "</div></div>\n";

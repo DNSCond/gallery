@@ -1,4 +1,5 @@
 RewriteEngine on
 RewriteBase /gallery/comics/
 
+RewriteRule ^_([a-zA-Z0-9\-]+)/?$ index.php?titleURL=$1 [L,QSA]
 RewriteRule ^_([a-zA-Z0-9\-]+)/(\d+)$ reader.php?titleURL=$1&episodeId=$2 [L,QSA]
