@@ -1,4 +1,5 @@
 <?php use function ANTHeader\create_head3;
+use function Helpers\htmlspecialchars12;
 
 $found = false;
 $data = array();
@@ -16,22 +17,25 @@ if (!$found) {
     require_once "{$_SERVER['DOCUMENT_ROOT']}/require/404document.php";
     exit;
 }
+$series = $datacar['data'][$_GET['titleURL']]['datatoon']['name'];
 $withPNGButton = array_key_exists('withpng', $_GET) && "{$_GET['withpng']}";
 create_head3($title = $data['chdata']['name'], [
     'base' => '/gallery/', 'canonical' => "/gallery/comics/_{$_GET['titleURL']}/{$_GET['episodeId']}", 'bread' => [
         array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
         array('text' => 'Comics', 'href' => '/gallery/comics/'),
-        array('text' => "$title", 'href' => "/gallery/comics/_{$_GET['titleURL']}/"),
-        array('text' => "Episode {$_GET['episodeId']}", 'href' => "/gallery/comics/_{$_GET['titleURL']}/{$_GET['episodeId']}"),
+        array('text' => "$series", 'href' => "/gallery/comics/_{$_GET['titleURL']}/"),
+        array('text' => "$title (Ep {$_GET['episodeId']})", 'href' =>
+            "/gallery/comics/_{$_GET['titleURL']}/{$_GET['episodeId']}"),
     ], 'stylelinks' => ['statics/cssx.css', 'statics/webtoon-img.css'],
 ]);
 $episode = 0;
-echo "<div class=divs><h1>$title</h1></div><script src=statics/png-conv.js type=module></script>\n";
+$htmlName = htmlspecialchars12($title);
+echo "<div class=divs><h1>$htmlName</h1></div><script src=statics/png-conv.js type=module></script>\n";
 foreach ($data['imgs'] as $img) {
     $echo = imageTag(null, $img, ['avif', 'webp'],
         "Episode Image\x20" . (++$episode), ['webtoon-img']);
-    if ($episode === 1 || $episode === 2) $echo = str_replace(
-        'fetchpriority=auto loading=lazy', 'fetchpriority=high', $echo);
+    if ($episode === 1 || $episode === 2 || $episode === 3 || $episode === 4 || $episode === 5 || $episode === 6)
+        $echo = str_replace('fetchpriority=auto loading=lazy', 'fetchpriority=high', $echo);
     if ($withPNGButton) $echo = "$echo<div class=divs><div class=lh><button class=comic-png>create png</button></div></div>";
     echo str_replace("data-file-name=''", "data-file-name='Episode Image $episode'", "$echo\n");
 }
