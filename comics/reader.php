@@ -27,6 +27,7 @@ create_head3($title = $data['chdata']['name'], [
         array('text' => "$title (Ep {$_GET['episodeId']})", 'href' =>
             "/gallery/comics/_{$_GET['titleURL']}/{$_GET['episodeId']}"),
     ], 'stylelinks' => ['statics/cssx.css', 'statics/webtoon-img.css'],
+    'borderColor' => '#fff100', 'backColor' => '#87cefa',
 ]);
 $episode = 0;
 $htmlName = htmlspecialchars12($title);
@@ -37,5 +38,5 @@ foreach ($data['imgs'] as $img) {
     if ($episode === 1 || $episode === 2 || $episode === 3 || $episode === 4 || $episode === 5 || $episode === 6)
         $echo = str_replace('fetchpriority=auto loading=lazy', 'fetchpriority=high', $echo);
     if ($withPNGButton) $echo = "$echo<div class=divs><div class=lh><button class=comic-png>create png</button></div></div>";
-    echo str_replace("data-file-name=''", "data-file-name='Episode Image $episode'", "$echo\n");
+    echo str_replace("data-file-name=''", "data-file-name=Episode-Image-$episode", "$echo\n");
 }
