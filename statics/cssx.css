@@ -60,6 +60,11 @@ form.border {
     }
 }
 
+.comics-ad {
+    border-bottom: none;
+    padding: 0.5em;
+}
+
 details[open] > summary {
     padding-bottom: 0.5em;
     border-bottom: 3px solid gray;
@@ -174,7 +179,7 @@ body {
 .ShadowBoxedHover {
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     /*noinspection CssInvalidFunction*/
-    --box-color: attr(data-c type(<color>), #00a8f3);
+    --box-color: attr(data-c type(< color >), #00a8f3);
 }
 
 /*noinspection CssInvalidPropertyValue, CssInvalidFunction*/

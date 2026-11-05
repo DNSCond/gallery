@@ -102,6 +102,7 @@ if (isset($GLOBALS['all'])) {
             <a href="<?= 'other' ?>">See Miscellaneous Ai Images</a>.
         </div>
     </details>
+    <div class='border comics-ad'><a href=comics>Check out my new comics</a></div>
     <nav class=border id=the-store><?= implode('', is_array($characters) ? $characters : array());
         global $ai;
         $image = false;
