@@ -40,7 +40,7 @@ step = int()
 added = int()
 deleted = int()
 for step, file_name in enumerate(l - s, start=1):
-    print(step, 'added.')
+    print(step, 'added. name =', file_name)
     sftp.put(f"../imgdata/{file_name}", f'/antrequest.nl/gallery/imgdata/{file_name}')
     added = step
 print('---')
@@ -57,7 +57,7 @@ overwrite( '.misc-ai.json')
 overwrite( '.comic-assets.json')
 print('---')
 for step, file_name in enumerate(s - l, start=1):
-    print(step, 'deleted.')
+    print(step, 'deleted. name =', file_name)
     remote_path = f'/antrequest.nl/gallery/imgdata/{file_name}'
     try:
         sftp.remove(remote_path)
