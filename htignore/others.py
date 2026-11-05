@@ -97,7 +97,6 @@ def comics():
     database = dict()
     for ii in glob('comic-images/*/*/edata.json'):
         paththing = pathlib.Path(ii)
-
         with open(ii, 'rt', encoding='utf8') as file:
             jdata = json.loads(file.read())
         imgdata = dict(chdata=jdata, imgs=dict())
@@ -116,8 +115,15 @@ def comics():
     for ii in glob('comic-images/*/edata.json'):
         paththing = pathlib.Path(ii)
         database[paththing.parent.name] = dict(eps=database[paththing.parent.name])
+        imgpath = str(paththing.parent / 'thumbnail-square')
+        thumbdata = dict(webtoon=dict())
+        thumbdata['webtoon']['data-name'] = 'thumbnail-square'
+        for fileformat in ('avif', 'webp'):
+            if pathlib.Path(imgpath + f'.{fileformat}').exists():
+                thumbdata['webtoon'][fileformat] = img(imgpath + f'.{fileformat}')
         with open(ii, 'rt', encoding='utf8') as file:
             database[paththing.parent.name]['datatoon'] = json.loads(file.read())
+        database[paththing.parent.name]['thumb'] = thumbdata
     with open('../imgdata/.comic-assets.json', 'wt', encoding='utf8') as file:
         file.write(json.dumps(dict(data=database), sort_keys=False))
     return errored
