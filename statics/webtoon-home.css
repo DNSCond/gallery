@@ -18,5 +18,9 @@ ol.episode-list {
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+
+        &:not(:last-child) {
+            border-bottom: 3px solid gray;
+        }
     }
 }

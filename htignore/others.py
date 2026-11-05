@@ -1,4 +1,6 @@
 import pathlib, hashlib, base64, re, requests, json, shutil
+from typing import Protocol
+
 from htmlparser import html_to_jsonml, process_htdata
 from custom_format import parse_named_blocks
 from glob import glob
@@ -95,6 +97,18 @@ def mkstory(character_data, reverse_map, unidata):
 def comics():
     errored = False
     database = dict()
+    for ii in glob('comic-images/*/edata.json'):
+        paththing = pathlib.Path(ii)
+        database[paththing.parent.name] = dict(eps=dict())
+        imgpath = str(paththing.parent / 'thumbnail-square')
+        thumbdata = dict(webtoon=dict())
+        thumbdata['webtoon']['data-name'] = 'thumbnail-square'
+        for fileformat in ('avif', 'webp'):
+            if pathlib.Path(imgpath + f'.{fileformat}').exists():
+                thumbdata['webtoon'][fileformat] = img(imgpath + f'.{fileformat}')
+        with open(ii, 'rt', encoding='utf8') as file:
+            database[paththing.parent.name]['datatoon'] = json.loads(file.read())
+        database[paththing.parent.name]['thumb'] = thumbdata
     for ii in glob('comic-images/*/*/edata.json'):
         paththing = pathlib.Path(ii)
         with open(ii, 'rt', encoding='utf8') as file:
@@ -105,7 +119,6 @@ def comics():
         else:
             jdata['released'] = None
         imgdata = dict(chdata=jdata, imgs=dict())
-        database[paththing.parent.parent.name] = database.get(paththing.parent.parent.name, dict())
         database[paththing.parent.parent.name][paththing.parent.name] = imgdata
         imgdata = imgdata['imgs']
         for i in pathlib.Path(ii).parent.iterdir():
@@ -117,20 +130,8 @@ def comics():
                 continue
             imgdata[pathlib.Path(i).stem] = imgdata.get(pathlib.Path(i).stem, dict())
             imgdata[pathlib.Path(i).stem][pathlib.Path(i).suffix[1::]] = data
-    for ii in glob('comic-images/*/edata.json'):
-        paththing = pathlib.Path(ii)
-        database[paththing.parent.name] = dict(eps=database[paththing.parent.name])
-        imgpath = str(paththing.parent / 'thumbnail-square')
-        thumbdata = dict(webtoon=dict())
-        thumbdata['webtoon']['data-name'] = 'thumbnail-square'
-        for fileformat in ('avif', 'webp'):
-            if pathlib.Path(imgpath + f'.{fileformat}').exists():
-                thumbdata['webtoon'][fileformat] = img(imgpath + f'.{fileformat}')
-        with open(ii, 'rt', encoding='utf8') as file:
-            database[paththing.parent.name]['datatoon'] = json.loads(file.read())
-        database[paththing.parent.name]['thumb'] = thumbdata
     with open('../imgdata/.comic-assets.json', 'wt', encoding='utf8') as file:
-        file.write(json.dumps(dict(data=database), sort_keys=False))
+        file.write(json.dumps(dict(data=database), sort_keys=False, indent=2))
     return errored
 
 
@@ -162,4 +163,6 @@ def img(src_path: str, folder='imgdata'):
     pass
 
 
+if __name__ == '__main__':
+    print('you meant makeready.py')
 pass
