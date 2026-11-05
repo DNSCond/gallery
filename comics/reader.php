@@ -32,7 +32,8 @@ create_head3($title = $data['chdata']['name'], [
 $episode = 0;
 $htmlName = htmlspecialchars12($title);
 echo "<div class=divs><h1>$htmlName</h1></div><script src=statics/png-conv.js type=module></script>\n";
-foreach ($data['imgs'] as $img) {
+foreach ($data['imgs'] as $key => $img) {
+    if (!preg_match('/^img\\d{3}$/D', $key)) continue;
     $echo = imageTag(null, $img, ['avif', 'webp'],
         "Episode Image\x20" . (++$episode), ['webtoon-img']);
     if ($episode === 1 || $episode === 2 || $episode === 3 || $episode === 4 || $episode === 5 || $episode === 6)
