@@ -36,7 +36,7 @@ foreach ($data['imgs'] as $key => $img) {
     if (!preg_match('/^img\\d{3}$/D', $key)) continue;
     $echo = imageTag(null, $img, ['avif', 'webp'],
         "Episode Image\x20" . (++$episode), ['webtoon-img']);
-    if ($episode === 1 || $episode === 2 || $episode === 3 || $episode === 4 || $episode === 5 || $episode === 6)
+    if ($episode === 1 || $episode === 2 || $episode === 3 || $episode === 4 || $episode === 5)
         $echo = str_replace('fetchpriority=auto loading=lazy', 'fetchpriority=high', $echo);
     if ($withPNGButton) $echo = "$echo<div class=divs><div class=lh><button class=comic-png>create png</button></div></div>";
     echo str_replace("data-file-name=''", "data-file-name=Episode-Image-$episode", "$echo\n");
