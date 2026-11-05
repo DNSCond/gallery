@@ -119,7 +119,7 @@ def comics():
         else:
             jdata['released'] = None
         imgdata = dict(chdata=jdata, imgs=dict())
-        database[paththing.parent.parent.name][paththing.parent.name] = imgdata
+        database[paththing.parent.parent.name]['eps'][paththing.parent.name] = imgdata
         imgdata = imgdata['imgs']
         for i in pathlib.Path(ii).parent.iterdir():
             if pathlib.Path(i).suffix not in image_formats:
