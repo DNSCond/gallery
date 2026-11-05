@@ -31,7 +31,7 @@ if ($dataURL !== '') {
             "{$chapter['chdata']['name']}'s Thumbnail", array('thumb202'), 'png');
         $href = "href=comics/_$dataURL/$chapterId";
         echo "<li><a $href>$img</a>\x20<a $href>$htmlName</a>\x20";
-        if ($time = strtotime($chapter['chdata']['released'])) {
+if (is_string($chapter['chdata']['released'])) if ($time = strtotime($chapter['chdata']['released'])) {
             $htmlTime = gmdate('D, Y-M-d H:i:s', $time) . "\x20UTC";
             $dt = gmdate('Y-m-d\\TH:i:s', $time);
             $is = '';//'is=relative-time';

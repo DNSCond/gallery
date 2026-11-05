@@ -99,6 +99,11 @@ def comics():
         paththing = pathlib.Path(ii)
         with open(ii, 'rt', encoding='utf8') as file:
             jdata = json.loads(file.read())
+        if isinstance(jdata.get('released'), str):
+            if not re.search('\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z', jdata['released']):
+                jdata['released'] = None
+        else:
+            jdata['released'] = None
         imgdata = dict(chdata=jdata, imgs=dict())
         database[paththing.parent.parent.name] = database.get(paththing.parent.parent.name, dict())
         database[paththing.parent.parent.name][paththing.parent.name] = imgdata
