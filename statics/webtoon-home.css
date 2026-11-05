@@ -1,3 +1,22 @@
 .thumb1000 {
     aspect-ratio: 1080 / 1080;
 }
+
+.thumb202 {
+    width: calc(202px / 2);
+    height: calc(142px / 2);
+    aspect-ratio: auto 202 / 142;
+    border-right: 3px solid gray;
+    vertical-align: middle;
+}
+
+ol.episode-list {
+    border: 3px solid gray;
+    padding-left: 0;
+
+    > li {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+}
