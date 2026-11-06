@@ -34,7 +34,7 @@ $source = 'statics/png-conv.js';
 $htmlName = htmlspecialchars12($title);
 echo "<div class=divs><h1>$htmlName</h1></div>" .
     "<script type=module src=$source></script>";
-echo "<main>\n";
+echo "<script src=statics/index.js type=module></script><main>\n";
 foreach ($data['imgs'] as $key => $img) {
     if (!preg_match('/^img\\d{3}$/D', $key)) continue;
     $echo = imageTag(null, $img, ['avif', 'webp'],
@@ -48,8 +48,8 @@ if (is_array($data['chdata']['with'])) foreach ($data['chdata']['with'] as $char
     $img = imageTag($character['n'], $character['img'], ['avif',
         'webp'], "{$character['n']}", array('store-img'));
     $html = htmlspecialchars12($character['n']);
-    if ($img) echo "<article class=store-div data-c={$character['b']} is=shadowboxed" .
-        "-hover><h3 class=charname><a href=gallery/universe/{$character['u']}>$html" .
-        "</a></h3><a href=gallery/universe/{$character['u']}>$img</a></article>";
+    if ($img) echo "<article class=store-div data-c={$character['b']} is=shadow" .
+        "boxed-hover><h3 class=charname><a href=universe/{$character['u']}>$html" .
+        "</a></h3><a href=universe/{$character['u']}>$img</a></article>";
 }
 echo "</div>\n";
