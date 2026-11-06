@@ -1,7 +1,7 @@
 <?php use function Helpers\htmlspecialchars12;
 
 function imageTag(?string $characterName, array $hashes, array $formats, string $alt,
-                  array   $classes, ?string $fallback = 'webp'): string|false
+                  array   $classes, ?string $fallback = 'webp', bool $highPriority = false): string|false
 {
     $lastValid = null;
     if (!count($formats)) return false;
@@ -21,8 +21,9 @@ function imageTag(?string $characterName, array $hashes, array $formats, string 
     elseif ($lastValid === null) return false;
     else $format = $lastValid;
     if (!array_key_exists($format, $hashes)) return false;
+    $fetchpriority = $highPriority ? 'fetchpriority=high' : 'fetchpriority=auto loading=lazy';
     $size = "width={$hashes[$format]['w']} height={$hashes[$format]['h']}";
-    $result .= "<img src=\"imgdata/{$hashes[$format]['hash']}\" $size alt=\"$alt\" class=\""
-        . "$classes\" data-type='{$hashes[$format]['t']}' fetchpriority=auto loading=lazy>";
+    $result .= "<img src=\"imgdata/{$hashes[$format]['hash']}\" $size alt=\"$alt\""
+        . " class=\"$classes\" data-type='{$hashes[$format]['t']}' $fetchpriority>";
     return "$result</picture>";
 }

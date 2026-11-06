@@ -237,7 +237,8 @@ def main():
     #                     for formats in thing.values():
     #                         write_file(file, formats, inner['main.json'], charid, univ, unidata)
     #                 pass
-    return errors or misc['errored'] or mkstory(local, reverse_map, unidata) or comics()
+    comic = comics(chardata=local, rev_map=reverse_map)
+    return errors or misc['errored'] or mkstory(local, reverse_map, unidata) or comic
 
 
 def write_file(file, data, chardata, charid, univ, unidata):

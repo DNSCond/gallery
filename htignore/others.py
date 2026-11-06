@@ -94,7 +94,7 @@ def mkstory(character_data, reverse_map, unidata):
     return False
 
 
-def comics():
+def comics(chardata, rev_map):
     errored = False
     database = dict()
     for ii in glob('comic-images/*/edata.json'):
@@ -118,6 +118,20 @@ def comics():
                 jdata['released'] = None
         else:
             jdata['released'] = None
+        with_data = jdata.get('with')
+        jdata['with'] = None
+        computed_with_data = list()
+        if isinstance(with_data, list):
+            for ioo in with_data:
+                if isinstance(ioo, str):
+                    revved = rev_map.get(ioo)
+                    cdata = chardata[revved][ioo]
+                    computed_with_data.append(dict(
+                        n=cdata['main.json']['name'], img=cdata['main-see'],
+                        b=cdata['main.json'].get('primaryColor', '#00a8f3'),
+                        u=f'{revved}/{ioo}'))
+        if computed_with_data:
+            jdata['with'] = computed_with_data
         imgdata = dict(chdata=jdata, imgs=dict())
         database[paththing.parent.parent.name]['eps'][paththing.parent.name] = imgdata
         imgdata = imgdata['imgs']

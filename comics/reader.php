@@ -30,14 +30,26 @@ create_head3($title = $data['chdata']['name'], [
     'borderColor' => '#fff100', 'backColor' => '#87cefa',
 ]);
 $episode = 0;
+$source = 'statics/png-conv.js';
 $htmlName = htmlspecialchars12($title);
-echo "<div class=divs><h1>$htmlName</h1></div><script src=statics/png-conv.js type=module></script>\n";
+echo "<div class=divs><h1>$htmlName</h1></div>" .
+    "<script type=module src=$source></script>";
+echo "<main>\n";
 foreach ($data['imgs'] as $key => $img) {
     if (!preg_match('/^img\\d{3}$/D', $key)) continue;
     $echo = imageTag(null, $img, ['avif', 'webp'],
-        "Episode Image\x20" . (++$episode), ['webtoon-img']);
-    if ($episode === 1 || $episode === 2 || $episode === 3 || $episode === 4 || $episode === 5)
-        $echo = str_replace('fetchpriority=auto loading=lazy', 'fetchpriority=high', $echo);
+        "Episode Image\x20" . (++$episode), ['webtoon-img'],
+        highPriority: $episode === 1 || $episode === 2 || $episode === 3 || $episode === 4 || $episode === 5);
     if ($withPNGButton) $echo = "$echo<div class=divs><div class=lh><button class=comic-png>create png</button></div></div>";
     echo str_replace("data-file-name=''", "data-file-name=Episode-Image-$episode", "$echo\n");
 }
+echo "</main><div class=divs><h2 class=h2-border>Characters Featured</h2>";
+if (is_array($data['chdata']['with'])) foreach ($data['chdata']['with'] as $character) {
+    $img = imageTag($character['n'], $character['img'], ['avif',
+        'webp'], "{$character['n']}", array('store-img'));
+    $html = htmlspecialchars12($character['n']);
+    if ($img) echo "<article class=store-div data-c={$character['b']} is=shadowboxed" .
+        "-hover><h3 class=charname><a href=gallery/universe/{$character['u']}>$html" .
+        "</a></h3><a href=gallery/universe/{$character['u']}>$img</a></article>";
+}
+echo "</div>\n";

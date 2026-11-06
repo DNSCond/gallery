@@ -24,6 +24,7 @@ create_head3($title = $humanTitle ? "$humanTitle (Comics)" : 'Comics', [
 ]);
 echo "<div class=divs><h1>$title</h1><div><script src=statics/index.js type=module></script>";
 if ($dataURL !== '') {
+    $is = 'is=relative-time';
     echo "<h2>Episodes</h2><ol class=episode-list>";
     foreach ($datacar['data'][$_GET['titleURL']]['eps'] as $chapterId => $chapter) {
         $htmlName = htmlspecialchars12("{$chapter['chdata']['name']}");
@@ -31,12 +32,12 @@ if ($dataURL !== '') {
             "{$chapter['chdata']['name']}'s Thumbnail", array('thumb202'), 'png');
         $href = "href=comics/_$dataURL/$chapterId";
         echo "<li><a $href>$img</a>\x20<a $href>$htmlName</a>\x20";
-if (is_string($chapter['chdata']['released'])) if ($time = strtotime($chapter['chdata']['released'])) {
-            $htmlTime = gmdate('D, Y-M-d H:i:s', $time) . "\x20UTC";
-            $dt = gmdate('Y-m-d\\TH:i:s', $time);
-            $is = '';//'is=relative-time';
-            echo "(<time $is datetime={$dt}Z>$htmlTime</time>)";
-        }
+        if (is_string($chapter['chdata']['released']))
+            if ($time = strtotime($chapter['chdata']['released'])) {
+                $htmlTime = gmdate('D, Y-M-d H:i:s', $time) . "\x20UTC";
+                $dt = gmdate('Y-m-d\\TH:i:s', $time);
+                echo "(<time $is datetime={$dt}Z>$htmlTime</time>)";
+            }
     }
     echo '</ol><h2>Other Webtoons!</h2>';
 }
