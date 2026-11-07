@@ -1,5 +1,6 @@
 <?php use function ANTHeader\create_head3;
 use function Helpers\htmlspecialchars12;
+use function Helpers\Getters\readJSON;
 
 $found = false;
 $data = array();
@@ -30,11 +31,11 @@ create_head3($title = $data['chdata']['name'], [
     'borderColor' => '#fff100', 'backColor' => '#87cefa',
 ]);
 $episode = 0;
-$source = 'statics/png-conv.js';
+$source = '';
 $htmlName = htmlspecialchars12($title);
-echo "<div class=divs><h1>$htmlName</h1></div>" .
-    "<script type=module src=$source></script>";
-echo "<script src=statics/index.js type=module></script><main>\n";
+echo "<div class=divs><h1>$htmlName</h1></div>" ;
+echo "<script type=module>import'./statics/png-".
+    "conv.js';import'./statics/index.js';</script>";
 foreach ($data['imgs'] as $key => $img) {
     if (!preg_match('/^img\\d{3}$/D', $key)) continue;
     $echo = imageTag(null, $img, ['avif', 'webp'],

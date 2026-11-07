@@ -1,5 +1,6 @@
 <?php use function ANTHeader\create_head3;
 use function Helpers\htmlspecialchars12;
+use function Helpers\Getters\readJSON;
 
 $dataURL = '';
 $humanTitle = '';
@@ -41,6 +42,7 @@ if ($dataURL !== '') {
     }
     echo '</ol><h2>Other Webtoons!</h2>';
 }
+
 foreach ($datacar['data'] as $name => $webtoon) {
     if ($dataURL === $name) continue;
     $htmlName = htmlspecialchars12("{$webtoon['datatoon']['name']}");
@@ -50,4 +52,5 @@ foreach ($datacar['data'] as $name => $webtoon) {
         "<h3 class=charname><a href=comics/_$name/>$htmlName</a></h3>" .
         "<a href=comics/_$name/>$img</a></article>";
 }
+
 echo "</div></div>\n";

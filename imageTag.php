@@ -8,12 +8,10 @@ function imageTag(?string $characterName, array $hashes, array $formats, string 
     $cname = is_string($characterName) ? "$characterName--" : '';
     $fn = htmlspecialchars12("$cname{$hashes['data-name']}");
     $result = "<picture data-file-name='$fn'>";
-    foreach ($formats as $format) {
-        if (array_key_exists($format, $hashes)) {
-            $size = "width={$hashes[$format]['w']} height={$hashes[$format]['h']}";
-            $result .= "<source srcset='imgdata/{$hashes[$format]['hash']}' $size type={$hashes[$format]['t']}>";
-            $lastValid = $format;
-        }
+    foreach ($formats as $format) if (array_key_exists($format, $hashes)) {
+        $size = "width={$hashes[$format]['w']} height={$hashes[$format]['h']}";
+        $result .= "<source srcset='imgdata/{$hashes[$format]['hash']}' $size type={$hashes[$format]['t']}>";
+        $lastValid = $format;
     }
     $alt = htmlspecialchars12($alt);
     $classes = implode(' ', $classes);

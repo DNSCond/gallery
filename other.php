@@ -1,5 +1,6 @@
 <?php use function ANTHeader\create_head3;
 use function Helpers\htmlspecialchars12;
+use function Helpers\Getters\readJSON;
 
 require_once 'require.php';
 $title = 'Favicond\'s Ai Image Gallery';

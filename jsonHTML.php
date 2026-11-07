@@ -1,4 +1,4 @@
-<?php
+<?php // mkHTMLFromJSON
 function mkHTMLFromJSON(mixed $desc, bool $htmlEscape = false): string
 {
     $result = "<$desc[0]";

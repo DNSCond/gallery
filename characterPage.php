@@ -1,4 +1,6 @@
-<?php use function Helpers\htmlspecialchars12;
+<?php use function Helpers\Getters\isPresent;
+use function Helpers\htmlspecialchars12;
+use function Helpers\Getters\readJSON;
 use function ANTHeader\create_head3;
 
 $charId = null;
