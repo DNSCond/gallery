@@ -33,9 +33,9 @@ create_head3($title = $data['chdata']['name'], [
 $episode = 0;
 $source = '';
 $htmlName = htmlspecialchars12($title);
-echo "<div class=divs><h1>$htmlName</h1></div>" ;
-echo "<script type=module>import'./statics/png-".
-    "conv.js';import'./statics/index.js';</script>";
+echo "<div class=divs><h1>$htmlName</h1></div>";
+echo "\x3cscript type=module src=statics/png-conv.js>\x3c/script>";
+echo "\x3cscript type=module src=statics/index.js\x3c/script";
 foreach ($data['imgs'] as $key => $img) {
     if (!preg_match('/^img\\d{3}$/D', $key)) continue;
     $echo = imageTag(null, $img, ['avif', 'webp'],

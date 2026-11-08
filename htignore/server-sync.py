@@ -1,7 +1,7 @@
 from makeready import main as mkready
 import paramiko, json, os
 
-if mkready():
+if mkready(True):
     input('an error has occured, aborting')
     exit()
 path = "../imgdata"  # Current directory

@@ -94,7 +94,7 @@ def mkstory(character_data, reverse_map, unidata):
     return False
 
 
-def comics(chardata, rev_map):
+def comics(chardata, rev_map, sent_to_server):
     errored = False
     database = dict()
     for ii in glob('comic-images/*/edata.json'):
@@ -113,6 +113,8 @@ def comics(chardata, rev_map):
         paththing = pathlib.Path(ii)
         with open(ii, 'rt', encoding='utf8') as file:
             jdata = json.loads(file.read())
+        if sent_to_server and jdata.get('dev-mode'):
+            continue
         if isinstance(jdata.get('released'), str):
             if not re.search('\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z', jdata['released']):
                 jdata['released'] = None

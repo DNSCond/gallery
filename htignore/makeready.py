@@ -10,7 +10,7 @@ def copyfile(src: str, out: str):
         out_file.write(src_file.read())
 
 
-def main():
+def main(sent_to_server):
     local = dict()
     htmls = list()
     errors = False
@@ -237,7 +237,7 @@ def main():
     #                     for formats in thing.values():
     #                         write_file(file, formats, inner['main.json'], charid, univ, unidata)
     #                 pass
-    comic = comics(chardata=local, rev_map=reverse_map)
+    comic = comics(chardata=local, rev_map=reverse_map, sent_to_server=sent_to_server)
     return errors or misc['errored'] or mkstory(local, reverse_map, unidata) or comic
 
 
@@ -272,6 +272,6 @@ def encode_str_b64(strx: str) -> str:
 
 
 if __name__ == '__main__':
-    if main():
+    if main(False):
         input('enter to exit:')
 pass
