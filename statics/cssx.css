@@ -189,7 +189,7 @@ body {
     }
 }
 
-.ShadowBoxedHover:hover {
+.ShadowBoxedHover:hover, .ShadowBoxedHover.hover {
     box-shadow: 5px 5px 4px var(--box-color);
     transform: translate(-4px, -4px);
 }

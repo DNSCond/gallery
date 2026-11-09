@@ -19,7 +19,7 @@ if (!$found) {
     exit;
 }
 $series = $datacar['data'][$_GET['titleURL']]['datatoon']['name'];
-$withPNGButton = array_key_exists('withpng', $_GET) && "{$_GET['withpng']}";
+$PNGBtn = array_key_exists('withpng', $_GET) && "{$_GET['withpng']}";
 create_head3($title = $data['chdata']['name'], [
     'base' => '/gallery/', 'canonical' => "/gallery/comics/_{$_GET['titleURL']}/{$_GET['episodeId']}", 'bread' => [
         array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
@@ -34,14 +34,14 @@ $episode = 0;
 $source = '';
 $htmlName = htmlspecialchars12($title);
 echo "<div class=divs><h1>$htmlName</h1></div>";
+echo "\x3cscript type=module src=statics/index.js>\x3c/script>";
 echo "\x3cscript type=module src=statics/png-conv.js>\x3c/script>";
-echo "\x3cscript type=module src=statics/index.js\x3c/script";
 foreach ($data['imgs'] as $key => $img) {
     if (!preg_match('/^img\\d{3}$/D', $key)) continue;
     $echo = imageTag(null, $img, ['avif', 'webp'],
         "Episode Image\x20" . (++$episode), ['webtoon-img'],
         highPriority: $episode === 1 || $episode === 2 || $episode === 3 || $episode === 4 || $episode === 5);
-    if ($withPNGButton) $echo = "$echo<div class=divs><div class=lh><button class=comic-png>create png</button></div></div>";
+    if ($PNGBtn) $echo = "$echo<div class=divs><div class=lh><button class=comic-png>create png</button></div></div>";
     echo str_replace("data-file-name=''", "data-file-name=Episode-Image-$episode", "$echo\n");
 }
 echo "</main><div class=divs><h2 class=h2-border>Characters Featured</h2>";
