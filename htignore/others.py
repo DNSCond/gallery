@@ -127,6 +127,9 @@ def comics(chardata, rev_map, sent_to_server):
             for ioo in with_data:
                 if isinstance(ioo, str):
                     revved = rev_map.get(ioo)
+                    if revved is None:
+                        print('charId', ioo, 'is not found')
+                        continue
                     cdata = chardata[revved][ioo]
                     computed_with_data.append(dict(
                         n=cdata['main.json']['name'], img=cdata['main-see'],
