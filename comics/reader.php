@@ -42,7 +42,7 @@ foreach ($data['imgs'] as $key => $img) {
         "Episode Image\x20" . (++$episode), ['webtoon-img'],
         highPriority: $episode === 1 || $episode === 2 || $episode === 3 || $episode === 4 || $episode === 5);
     if ($PNGBtn) $echo = "$echo<div class=divs><div class=lh><button class=comic-png>create png</button></div></div>";
-    echo str_replace("data-file-name=''", "data-file-name=Episode-Image-$episode", "$echo\n");
+    echo str_replace("data-file-name=''", "data-file-name=Ep-Img-$episode", "$echo\n");
 }
 echo "</main><div class=divs><h2 class=h2-border>Characters Featured</h2>";
 if (is_array($data['chdata']['with'])) foreach ($data['chdata']['with'] as $character) {
