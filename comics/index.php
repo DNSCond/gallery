@@ -29,8 +29,9 @@ if ($dataURL !== '') {
     echo "<h2>Episodes</h2><ol class=episode-list>";
     foreach ($datacar['data'][$_GET['titleURL']]['eps'] as $chapterId => $chapter) {
         $htmlName = htmlspecialchars12("{$chapter['chdata']['name']}");
-        $img = imageTag(null, $chapter['imgs']['ep-thumb'], ['png'],
-            "{$chapter['chdata']['name']}'s Thumbnail", array('thumb202'), 'png');
+        $hashes = $chapter['imgs']['ep-thumb']; $img = '';
+        if(is_array($hashes)) $img = imageTag(null, $hashes, ['avif', 'webp', 'png'],
+            "{$chapter['chdata']['name']}'s Thumbnail", array('thumb202'), null);
         $href = "href=comics/_$dataURL/$chapterId";
         echo "<li><a $href>$img</a>\x20<a $href>$htmlName</a>\x20";
         if (is_string($chapter['chdata']['released']))
