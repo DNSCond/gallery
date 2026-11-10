@@ -203,7 +203,7 @@ def main(sent_to_server):
                 print(charid, 'is a duplicate of another')
                 errors = True
             reverse_map[charid] = unid
-   for htmld in htmls:
+    for htmld in htmls:
         with open(htmld, 'rb') as file:
             content = file.read()
             hashed = base64.b64encode(hashlib.sha512(content).digest()).decode('utf-8') \
