@@ -26,11 +26,13 @@ create_head3($title = $humanTitle ? "$humanTitle (Comics)" : 'Comics', [
 echo "<div class=divs><h1>$title</h1><div><script src=statics/index.js type=module></script>";
 if ($dataURL !== '') {
     $is = 'is=relative-time';
+    $thing = 0;
     echo "<h2>Episodes</h2><ol class=episode-list>";
     foreach ($datacar['data'][$_GET['titleURL']]['eps'] as $chapterId => $chapter) {
         $htmlName = htmlspecialchars12("{$chapter['chdata']['name']}");
-        $hashes = $chapter['imgs']['ep-thumb']; $img = '';
-        if(is_array($hashes)) $img = imageTag(null, $hashes, ['avif', 'webp', 'png'],
+        $hashes = $chapter['imgs']['ep-thumb'];
+        $img = '';
+        if (is_array($hashes)) $img = imageTag(null, $hashes, ['avif', 'webp', 'png'],
             "{$chapter['chdata']['name']}'s Thumbnail", array('thumb202'), null);
         $href = "href=comics/_$dataURL/$chapterId";
         echo "<li><a $href>$img</a>\x20<a $href>$htmlName</a>\x20";
@@ -40,8 +42,11 @@ if ($dataURL !== '') {
                 $dt = gmdate('Y-m-d\\TH:i:s', $time);
                 echo "(<time $is datetime={$dt}Z>$htmlTime</time>)";
             }
+        $thing += 1;
     }
-    echo '</ol><h2>Other Webtoons!</h2>';
+    echo "</ol>";
+    if ($thing > 1) echo "<a href=comics/_$dataURL/multireader>Or Read Them All</a>";
+    echo "<h2>Other Webtoons!</h2>";
 }
 
 foreach ($datacar['data'] as $name => $webtoon) {

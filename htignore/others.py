@@ -94,6 +94,7 @@ def mkstory(character_data, reverse_map, unidata):
     return False
 
 
+# noinspection string-conversion-without-dunder-method
 def comics(chardata, rev_map, sent_to_server):
     errored = False
     database = dict()
@@ -120,23 +121,8 @@ def comics(chardata, rev_map, sent_to_server):
                 jdata['released'] = None
         else:
             jdata['released'] = None
-        with_data = jdata.get('with')
-        jdata['with'] = None
-        computed_with_data = list()
-        if isinstance(with_data, list):
-            for ioo in with_data:
-                if isinstance(ioo, str):
-                    revved = rev_map.get(ioo)
-                    if revved is None:
-                        print('charId', ioo, 'is not found')
-                        continue
-                    cdata = chardata[revved][ioo]
-                    computed_with_data.append(dict(
-                        n=cdata['main.json']['name'], img=cdata['main-see'],
-                        b=cdata['main.json'].get('primaryColor', '#00a8f3'),
-                        u=f'{revved}/{ioo}'))
-        if computed_with_data:
-            jdata['with'] = computed_with_data
+        makecharacterlisting(jdata, 'with', rev_map, chardata)
+        makecharacterlisting(jdata, 'bgCharacters', rev_map, chardata)
         imgdata = dict(chdata=jdata, imgs=dict())
         database[paththing.parent.parent.name]['eps'][paththing.parent.name] = imgdata
         imgdata = imgdata['imgs']
@@ -149,9 +135,49 @@ def comics(chardata, rev_map, sent_to_server):
                 continue
             imgdata[pathlib.Path(i).stem] = imgdata.get(pathlib.Path(i).stem, dict())
             imgdata[pathlib.Path(i).stem][pathlib.Path(i).suffix[1::]] = data
+    for series in database.values():
+        episode_keys = sorted(int(i) for i in series['eps'].keys())
+        for i in transform_list(episode_keys):
+            series['eps'][str(i['value'])]['chdata']['prev'] = None
+            series['eps'][str(i['value'])]['chdata']['next'] = None
+            if i['prev'] is not None:
+                series['eps'][str(i['value'])]['chdata']['prev'] = i['prev']
+            if i['next'] is not None:
+                series['eps'][str(i['value'])]['chdata']['next'] = i['next']
     with open('../imgdata/.comic-assets.json', 'wt', encoding='utf8') as file:
-        file.write(json.dumps(dict(data=database), sort_keys=False, indent=2))
+        file.write(json.dumps(dict(data=database), sort_keys=False))
     return errored
+
+
+def transform_list(nums):
+    n = len(nums)
+    return [
+        {
+            "value": val,
+            "prev": nums[i - 1] if i > 0 else None,
+            "next": nums[i + 1] if i < n - 1 else None
+        } for i, val in enumerate(nums)
+    ]
+
+
+def makecharacterlisting(jdata, key, rev_map, chardata):
+    with_data = jdata.get(key)
+    jdata[key] = None
+    computed_with_data = list()
+    if isinstance(with_data, list):
+        for ioo in with_data:
+            if isinstance(ioo, str):
+                revved = rev_map.get(ioo)
+                if revved is None:
+                    print('charId', ioo, 'is not found')
+                    continue
+                cdata = chardata[revved][ioo]
+                computed_with_data.append(dict(
+                    n=cdata['main.json']['name'], img=cdata['main-see'],
+                    b=cdata['main.json'].get('primaryColor', '#00a8f3'),
+                    u=f'{revved}/{ioo}'))
+    if computed_with_data:
+        jdata[key] = computed_with_data
 
 
 def img(src_path: str, folder='imgdata'):
