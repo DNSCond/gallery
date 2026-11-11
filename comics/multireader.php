@@ -30,9 +30,9 @@ create_head3($title = "Multireader of {$data['datatoon']['name']}", [
 $episode = 0;
 $htmlName = htmlspecialchars12($title);
 echo "<div class=divs><h1>$htmlName</h1></div><main>\n";
-foreach ($data['eps'] as $ep) {
+foreach ($data['eps'] as $episodeKey => $ep) {
     $htmlName = htmlspecialchars12($ep['chdata']['name']);
-    echo "<div class=divs><h2 class=center>$htmlName</h2></div>";
+    echo "<div class=divs><h2 class=center id=epkey-$episodeKey>$htmlName</h2></div>";
     foreach ($ep['imgs'] as $key => $img) {
         if (!preg_match('/^img\\d{3}$/D', $key)) continue;
         $echo = imageTag(null, $img, ['avif', 'webp'],
