@@ -3,7 +3,7 @@
     .ShadowBoxedHover {
         transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         /*noinspection CssInvalidFunction*/
-        --box-color: attr(data-c type(< color >), #00a8f3);
+        --box-color: attr(data-c type(<color>), #00a8f3);
     }
 
     /*noinspection CssInvalidPropertyValue, CssInvalidFunction*/
