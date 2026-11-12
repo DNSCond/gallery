@@ -45,14 +45,14 @@ if (isset($GLOBALS['all'])) {
                     $uniSlugName !== 'main' ? array('text' => matchUniverses($uniSlugName),
                             'href' => "universe/$uniSlugName/") : null,
             ], 'canonical' => $key === 'main' && !$ai ? '/gallery/' : "gallery/universe$ai/$key/",
-            'stylelinks' => ['statics/cssx.css', 'statics/ddDL-table.css'],
+            'stylelinks' => ['statics/cssx.css', 'statics/ddDL-table.css', 'statics/ShadowBoxedHover.css'],
             'borderColor' => ($aiAlways ? '#ff00ff' : '#00a8f3'),
             'backColor' => ($aiAlways ? '#a600a6' : '#0073a6'),
     ]);
 } ?>
 <div class=divs>
     <h1><?= $title ?></h1>
-    <script src=statics/index.js type=module></script>
+    <script src=statics/index.js></script>
     <details class='border alt-uni'>
         <summary>Alternate Universes</summary>
         <div><?= "<h2 id=Other-Universes class='altUniStyle h2-border'>Other Universes</h2>\n";
@@ -102,7 +102,9 @@ if (isset($GLOBALS['all'])) {
             <a href="<?= 'other' ?>">See Miscellaneous Ai Images</a>.
         </div>
     </details>
-    <div class='border comics-ad'><a href=comics>Check out my new comics</a></div>
+    <div class='border comics-ad'><a href=comics is=button-hovera>Check out my new comics</a>
+        <button type=button is=button-hover>BUTTON</button>
+    </div>
     <nav class=border id=the-store><?= implode('', is_array($characters) ? $characters : array());
         global $ai;
         $image = false;
@@ -117,7 +119,7 @@ if (isset($GLOBALS['all'])) {
                     ['webp'], $alt, $classes);
             /** @noinspection PhpFullyQualifiedNameUsageInspection */
             $Universe = \Helpers\htmlspecialchars12($Universe);
-            $image = $image === false ? false : "<div class='divs center'><h2>$Universe</h2>$image";
+            $image = $image === false ? false : "<div class='divs center'><h2>$Universe</h2>$image</div>";
         }
         if ($image === false) $image = '' ?></nav>
-</div><?= $image . ($image ? '</div>' : '') ?><!-- Object -->
+</div><?= $image ?><!-- Object -->

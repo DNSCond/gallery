@@ -21,11 +21,10 @@ create_head3($title = "Multireader of {$data['datatoon']['name']}", [
     'base' => '/gallery/', 'canonical' => "/gallery/comics/__{$_GET['titleURL']}/", 'bread' => [
         array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
         array('text' => 'Comics', 'href' => '/gallery/comics/'),
-        array('text' => "{$data['datatoon']['name']}",'href'=>"/gallery/comics/_{$_GET['titleURL']}/"),
+        array('text' => "{$data['datatoon']['name']}", 'href' => "/gallery/comics/_{$_GET['titleURL']}/"),
         array('text' => "Multireader", 'href' => "/gallery/comics/_{$_GET['titleURL']}/multireader"),
-    ], 'stylelinks' => ['statics/cssx.css', 'statics/webtoon-img.css'],
-    'borderColor' => '#fff100', 'backColor' => '#87cefa',
-    'metatags' => [['robots', 'noindex']],
+    ], 'stylelinks' => ['statics/cssx.css', 'statics/webtoon-img.css', 'statics/ShadowBoxedHover.css'],
+    'borderColor' => '#fff100', 'backColor' => '#87cefa', 'metatags' => [['robots', 'noindex']],
 ]);
 $episode = 0;
 $htmlName = htmlspecialchars12($title);

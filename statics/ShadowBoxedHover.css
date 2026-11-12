@@ -1,0 +1,57 @@
+/*ShadowBoxedHover*/
+.ShadowBoxedHover {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    /*noinspection CssInvalidFunction*/
+    --box-color: attr(data-c type(<color>), #00a8f3);
+}
+
+/*noinspection CssInvalidPropertyValue, CssInvalidFunction*/
+@supports not (x: attr(x type(*))) {
+    .ShadowBoxedHover {
+        --box-color: #00a8f3;
+    }
+}
+
+.ShadowBoxedHover:hover, .ShadowBoxedHover.hover {
+    box-shadow: 5px 5px 4px var(--box-color);
+    transform: translate(-4px, -4px);
+}
+
+.button-hover {
+    transition: transform 21ms ease-in-out, box-shadow 20ms ease-in-out;
+    text-decoration: none;
+    vertical-align: bottom;
+    box-shadow: 0 5px 0 #a62b00;
+    background-color: tomato;
+    transform: translate(0, -5px);
+    display: inline-block;
+    border-radius: 10px;
+    margin-top: 7px;
+    padding: 0.5em;
+    border: none;
+}
+
+a.button-hover:link, a.button-hover:visited {
+    color: #000000;
+}
+
+.button-hover:hover {
+    transform: translate(0, -10px);
+    box-shadow: 0 10px 0 #a62b00;
+    color: #000000;
+}
+
+.button-hover:active {
+    transform: translate(0, 0);
+    box-shadow: 0 0 0 #a62b00;
+}
+
+@media (prefers-color-scheme: dark) {
+    a.button-hover:link, a.button-hover:visited, .button-hover {
+        color: #ffffff;
+    }
+
+    .button-hover:hover {
+        color: #ffffff;
+    }
+}

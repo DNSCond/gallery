@@ -21,7 +21,7 @@ create_head3($title = $humanTitle ? "$humanTitle (Comics)" : 'Comics', [
         array('text' => 'Comics', 'href' => '/gallery/comics/'),
         $dataURL ? array('text' => $humanTitle, 'href' => "/gallery/comics/_$dataURL/") : null,
     ], 'canonical' => "/gallery/comics/" . ($dataURL ? "_$dataURL/" : ''),
-    'stylelinks' => ["statics/cssx.css", 'statics/webtoon-home.css'],
+    'stylelinks' => ["statics/cssx.css", 'statics/webtoon-home.css', 'statics/ShadowBoxedHover.css'],
 ]);
 echo "<div class=divs><h1>$title</h1><div><script src=statics/index.js type=module></script>";
 if ($dataURL !== '') {

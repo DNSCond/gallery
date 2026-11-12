@@ -21,14 +21,14 @@ if (!$found) {
 $series = $datacar['data'][$_GET['titleURL']]['datatoon']['name'];
 $PNGBtn = array_key_exists('withpng', $_GET) && "{$_GET['withpng']}";
 create_head3($title = $data['chdata']['name'], [
+    'stylelinks' => ['statics/cssx.css', 'statics/webtoon-img.css', 'statics/ShadowBoxedHover.css'],
     'base' => '/gallery/', 'canonical' => "/gallery/comics/_{$_GET['titleURL']}/{$_GET['episodeId']}", 'bread' => [
         array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
         array('text' => 'Comics', 'href' => '/gallery/comics/'),
         array('text' => "$series", 'href' => "/gallery/comics/_{$_GET['titleURL']}/"),
         array('text' => "$title (Ep {$_GET['episodeId']})", 'href' =>
             "/gallery/comics/_{$_GET['titleURL']}/{$_GET['episodeId']}"),
-    ], 'stylelinks' => ['statics/cssx.css', 'statics/webtoon-img.css'],
-    'borderColor' => '#fff100', 'backColor' => '#87cefa',
+    ], 'borderColor' => '#fff100', 'backColor' => '#87cefa',
 ]);
 $episode = 0;
 $source = '';

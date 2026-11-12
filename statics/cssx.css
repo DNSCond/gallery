@@ -176,24 +176,6 @@ body {
     width: 10em;
 }
 
-.ShadowBoxedHover {
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    /*noinspection CssInvalidFunction*/
-    --box-color: attr(data-c type(<color>), #00a8f3);
-}
-
-/*noinspection CssInvalidPropertyValue, CssInvalidFunction*/
-@supports not (x: attr(x type(*))) {
-    .ShadowBoxedHover {
-        --box-color: #00a8f3;
-    }
-}
-
-.ShadowBoxedHover:hover, .ShadowBoxedHover.hover {
-    box-shadow: 5px 5px 4px var(--box-color);
-    transform: translate(-4px, -4px);
-}
-
 .introImage.uni {
     width: auto;
     height: auto;

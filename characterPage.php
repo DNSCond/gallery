@@ -82,9 +82,10 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
                 array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
                 array('text' => matchUniverses($uniSlugName), 'href' => $unicanonical),
                 array('text' => $datachar['name'], 'href' => "$unicanonical$charId"),
-        ], 'borderColor' => $borderColor, 'backColor' => $backColor, 'stylelinks' => [
-                'statics/cssx.css', 'statics/ddDL-table.css', 'statics/characterPage.css'],
-        'canonical' => "$unicanonical$charId", 'class' => ['larger'],
+        ], 'borderColor' => $borderColor, 'backColor' => $backColor, 'class' => ['larger'],
+        'stylelinks' => ['statics/cssx.css', 'statics/ddDL-table.css',
+                'statics/characterPage.css', 'statics/ShadowBoxedHover.css'],
+        'canonical' => "$unicanonical$charId",
 ]) ?>
 <main>
     <div class=divs>
