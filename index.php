@@ -94,17 +94,16 @@ if (isset($GLOBALS['all'])) {
             }
 
             //ob_end_flush();
-            global $Favi_verse ?></div>
+            global $Favi_verse;
+            $disableAi = $uniSlugName === 'main' ? '/' : "universe/$uniSlugName/" ?></div>
         <HR>
         <div class=altUniStyle>
-            <a href="<?= "universe-ai/$uniSlugName/" ?>">Enable Ai Mode</a>,
-            <a href="<?= $uniSlugName === 'main' ? '/' : "universe/$uniSlugName/" ?>">Disable Ai Mode</a>,
-            <a href="<?= 'other' ?>">See Miscellaneous Ai Images</a>.
+            <a href="<?= "universe-ai/$uniSlugName/" ?>" is=button-hovera>Enable Ai Mode</a>,
+            <a href="<?= $disableAi ?>" is=button-hovera>Disable Ai Mode</a>,
+            <a href="<?= 'other' ?>" is=button-hovera>See Miscellaneous Ai Images</a>.
         </div>
     </details>
-    <div class='border comics-ad'><a href=comics is=button-hovera>Check out my new comics</a>
-        <button type=button is=button-hover>BUTTON</button>
-    </div>
+    <div class='border comics-ad'><a href=comics is=button-hovera>Check out my new comics</a></div>
     <nav class=border id=the-store><?= implode('', is_array($characters) ? $characters : array());
         global $ai;
         $image = false;
