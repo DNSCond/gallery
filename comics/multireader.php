@@ -34,9 +34,8 @@ foreach ($data['eps'] as $episodeKey => $ep) {
     echo "<div class=divs><h2 class=center id=epkey-$episodeKey>$htmlName</h2></div>";
     foreach ($ep['imgs'] as $key => $img) {
         if (!preg_match('/^img\\d{3}$/D', $key)) continue;
-        $echo = imageTag(null, $img, ['avif', 'webp'],
-            "Episode Image\x20" . (++$episode), ['webtoon-img'],
-            highPriority: $episode === 1 || $episode === 2 || $episode === 3 || $episode === 4 || $episode === 5);
+        $echo = imageTag(null, $img, ['avif', 'webp'], "Episode\x20" .
+            "Image\x20" . (++$episode), ['webtoon-img'], highPriority: $episode === 1 || $episode === 2);
         echo str_replace("data-file-name=''", "data-file-name=Ep-Img-$episode", "$echo\n");
     }
 }
