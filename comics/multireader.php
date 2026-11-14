@@ -34,13 +34,14 @@ foreach ($data['eps'] as $episodeKey => $ep) {
     $htmlName = htmlspecialchars12($ep['chdata']['name']);
     echo "<div class=divs><h2 class=center id=epkey-$episodeKey>$htmlName</h2></div>";
     foreach ($ep['imgs'] as $key => $img) {
+        $highPriority=$episode === 1 || $episode === 2;
         if (!preg_match('/^img\\d{3}$/D', $key)) continue;
-        $echo = imageTag(null, $img,
-            ['avif', 'webp'], "Episode Image\x20" . (++$episode), ['webtoon-img'],
-            highPriority: $episode === 1 || $episode === 2, dataset: ['file-name' => "Ep-Img-$episode"]);
+        $echo = imageTag(null, $img, ['avif', 'webp'],
+            "Episode Image\x20" . (++$episode), ['webtoon-img'],
+            highPriority: $highPriority, dataset: ['file-name' => "Ep-Img-$episode"]);
         echo "$echo\n";
     }
-    echo "<DETAILS class=divs><summary>Characters Featured</summary>";
+    echo "<DETAILS class=divs><suMMary>Characters Featured</suMMary>";
     printCharacters($ep['chdata'], 'with', 'Characters Featured', 'h2-margin');
     printCharacters($ep['chdata'], 'bgCharacters', 'Background Characters Present', 'h2-margin');
     echo "</DETAILS>";

@@ -50,7 +50,6 @@ $noBottom = array_key_exists('noBottom', $GLOBALS) && $GLOBALS['noBottom'];
 if (!$noBottom) {
     printCharacters($data['chdata'], 'with', 'Characters Featured');
     printCharacters($data['chdata'], 'bgCharacters', 'Background Characters Present');
-
     echo "</div>\n";
     $baseURL = "comics/_{$_GET['titleURL']}/";
     if (is_int($data['chdata']['next'])) {
