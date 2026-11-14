@@ -4,6 +4,7 @@ use function Helpers\Getters\readJSON;
 
 $found = false;
 $data = array();
+require_once __DIR__ . '/require.php';
 require_once __DIR__ . '/../require.php';
 require_once __DIR__ . '/../imageTag.php';
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/header3/head3.php";
@@ -34,9 +35,14 @@ foreach ($data['eps'] as $episodeKey => $ep) {
     echo "<div class=divs><h2 class=center id=epkey-$episodeKey>$htmlName</h2></div>";
     foreach ($ep['imgs'] as $key => $img) {
         if (!preg_match('/^img\\d{3}$/D', $key)) continue;
-        $echo = imageTag(null, $img, ['avif', 'webp'], "Episode\x20" .
-            "Image\x20" . (++$episode), ['webtoon-img'], highPriority: $episode === 1 || $episode === 2);
-        echo str_replace("data-file-name=''", "data-file-name=Ep-Img-$episode", "$echo\n");
+        $echo = imageTag(null, $img,
+            ['avif', 'webp'], "Episode Image\x20" . (++$episode), ['webtoon-img'],
+            highPriority: $episode === 1 || $episode === 2, dataset: ['file-name' => "Ep-Img-$episode"]);
+        echo "$echo\n";
     }
+    echo "<DETAILS class=divs><summary>Characters Featured</summary>";
+    printCharacters($ep['chdata'], 'with', 'Characters Featured', 'h2-margin');
+    printCharacters($ep['chdata'], 'bgCharacters', 'Background Characters Present', 'h2-margin');
+    echo "</DETAILS>";
 }
 echo "</main>\n";

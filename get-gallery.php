@@ -35,20 +35,20 @@ if (isset($GLOBALS['all'])) {
         $uninameData = matchUniverses($uniSlugName);
         $unislugData = $uniSlugName === 'main' ? '/' : $base;
         $characters[] = "<h2 class=h2-border><a href='$unislugData'>$uninameData</a></h2>";
-        foreach ($every as $item) appendMain($item, false, $characters, $withalt);
+        foreach ($every as $item) appendMain($item, false,
+            $characters, $withalt, ++$characterCount);
     }
     $uniSlugName = 'main';
 } elseif ($uniSlugName) {
     $uninameData = matchUniverses($uniSlugName);
     $characters[] = "<h2 class=h2-border>Characters of &lt;$uninameData&gt;</h2>";
-    foreach ($data[$uniSlugName] as $item) {
-        appendMain($item, $aiAlways, $characters, $withalt);
-        $characterCount++;
-    }
-    header("character-count:$characterCount");
+    foreach ($data[$uniSlugName] as $item) appendMain($item, $aiAlways,
+        $characters, $withalt, ++$characterCount);
 }
 
-function appendMain(array $item, bool $aiAlways, array &$characters, bool $withalt): void
+header("character-count:$characterCount");
+
+function appendMain(array $item, bool $aiAlways, array &$characters, bool $withalt, int $count): void
 {
     global $base;
     $char = $item['main.json'];
@@ -61,27 +61,29 @@ function appendMain(array $item, bool $aiAlways, array &$characters, bool $witha
     if (!str_starts_with($_boxcolor, '#')) $_boxcolor = "#$_boxcolor";
     $name = htmlspecialchars12($nameUnescaped = $char['name'] ?? $char['charId']);
     $formats = $aiAlways ? $formatsWiAi : $formatsNoAi;
-    $img = imageTag($nameUnescaped, $item[$aiAlways ? 'main-ai' : "main-see"],
-        $formats, $name, array('store-img'), $aiAlways ? null : 'webp');
+    $img = imageTag($nameUnescaped,
+        $item[$aiAlways ? 'main-ai' : "main-see"],
+        $formats, $name, array('store-img'),
+        $aiAlways ? null : 'webp', dataset: ['count' => $count]);
     if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
         "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
         ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";
     if ($withalt) {
         foreach ($item['asset2'] as $asset) {
-            $img = imageTag($nameUnescaped, $asset,
-                $formatsNoAi, "$name (Alt)", array('store-img'));
+            $img = imageTag($nameUnescaped, $asset, $formatsNoAi,
+                "$name (Alt)", array('store-img'), dataset: ['count' => $count]);
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
                 "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
                 ">$name (Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";
         }
-        $img = imageTag($nameUnescaped, $item['main-ai'],
-            $formatsWiAi, "$name (Ai)", array('store-img'), null);
+        $img = imageTag($nameUnescaped, $item['main-ai'], $formatsWiAi,
+            "$name (Ai)", array('store-img'), null, dataset: ['count' => $count]);
         if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
             "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
             ">$name (Ai) </a></h3><a href=$base{$item['charId']}>$img</a></article>";
         foreach ($item['assetAi'] as $asset) {
-            $img = imageTag($nameUnescaped, $asset,
-                $formatsWiAi, "$name (Ai Alt)", array('store-img'), null);
+            $img = imageTag($nameUnescaped, $asset, $formatsWiAi,
+                "$name (Ai Alt)", array('store-img'), null, dataset: ['count' => $count]);
             if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
                 "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
                 ">$name (Ai Alt)</a></h3><a href=$base{$item['charId']}>$img</a></article>";

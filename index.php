@@ -56,10 +56,6 @@ if (isset($GLOBALS['all'])) {
     <details class='border alt-uni'>
         <summary>Alternate Universes</summary>
         <div><?= "<h2 id=Other-Universes class='altUniStyle h2-border'>Other Universes</h2>\n";
-            //ob_start(function (string $string): string {
-            //$string = preg_replace('/\\s+/', "\x20", $string);
-            //$string = preg_replace('/>\\s+</', '><', $string);
-            //return ltrim($string);});
             $newUniData = $unidata;
             unidata('main', $newUniData['unidata']['main']);
             unset($newUniData['unidata']['main']);
@@ -93,7 +89,6 @@ if (isset($GLOBALS['all'])) {
                 echo '</article>';
             }
 
-            //ob_end_flush();
             global $Favi_verse;
             $disableAi = $uniSlugName === 'main' ? '/' : "universe/$uniSlugName/" ?></div>
         <HR>
@@ -103,7 +98,7 @@ if (isset($GLOBALS['all'])) {
             <a href="<?= 'other' ?>" is=button-hovera>See Miscellaneous Ai Images</a>.
         </div>
     </details>
-    <div class='border comics-ad'><a href=comics is=button-hovera>Check out my new comics</a></div>
+    <div class='border comics-ad'><a href=comics>Check out my new comics</a></div>
     <nav class=border id=the-store><?= implode('', is_array($characters) ? $characters : array());
         global $ai;
         $image = false;

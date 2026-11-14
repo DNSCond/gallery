@@ -90,13 +90,15 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
 <main>
     <div class=divs>
         <h1><?= "&quot;$name&quot;$aiMode";
-            if ($main === false) $main = imageTag($nameUnescaped, $chardata['main-see'],
-                    ['avif', 'webp'], 'Main Appearance', ['introImage border']) ?></h1>
-        <div><?= str_replace('fetchpriority=auto loading=lazy', 'fetchpriority=high', $main);
+            if ($main === false) $main = imageTag($nameUnescaped,
+                    $chardata['main-see'], ['avif', 'webp'],
+                    'Main Appearance', ['introImage border'],
+                    highPriority: true) ?></h1>
+        <div><?= "$main<!-- Main Appearance -->";
             require_once 'dataDescriptionList.php';
+            $matchUniverses = matchUniverses($uniname);
             $datachar['charId'] = "$uniSlugName/$charId";
-            $datachar['UniverseId'] = new HTMLSafeEscaped("<data value=$uniname>"
-                    . matchUniverses($uniname) . "\x20($uniname)</data>");
+            $datachar['UniverseId'] = new HTMLSafeEscaped("<data value=$uniname>$matchUniverses</data>");
             $registerDate =
             $LastModified =
             $creationDate = INF;
