@@ -22,3 +22,4 @@ class ButtonHoverA extends HTMLAnchorElement {
 }
 
 customElements.define('button-hovera', ButtonHoverA, {extends: 'a'});
+console.log(document.querySelector('link[rel=canonical]')?.href);

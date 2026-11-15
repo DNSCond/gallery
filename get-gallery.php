@@ -64,7 +64,8 @@ function appendMain(array $item, bool $aiAlways, array &$characters, bool $witha
     $img = imageTag($nameUnescaped,
         $item[$aiAlways ? 'main-ai' : "main-see"],
         $formats, $name, array('store-img'),
-        $aiAlways ? null : 'webp', dataset: ['count' => $count]);
+        $aiAlways ? null : 'webp', ($count === 1) ?
+            true : (($count - 1 < 6) ? 2 : 0), ['count' => $count]);
     if ($img) $characters[] = "<article class=store-div data-c=$_boxcolor is=shadowboxed-" .
         "hover id=sec-{$item['charId']}><h3 class=charname><a href=$base{$item['charId']}" .
         ">$name</a></h3><a href=$base{$item['charId']}>$img</a></article>";

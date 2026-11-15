@@ -32,8 +32,9 @@ if ($dataURL !== '') {
         $htmlName = htmlspecialchars12("{$chapter['chdata']['name']}");
         $hashes = $chapter['imgs']['ep-thumb'];
         $img = '';
-        if (is_array($hashes)) $img = imageTag(null, $hashes, ['avif', 'webp', 'png'],
-            "{$chapter['chdata']['name']}'s Thumbnail", array('thumb202'), null);
+        if (is_array($hashes)) $img = imageTag(null, $hashes,
+            ['avif', 'webp', 'png'], "{$chapter['chdata']['name']}'s Thumbnail",
+            array('thumb202'), null, highPriority: 2);
         $href = "href=comics/_$dataURL/$chapterId";
         echo "<li><a $href>$img</a>\x20<a $href>$htmlName</a>\x20";
         if (is_string($chapter['chdata']['released']))
@@ -52,8 +53,9 @@ if ($dataURL !== '') {
 foreach ($datacar['data'] as $name => $webtoon) {
     if ($dataURL === $name) continue;
     $htmlName = htmlspecialchars12("{$webtoon['datatoon']['name']}");
-    $img = imageTag(null, $webtoon['thumb']['webtoon'], ['avif', 'webp'],
-        "{$webtoon['datatoon']['name']}'s Thumbnail", array('thumb1000', 'store-img'));
+    $img = imageTag(null, $webtoon['thumb']['webtoon'],
+        ['avif', 'webp'], "{$webtoon['datatoon']['name']}'s Thumbnail",
+        array('thumb1000', 'store-img'), highPriority: 2);
     echo "<article class=store-div data-c=#00a8f3 is=shadowboxed-hover>" .
         "<h3 class=charname><a href=comics/_$name/>$htmlName</a></h3>" .
         "<a href=comics/_$name/>$img</a></article>";

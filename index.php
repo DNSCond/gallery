@@ -1,7 +1,7 @@
 <?php use function ANTHeader\create_head3;
 
 require_once "{$_SERVER['DOCUMENT_ROOT']}/require/header3/head3.php";
-global $characters, $uniSlugName, $data, $unidata;
+global $characters, $uniSlugName, $data, $unidata, $withalt;
 header('cache-control: public, max-age=600, stale-while-revalidate=86400, stale-if-error=432000');
 $nightLightOverride = array_key_exists('night', $_GET) && "{$_GET['night']}";
 $aiAlways = array_key_exists('withai', $_GET) && "{$_GET['withai']}";
@@ -16,6 +16,8 @@ if (array_key_exists('iconSize', $_GET)) {
         default => $iconSize,
     };
 }
+$withaltString = $withalt ? '?withalt=1' : '';
+$styleLinks = ['statics/cssx.css', 'statics/ddDL-table.css', 'statics/ShadowBoxedHover.css'];
 if (isset($GLOBALS['all'])) {
     $title = 'All of Favicond\'s Character Gallery';
     create_head3($title, ['base' => '/gallery/',
@@ -23,10 +25,10 @@ if (isset($GLOBALS['all'])) {
             'class' => array($iconSize), 'nightLightOverride' => $nightLightOverride, 'bread' => [
                     array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
                     array('text' => 'All of Favicond\'s Character Gallery', 'href' => '/gallery/all.php'),
-            ], 'stylelinks' => ['statics/cssx.css', 'statics/ddDL-table.css'],
+            ], 'stylelinks' => $styleLinks, 'canonical' => "/gallery/all.php$withaltString",
             'borderColor' => ($aiAlways ? '#ff00ff' : '#00a8f3'),
             'backColor' => ($aiAlways ? '#a600a6' : '#0073a6'),
-            'canonical' => "/gallery/all.php",
+
     ]);
     $uniSlugName = 'main';
 } else {
@@ -38,14 +40,13 @@ if (isset($GLOBALS['all'])) {
     $ai = $aiAlways ? "-ai" : '';
     $title = $uniSlugName === 'main' ? 'Favicond\'s Character Gallery' . ($aiAlways ? "\x20(Ai Mode)" : '') :
             matchUniverses($uniSlugName) . ($aiAlways ? "\x20(Ai Mode)" : '') . "\x20(Favicond's Character Gallery)";
-    create_head3($title, ['base' => '/gallery/',
+    create_head3($title, ['base' => '/gallery/', 'stylelinks' => $styleLinks,
             'desc' => 'Explore the character gallery of Favi Favicond at ANTRequest.nl!',
+            'canonical' => ($key === 'main' && !$ai ? '/' : "gallery/universe$ai/$key/") . $withaltString,
             'class' => array($iconSize), 'nightLightOverride' => $nightLightOverride, 'bread' => [
                     array('text' => 'Favicond\'s Character Gallery', 'href' => 'https://ANTRequest.nl'),
                     $uniSlugName !== 'main' ? array('text' => matchUniverses($uniSlugName),
-                            'href' => "universe/$uniSlugName/") : null,
-            ], 'canonical' => $key === 'main' && !$ai ? '/gallery/' : "gallery/universe$ai/$key/",
-            'stylelinks' => ['statics/cssx.css', 'statics/ddDL-table.css', 'statics/ShadowBoxedHover.css'],
+                            'href' => "universe/$uniSlugName/") : null],
             'borderColor' => ($aiAlways ? '#ff00ff' : '#00a8f3'),
             'backColor' => ($aiAlways ? '#a600a6' : '#0073a6'),
     ]);
@@ -90,12 +91,17 @@ if (isset($GLOBALS['all'])) {
             }
 
             global $Favi_verse;
-            $disableAi = $uniSlugName === 'main' ? '/' : "universe/$uniSlugName/" ?></div>
+            $disableAi = $uniSlugName === 'main' ? '/' : "universe/$uniSlugName/";
+            $current = $aiAlways ? "universe-ai/$uniSlugName/" : $disableAi ?></div>
         <HR>
         <div class=altUniStyle>
             <a href="<?= "universe-ai/$uniSlugName/" ?>" is=button-hovera>Enable Ai Mode</a>,
             <a href="<?= $disableAi ?>" is=button-hovera>Disable Ai Mode</a>,
-            <a href="<?= 'other' ?>" is=button-hovera>See Miscellaneous Ai Images</a>.
+            <a href="<?= "other\x2f" ?>" is=button-hovera>See Miscellaneous Ai Images</a>,
+            <a href="<?= 'all.php' ?>" is=button-hovera>View all characters on one page</a>,
+            <a href="<?= "$current?withalt=1" ?>" is=button-hovera>View alternate appearances</a>,
+            <a href="<?= 'all.php?withalt=1' ?>" is=button-hovera>View all characters with
+                alternate appearances on one page</a>.
         </div>
     </details>
     <div class='border comics-ad'><a href=comics>Check out my new comics</a></div>
