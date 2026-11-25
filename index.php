@@ -97,6 +97,7 @@ if (isset($GLOBALS['all'])) {
         <div class=altUniStyle>
             <a href="<?= "universe-ai/$uniSlugName/" ?>" is=button-hovera>Enable Ai Mode</a>,
             <a href="<?= $disableAi ?>" is=button-hovera>Disable Ai Mode</a>,
+            <a href=ascii-table.php is=button-hovera>Ascii Table</a>,
             <a href="<?= "other\x2f" ?>" is=button-hovera>See Miscellaneous Ai Images</a>,
             <a href="<?= 'all.php' ?>" is=button-hovera>View all characters on one page</a>,
             <a href="<?= "$current?withalt=1" ?>" is=button-hovera>View alternate appearances</a>,
