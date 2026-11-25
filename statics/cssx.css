@@ -118,10 +118,6 @@ body {
         margin: 0.5rem 0 0 0.5rem;
     }
 
-    .store-big {
-        width: 20rem;
-    }
-
     &.smallest {
         --width: 7rem;
 
@@ -138,12 +134,12 @@ body {
         --width: 10rem;
     }
 
-    .store-img {
-        width: var(--width);
+    &.larger {
+      --width: 20rem;
     }
 
-    &.larger .store-img {
-        width: 20rem;
+    .store-img {
+        width: var(--width);
     }
 
     .charname {

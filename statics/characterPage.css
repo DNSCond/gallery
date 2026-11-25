@@ -17,13 +17,13 @@
 
 .altText {
     padding: 1ch;
-    min-height: 4em;
+    min-height: 4rem;
 }
 
 .line-height-1 {
     border-top: 3px solid gray;
-    min-height: 1.5em;
-    height: 1.5em;
+    min-height: 1.5rem;
+    height: 1.5rem;
 }
 
 .divs > .character-profile {
@@ -37,7 +37,7 @@
 }
 
 h1 {
-    margin-bottom: 0.5em;
+    margin-bottom: 0.5rem;
     text-align: center;
 
     & + div {
@@ -51,11 +51,11 @@ h1 {
 }
 
 .store-img, .store-div {
-    width: 20em;
+    width: var(--width);
 }
 
 .charname {
-    width: calc(20em - 2ch);
+    width: calc(var(--width) - 2ch);
     overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -63,7 +63,7 @@ h1 {
 
 #gallery + * {
     margin-left: 0;
-    padding-bottom: 1em;
+    padding-bottom: 1rem;
 }
 
 .border-set2 {
