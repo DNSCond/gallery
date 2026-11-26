@@ -6,8 +6,8 @@ create_head3($title = 'Ascii Table', [
     'canonical' => "/gallery/ascii-table.php",
     'noVent' => true,
 ]);
-echo "<DIV CLASS=divs><H1>$title</H1></DIV><TABLE><THEAD><TR>" .
-    '<TH SCOPE=col>char<th scope=col>hex<th scope=col>code<tbody>';
+echo "<H1>$title</H1><TABLE><THEAD><TR><TH SCOPE=col>"
+    . 'char<th scope=col>hex<th scope=col>code<tBODY>';
 function chrToHTMLStr($i): void
 {
     $char = (match ("$i") {
@@ -16,9 +16,9 @@ function chrToHTMLStr($i): void
         default => "&#$i;",
     });
     $x = dechex($i);
-    echo "\n<tr><td>$char<td>0x$x<td>$i";
+    echo "\n  <tr><td>$char<td>0x$x<td>$i";
 }
 
 chrToHTMLStr(10);
 for ($i = 0x20; $i <= 126; $i++) chrToHTMLStr($i);
-echo "\n</table>\n";
+echo "\n</table>";
