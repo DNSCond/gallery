@@ -50,15 +50,8 @@ h1 {
     border-bottom: 3px solid gray;
 }
 
-.store-img, .store-div {
-    width: var(--width);
-}
-
-.charname {
-    width: calc(var(--width) - 2ch);
-    overflow-x: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+.margin-right {
+    padding-right: 1rem;
 }
 
 #gallery + * {

@@ -164,7 +164,7 @@ create_head3($title = "{$datachar['name']}$aiMode (ANT's Character Gallery)", [
             } ?></div>
     </div>
     <div class=divs><?= "\n$characterInfo\n\x20\x20\x20\x20" ?></div>
-    <div class=divs><?= "<h2 id=gallery>Gallery</h2><div class=border>";
+    <div class=divs><?= "<h2 id=gallery>Gallery</h2><div class='margin-right border'>";
         echo galleryListing($item["main-see"], 'Main Appearance', false);
         echo galleryListing($item['main-ai'], 'Main Ai Appearance', true);
         foreach ($item['asset2'] as $asset) echo galleryListing($asset, 'An Appearance', false);

@@ -135,11 +135,12 @@ body {
     }
 
     &.larger {
-      --width: 20rem;
+        --width: 20rem;
     }
 
     .store-img {
         width: var(--width);
+        max-width: 100%;
     }
 
     .charname {
@@ -151,6 +152,7 @@ body {
 
     .store-div {
         vertical-align: bottom;
+        max-width: 100%;
     }
 
     &.inverted {
